@@ -1,0 +1,2832 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Player ID — Anime Aawaj Guild</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;600;900&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    /* ═══════════════════════════════════════
+       ROOT — SAME GUILD PALETTE
+    ═══════════════════════════════════════ */
+    :root {
+      --bg-void: #04060F;
+      --bg-abyss: #080C1A;
+      --bg-deep: #0D1229;
+      --bg-panel: #111827;
+      --bg-glass: rgba(13, 18, 41, 0.55);
+      --neon-blue: #00D4FF;
+      --neon-purple: #7B5CF5;
+      --neon-gold: #FFD700;
+      --neon-crimson: #FF3E6C;
+      --neon-teal: #00FFB3;
+      --neon-green: #39FF14;
+      --text-primary: #E8EEFF;
+      --text-muted: #7B8DB0;
+      --text-ghost: #3D4F6B;
+      --border-glow: rgba(0, 212, 255, 0.22);
+      --border-subtle: rgba(123, 92, 245, 0.18);
+      --shadow-blue: 0 0 40px rgba(0, 212, 255, 0.12);
+      --shadow-purple: 0 0 40px rgba(123, 92, 245, 0.18);
+      --shadow-gold: 0 0 30px rgba(255, 215, 0, 0.2);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-void);
+      color: var(--text-primary);
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 400;
+      overflow-x: hidden;
+      /* Bottom padding for mobile nav */
+      padding-bottom: calc(64px + var(--safe-bottom));
+    }
+
+    @media (min-width: 1024px) {
+      body {
+        padding-bottom: 0;
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-void);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--neon-purple);
+      border-radius: 2px;
+    }
+
+    /* ═══════════════════════════════════════
+       GLOBAL GRID OVERLAY
+    ═══════════════════════════════════════ */
+    .grid-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        repeating-linear-gradient(0deg, rgba(0, 212, 255, 0.012) 0px, transparent 1px, transparent 60px),
+        repeating-linear-gradient(90deg, rgba(0, 212, 255, 0.012) 0px, transparent 1px, transparent 60px);
+    }
+
+    /* ═══════════════════════════════════════
+       STICKY NAVBAR
+    ═══════════════════════════════════════ */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: rgba(4, 6, 15, 0.88);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-glow);
+      padding: 0 20px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .nav-logo {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      white-space: nowrap;
+      flex-shrink: 0;
+      text-decoration: none;
+    }
+
+    .nav-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.62rem;
+      color: var(--text-ghost);
+      letter-spacing: 1px;
+    }
+
+    .nav-breadcrumb .sep {
+      color: var(--text-ghost);
+    }
+
+    .nav-breadcrumb .current {
+      color: var(--neon-blue);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-avatar-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      cursor: pointer;
+      border: 2px solid rgba(0, 212, 255, 0.3);
+      transition: transform 0.2s, box-shadow 0.2s;
+      flex-shrink: 0;
+    }
+
+    .nav-avatar-btn:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 16px rgba(0, 212, 255, 0.4);
+    }
+
+    .nav-avatar-btn {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-avatar-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      display: none;
+    }
+
+    .nav-avatar-btn.has-photo .nav-avatar-img {
+      display: block;
+    }
+
+    .nav-avatar-btn.has-photo .nav-avatar-fallback {
+      display: none;
+    }
+
+    .nav-avatar-fallback {
+      font-size: 1rem;
+    }
+
+    .aa-auth-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 20000;
+      background: rgba(4, 6, 15, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .aa-auth-gate[hidden] {
+      display: none !important;
+    }
+
+    .aa-auth-gate-text {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .aa-auth-gate-spinner {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid rgba(0, 212, 255, 0.2);
+      border-top-color: var(--neon-blue);
+      animation: ring-spin 0.85s linear infinite;
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: color 0.2s;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+
+    .back-btn:hover {
+      color: var(--neon-blue);
+    }
+
+    /* ═══════════════════════════════════════
+       PAGE WRAPPER
+    ═══════════════════════════════════════ */
+    .page-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+    }
+
+    /* ═══════════════════════════════════════
+       PLAYER CARD — HERO (Glassmorphism)
+    ═══════════════════════════════════════ */
+    .player-card {
+      position: relative;
+      border-radius: 6px;
+      overflow: hidden;
+      background: var(--bg-glass);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--border-glow);
+      padding: 32px 28px 28px;
+      margin-bottom: 28px;
+    }
+
+    /* Animated scan line */
+    .player-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.04), transparent);
+      animation: card-scan 5s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes card-scan {
+      0% {
+        left: -100%;
+      }
+
+      100% {
+        left: 200%;
+      }
+    }
+
+    /* Glow orbs behind card */
+    .card-bg-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      pointer-events: none;
+    }
+
+    .orb-blue {
+      width: 300px;
+      height: 300px;
+      background: rgba(0, 212, 255, 0.07);
+      top: -80px;
+      right: -60px;
+    }
+
+    .orb-purple {
+      width: 250px;
+      height: 250px;
+      background: rgba(123, 92, 245, 0.08);
+      bottom: -60px;
+      left: -40px;
+    }
+
+    .player-card-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* Avatar */
+    .avatar-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .avatar-frame {
+      position: relative;
+      width: 96px;
+      height: 96px;
+    }
+
+    .avatar-img {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0D1229, #1a2040);
+      border: 2px solid rgba(0, 212, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.8rem;
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .avatar-img img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      display: none;
+    }
+
+    .avatar-img.has-photo img {
+      display: block;
+    }
+
+    .avatar-img.has-photo .avatar-fallback-emoji {
+      display: none;
+    }
+
+    .avatar-ring {
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 1.5px solid transparent;
+      border-top-color: var(--neon-blue);
+      border-right-color: var(--neon-purple);
+      animation: ring-spin 4s linear infinite;
+    }
+
+    @keyframes ring-spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .avatar-ring-2 {
+      position: absolute;
+      inset: -12px;
+      border-radius: 50%;
+      border: 1px solid transparent;
+      border-bottom-color: rgba(0, 212, 255, 0.3);
+      border-left-color: rgba(123, 92, 245, 0.3);
+      animation: ring-spin 8s linear infinite reverse;
+    }
+
+    .online-badge {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      z-index: 2;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--neon-teal);
+      border: 2px solid var(--bg-void);
+      animation: blink-glow 2s ease-in-out infinite;
+    }
+
+    @keyframes blink-glow {
+
+      0%,
+      100% {
+        box-shadow: 0 0 4px var(--neon-teal);
+      }
+
+      50% {
+        box-shadow: 0 0 12px var(--neon-teal);
+      }
+    }
+
+    .avatar-edit-btn {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 1px;
+      color: var(--text-ghost);
+      cursor: pointer;
+      transition: color 0.2s;
+      text-transform: uppercase;
+    }
+
+    .avatar-edit-btn:hover {
+      color: var(--neon-blue);
+    }
+
+    /* Player Info */
+    .player-info {
+      flex: 1;
+    }
+
+    .player-rank-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 2px;
+      color: var(--neon-gold);
+      margin-bottom: 8px;
+      padding: 3px 10px;
+      background: rgba(255, 215, 0, 0.08);
+      border: 1px solid rgba(255, 215, 0, 0.2);
+      clip-path: polygon(5px 0%, 100% 0%, calc(100% - 5px) 100%, 0% 100%);
+    }
+
+    .rank-diamond {
+      font-size: 0.7rem;
+    }
+
+    .player-username {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.5rem, 4vw, 2.2rem);
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+
+    .player-title {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+
+    .player-title span {
+      color: var(--neon-purple);
+      font-family: 'Orbitron', monospace;
+      font-size: 0.75rem;
+    }
+
+    /* EXP Bar */
+    .exp-section {
+      margin-bottom: 4px;
+    }
+
+    .exp-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .exp-label-text {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 1.5px;
+      color: var(--text-ghost);
+      text-transform: uppercase;
+    }
+
+    .exp-value {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.68rem;
+      color: var(--neon-blue);
+    }
+
+    .exp-bar-track {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .exp-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple), var(--neon-teal));
+      border-radius: 3px;
+      position: relative;
+      transition: width 1.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .exp-bar-fill::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 6px;
+      height: 100%;
+      background: white;
+      opacity: 0.6;
+      filter: blur(2px);
+    }
+
+    .exp-bar-glow {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent 60%, rgba(0, 212, 255, 0.2));
+      animation: glow-sweep 2s ease-in-out infinite;
+    }
+
+    @keyframes glow-sweep {
+
+      0%,
+      100% {
+        opacity: 0.5;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    .exp-sublabel {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--text-ghost);
+      margin-top: 5px;
+    }
+
+    .exp-sublabel .next {
+      color: var(--neon-teal);
+      font-family: 'Orbitron', monospace;
+      font-size: 0.62rem;
+    }
+
+    /* Player Card Right Panel */
+    .player-right-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .level-orb {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 212, 255, 0.15), rgba(123, 92, 245, 0.1));
+      border: 2px solid var(--border-glow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .level-orb::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 212, 255, 0.1);
+    }
+
+    .level-num {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--neon-blue);
+      line-height: 1;
+    }
+
+    .level-tag {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.5rem;
+      color: var(--text-ghost);
+      letter-spacing: 1px;
+    }
+
+    .join-date {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.58rem;
+      color: var(--text-ghost);
+      letter-spacing: 1px;
+      text-align: right;
+    }
+
+    .join-date strong {
+      display: block;
+      color: var(--text-muted);
+      font-size: 0.65rem;
+    }
+
+    /* ── Mobile: Stack player card ── */
+    @media (max-width: 640px) {
+      .player-card-inner {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .avatar-wrap {
+        align-items: center;
+        margin: 0 auto;
+      }
+
+      .player-right-panel {
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 8px;
+      }
+
+      .player-rank-tag {
+        margin: 0 auto 8px;
+      }
+    }
+
+    /* ═══════════════════════════════════════
+       DASHBOARD GRID LAYOUT
+    ═══════════════════════════════════════ */
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 1024px) {
+      .dashboard-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ═══════════════════════════════════════
+       SECTION SHARED STYLES
+    ═══════════════════════════════════════ */
+    .section-block {
+      background: var(--bg-deep);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .section-block:last-child {
+      margin-bottom: 0;
+    }
+
+    .block-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(90deg, rgba(0, 212, 255, 0.05), transparent);
+    }
+
+    .block-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--neon-blue);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .block-title::before {
+      content: '';
+      display: inline-block;
+      width: 3px;
+      height: 14px;
+      background: linear-gradient(180deg, var(--neon-blue), var(--neon-purple));
+    }
+
+    .block-action {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.58rem;
+      color: var(--text-ghost);
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: color 0.2s;
+      text-transform: uppercase;
+    }
+
+    .block-action:hover {
+      color: var(--neon-blue);
+    }
+
+    /* ═══════════════════════════════════════
+       STATS GRID
+    ═══════════════════════════════════════ */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+
+    .stat-cell {
+      padding: 20px 16px;
+      text-align: center;
+      border-right: 1px solid var(--border-subtle);
+      position: relative;
+      cursor: default;
+      transition: background 0.25s;
+    }
+
+    .stat-cell:last-child {
+      border-right: none;
+    }
+
+    .stat-cell:hover {
+      background: rgba(0, 212, 255, 0.03);
+    }
+
+    .stat-icon {
+      font-size: 1.6rem;
+      margin-bottom: 6px;
+      display: block;
+      filter: drop-shadow(0 0 6px rgba(0, 212, 255, 0.3));
+    }
+
+    .stat-value {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.6rem;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .stat-value.blue {
+      color: var(--neon-blue);
+    }
+
+    .stat-value.purple {
+      color: var(--neon-purple);
+    }
+
+    .stat-value.gold {
+      color: var(--neon-gold);
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      font-weight: 500;
+    }
+
+    .stat-change {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.58rem;
+      color: var(--neon-teal);
+      margin-top: 4px;
+    }
+
+    @media (max-width: 480px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stat-cell {
+        border-right: none;
+        border-bottom: 1px solid var(--border-subtle);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        text-align: left;
+        padding: 14px 20px;
+      }
+
+      .stat-cell:last-child {
+        border-bottom: none;
+      }
+
+      .stat-icon {
+        margin-bottom: 0;
+        font-size: 1.4rem;
+      }
+
+      .stat-value {
+        font-size: 1.3rem;
+      }
+    }
+
+    /* ═══════════════════════════════════════
+       BADGES SECTION
+    ═══════════════════════════════════════ */
+    .badges-grid {
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+      gap: 14px;
+    }
+
+    .badge-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.2s;
+    }
+
+    .badge-item:hover {
+      transform: translateY(-3px);
+    }
+
+    .badge-icon-wrap {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      position: relative;
+      transition: box-shadow 0.25s;
+    }
+
+    .badge-item.unlocked .badge-icon-wrap {
+      background: linear-gradient(135deg, rgba(13, 18, 41, 0.9), rgba(13, 18, 41, 0.6));
+      border: 1.5px solid rgba(0, 212, 255, 0.35);
+      box-shadow: 0 0 16px rgba(0, 212, 255, 0.1);
+    }
+
+    .badge-item.unlocked:hover .badge-icon-wrap {
+      box-shadow: 0 0 24px rgba(0, 212, 255, 0.3);
+      border-color: var(--neon-blue);
+    }
+
+    .badge-item.gold-badge .badge-icon-wrap {
+      border-color: rgba(255, 215, 0, 0.4);
+      box-shadow: 0 0 16px rgba(255, 215, 0, 0.12);
+    }
+
+    .badge-item.gold-badge:hover .badge-icon-wrap {
+      box-shadow: 0 0 24px rgba(255, 215, 0, 0.3);
+    }
+
+    .badge-item.locked .badge-icon-wrap {
+      background: rgba(13, 18, 41, 0.4);
+      border: 1.5px solid rgba(255, 255, 255, 0.05);
+      filter: grayscale(1) brightness(0.35);
+    }
+
+    .lock-overlay {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.5);
+      font-size: 1rem;
+    }
+
+    .badge-name {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.3;
+      text-transform: uppercase;
+    }
+
+    .badge-item.locked .badge-name {
+      color: var(--text-ghost);
+    }
+
+    /* Tooltip on badge hover */
+    .badge-tooltip {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-abyss);
+      border: 1px solid var(--border-glow);
+      padding: 6px 10px;
+      border-radius: 3px;
+      white-space: nowrap;
+      font-size: 0.7rem;
+      color: var(--text-primary);
+      font-family: 'Rajdhani', sans-serif;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+      z-index: 10;
+    }
+
+    .badge-item:hover .badge-tooltip {
+      opacity: 1;
+    }
+
+    /* ═══════════════════════════════════════
+       ACTIVITY LOG
+    ═══════════════════════════════════════ */
+    .activity-list {
+      padding: 8px 0;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      transition: background 0.2s;
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+
+    .activity-item:hover {
+      background: rgba(0, 212, 255, 0.02);
+    }
+
+    .activity-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .dot-blue {
+      background: var(--neon-blue);
+      box-shadow: 0 0 6px var(--neon-blue);
+    }
+
+    .dot-purple {
+      background: var(--neon-purple);
+      box-shadow: 0 0 6px var(--neon-purple);
+    }
+
+    .dot-gold {
+      background: var(--neon-gold);
+      box-shadow: 0 0 6px var(--neon-gold);
+    }
+
+    .dot-green {
+      background: var(--neon-teal);
+      box-shadow: 0 0 6px var(--neon-teal);
+    }
+
+    .activity-text {
+      flex: 1;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .activity-text strong {
+      color: var(--text-primary);
+    }
+
+    .activity-time {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.58rem;
+      color: var(--text-ghost);
+      white-space: nowrap;
+    }
+
+    .activity-xp {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.65rem;
+      color: var(--neon-teal);
+      white-space: nowrap;
+    }
+
+    /* ═══════════════════════════════════════
+       SIDEBAR PANELS
+    ═══════════════════════════════════════ */
+    .sidebar-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    @media (min-width: 1024px) {
+      .sidebar-stack {
+        position: sticky;
+        top: 76px;
+      }
+    }
+
+    .mini-stat-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .mini-stat-row:last-child {
+      border-bottom: none;
+    }
+
+    .mini-stat-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .mini-stat-val {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.72rem;
+      color: var(--neon-blue);
+    }
+
+    .rank-ladder {
+      padding: 8px 0;
+    }
+
+    .ladder-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 20px;
+      transition: background 0.2s;
+    }
+
+    .ladder-item:hover {
+      background: rgba(0, 212, 255, 0.03);
+    }
+
+    .ladder-item.current {
+      background: rgba(0, 212, 255, 0.06);
+    }
+
+    .ladder-rank-name {
+      flex: 1;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .ladder-item.current .ladder-rank-name {
+      color: var(--neon-blue);
+    }
+
+    .ladder-arrow {
+      font-size: 0.7rem;
+      color: var(--text-ghost);
+    }
+
+    .ladder-item.current .ladder-arrow {
+      color: var(--neon-blue);
+    }
+
+    .ladder-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-ghost);
+    }
+
+    .ladder-item.current .ladder-dot {
+      background: var(--neon-blue);
+      box-shadow: 0 0 8px var(--neon-blue);
+    }
+
+    .ladder-item.locked-rank .ladder-rank-name {
+      color: var(--text-ghost);
+    }
+
+    /* ═══════════════════════════════════════
+       CREATOR CTA PANEL
+    ═══════════════════════════════════════ */
+    .creator-cta-panel {
+      position: relative;
+      border-radius: 4px;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(123, 92, 245, 0.12), rgba(0, 212, 255, 0.08));
+      border: 1px solid rgba(123, 92, 245, 0.3);
+      padding: 24px 20px;
+      margin-top: 8px;
+    }
+
+    .creator-cta-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 80% 20%, rgba(123, 92, 245, 0.12), transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-glyph {
+      font-size: 2.4rem;
+      margin-bottom: 10px;
+      display: block;
+      filter: drop-shadow(0 0 10px rgba(123, 92, 245, 0.5));
+    }
+
+    .cta-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .cta-sub {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+
+    .creator-apply-btn {
+      width: 100%;
+      padding: 13px 20px;
+      background: linear-gradient(135deg, var(--neon-purple), rgba(123, 92, 245, 0.7));
+      border: 1px solid rgba(123, 92, 245, 0.5);
+      color: #fff;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .creator-apply-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .creator-apply-btn:hover {
+      box-shadow: 0 0 30px rgba(123, 92, 245, 0.5), 0 0 60px rgba(123, 92, 245, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .creator-apply-btn:hover::before {
+      opacity: 1;
+    }
+
+    /* ═══════════════════════════════════════
+       MULTI-STEP MODAL
+    ═══════════════════════════════════════ */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      background: rgba(4, 6, 15, 0.92);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.35s ease, visibility 0.35s ease;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-box {
+      width: 100%;
+      max-width: 560px;
+      background: var(--bg-deep);
+      border: 1px solid var(--border-glow);
+      border-radius: 6px;
+      overflow: hidden;
+      transform: translateY(24px) scale(0.97);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-overlay.open .modal-box {
+      transform: translateY(0) scale(1);
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      background: linear-gradient(90deg, rgba(123, 92, 245, 0.08), transparent);
+      border-bottom: 1px solid var(--border-glow);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .modal-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 2px;
+      color: var(--neon-purple);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .modal-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .modal-close:hover {
+      background: rgba(255, 62, 108, 0.15);
+      border-color: var(--neon-crimson);
+      color: var(--neon-crimson);
+    }
+
+    /* Step indicator */
+    .step-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-subtle);
+      flex-shrink: 0;
+    }
+
+    .step-dot {
+      display: flex;
+      align-items: center;
+      flex: 1;
+    }
+
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.65rem;
+      font-weight: 700;
+      border: 1.5px solid var(--border-subtle);
+      color: var(--text-ghost);
+      transition: all 0.3s;
+      flex-shrink: 0;
+    }
+
+    .step-dot.active .step-num {
+      border-color: var(--neon-blue);
+      color: var(--neon-blue);
+      background: rgba(0, 212, 255, 0.08);
+      box-shadow: 0 0 12px rgba(0, 212, 255, 0.2);
+    }
+
+    .step-dot.done .step-num {
+      border-color: var(--neon-teal);
+      color: var(--bg-void);
+      background: var(--neon-teal);
+    }
+
+    .step-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border-subtle);
+      transition: background 0.3s;
+    }
+
+    .step-line.done {
+      background: var(--neon-teal);
+    }
+
+    .step-text {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.55rem;
+      color: var(--text-ghost);
+      text-align: center;
+      margin-top: 4px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      display: none;
+    }
+
+    @media (min-width: 480px) {
+      .step-text {
+        display: block;
+      }
+    }
+
+    /* Modal body */
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    /* Step panels */
+    .step-panel {
+      display: none;
+    }
+
+    .step-panel.active {
+      display: block;
+      animation: step-in 0.3s ease;
+    }
+
+    @keyframes step-in {
+      from {
+        opacity: 0;
+        transform: translateX(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .step-heading {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .step-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    /* Form fields */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 1.5px;
+      color: var(--text-ghost);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .form-input,
+    .form-textarea,
+    .form-select {
+      width: 100%;
+      background: rgba(4, 6, 15, 0.8);
+      border: 1px solid var(--border-subtle);
+      border-radius: 2px;
+      color: var(--text-primary);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.95rem;
+      padding: 11px 14px;
+      outline: none;
+      transition: border-color 0.25s, box-shadow 0.25s;
+      clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+    }
+
+    .form-input::placeholder,
+    .form-textarea::placeholder {
+      color: var(--text-ghost);
+    }
+
+    .form-input:focus,
+    .form-textarea:focus,
+    .form-select:focus {
+      border-color: var(--neon-blue);
+      box-shadow: 0 0 12px rgba(0, 212, 255, 0.12);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 90px;
+      clip-path: none;
+      border-radius: 2px;
+    }
+
+    .form-select {
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237B8DB0'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+    }
+
+    .form-hint {
+      font-size: 0.72rem;
+      color: var(--text-ghost);
+      margin-top: 4px;
+    }
+
+    .form-link-hint {
+      font-size: 0.72rem;
+      color: var(--neon-blue);
+      margin-top: 4px;
+      cursor: pointer;
+    }
+
+    /* Rules checklist */
+    .rules-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .rule-check {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 14px;
+      background: rgba(13, 18, 41, 0.5);
+      border: 1px solid var(--border-subtle);
+      border-radius: 2px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .rule-check:hover {
+      border-color: rgba(0, 212, 255, 0.3);
+    }
+
+    .rule-check input[type=checkbox] {
+      display: none;
+    }
+
+    .check-box {
+      width: 18px;
+      height: 18px;
+      border-radius: 2px;
+      flex-shrink: 0;
+      border: 1.5px solid var(--border-subtle);
+      background: transparent;
+      margin-top: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .rule-check.checked .check-box {
+      background: var(--neon-teal);
+      border-color: var(--neon-teal);
+    }
+
+    .check-mark {
+      display: none;
+      color: var(--bg-void);
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .rule-check.checked .check-mark {
+      display: block;
+    }
+
+    .rule-text {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .rule-check.checked .rule-text {
+      color: var(--text-primary);
+    }
+
+    /* Success step */
+    .success-step {
+      text-align: center;
+      padding: 16px 0;
+    }
+
+    .success-glyph {
+      font-size: 3.5rem;
+      margin-bottom: 14px;
+      display: block;
+      animation: success-pop 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes success-pop {
+      from {
+        transform: scale(0.4);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .success-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--neon-teal);
+      margin-bottom: 8px;
+    }
+
+    .success-msg {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      max-width: 340px;
+      margin: 0 auto;
+    }
+
+    /* Modal footer */
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-shrink: 0;
+      background: rgba(4, 6, 15, 0.5);
+    }
+
+    .modal-btn {
+      padding: 11px 24px;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--text-muted);
+      color: var(--text-primary);
+    }
+
+    .btn-primary {
+      background: transparent;
+      border: 1px solid var(--neon-blue);
+      color: var(--neon-blue);
+      clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 212, 255, 0.1);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.25);
+      color: #fff;
+      border-color: var(--neon-blue);
+    }
+
+    .btn-primary:hover::before {
+      opacity: 1;
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, var(--neon-purple), rgba(0, 212, 255, 0.8));
+      border: none;
+      color: #fff;
+      clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+    }
+
+    .btn-submit:hover {
+      box-shadow: 0 0 24px rgba(123, 92, 245, 0.45);
+      transform: translateY(-1px);
+    }
+
+    .step-counter {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.6rem;
+      color: var(--text-ghost);
+      letter-spacing: 1px;
+    }
+
+    /* ═══════════════════════════════════════
+       MOBILE BOTTOM NAV BAR
+    ═══════════════════════════════════════ */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 300;
+      background: rgba(4, 6, 15, 0.95);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border-glow);
+      display: none;
+      padding-bottom: var(--safe-bottom);
+    }
+
+    @media (max-width: 1023px) {
+      .bottom-nav {
+        display: flex !important;
+      }
+    }
+
+    .bottom-nav-inner {
+      display: flex;
+      width: 100%;
+    }
+
+    .bottom-nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 10px 4px;
+      cursor: pointer;
+      transition: background 0.2s;
+      position: relative;
+    }
+
+    .bottom-nav-item:hover {
+      background: rgba(0, 212, 255, 0.04);
+    }
+
+    .bottom-nav-item.active::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 28px;
+      height: 2px;
+      background: var(--neon-blue);
+    }
+
+    .bnav-icon {
+      font-size: 1.3rem;
+    }
+
+    .bnav-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.52rem;
+      letter-spacing: 0.5px;
+      color: var(--text-ghost);
+      text-transform: uppercase;
+    }
+
+    .bottom-nav-item.active .bnav-label {
+      color: var(--neon-blue);
+    }
+
+    .bnav-badge {
+      position: absolute;
+      top: 6px;
+      right: calc(50% - 18px);
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--neon-crimson);
+      border: 1.5px solid var(--bg-void);
+      font-family: 'Orbitron', monospace;
+      font-size: 0.45rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ═══════════════════════════════════════
+       SLIDE-OUT DRAWER (mobile menu)
+    ═══════════════════════════════════════ */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 400;
+      background: rgba(4, 6, 15, 0.6);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    .drawer-overlay.open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: -300px;
+      bottom: 0;
+      width: 280px;
+      z-index: 401;
+      background: var(--bg-abyss);
+      border-left: 1px solid var(--border-glow);
+      transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      padding-bottom: var(--safe-bottom);
+    }
+
+    .drawer-overlay.open .drawer {
+      right: 0;
+    }
+
+    .drawer-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .drawer-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.9rem;
+      background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .drawer-close {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .drawer-close:hover {
+      border-color: var(--neon-crimson);
+      color: var(--neon-crimson);
+    }
+
+    .drawer-body {
+      padding: 12px 0;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .drawer-section-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 2px;
+      color: var(--text-ghost);
+      text-transform: uppercase;
+      padding: 8px 20px 6px;
+    }
+
+    .drawer-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .drawer-item:hover {
+      background: rgba(0, 212, 255, 0.04);
+      color: var(--text-primary);
+    }
+
+    .drawer-item.active {
+      color: var(--neon-blue);
+    }
+
+    .drawer-item-icon {
+      width: 20px;
+      text-align: center;
+      font-size: 1rem;
+    }
+
+    .drawer-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    /* ═══════════════════════════════════════
+       PAGE LOAD ANIMATIONS
+    ═══════════════════════════════════════ */
+    .reveal-up {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: reveal-up 0.6s ease forwards;
+    }
+
+    @keyframes reveal-up {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .delay-1 {
+      animation-delay: 0.05s;
+    }
+
+    .delay-2 {
+      animation-delay: 0.12s;
+    }
+
+    .delay-3 {
+      animation-delay: 0.20s;
+    }
+
+    .delay-4 {
+      animation-delay: 0.28s;
+    }
+
+    .delay-5 {
+      animation-delay: 0.36s;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="aa-auth-gate" class="aa-auth-gate">
+    <div class="aa-auth-gate-spinner" aria-hidden="true"></div>
+    <div class="aa-auth-gate-text">Verifying guild credentials…</div>
+  </div>
+
+  <div class="grid-overlay"></div>
+
+  <!-- ════════════════════════════════════
+     NAVBAR
+════════════════════════════════════ -->
+  <nav class="navbar">
+    <a href="index-1.html" class="nav-logo">Anime Aawaj</a>
+
+    <div class="nav-breadcrumb">
+      <span>Guild</span>
+      <span class="sep">›</span>
+      <span class="current">Player ID</span>
+    </div>
+
+    <div class="nav-right">
+      <div class="nav-avatar-btn" id="aa-nav-avatar-btn" onclick="openDrawer()" title="Open Menu">
+        <img id="aa-top-avatar" class="nav-avatar-img" alt="" width="36" height="36" decoding="async" />
+        <span class="nav-avatar-fallback">⚔️</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ════════════════════════════════════
+     PAGE CONTENT
+════════════════════════════════════ -->
+  <div class="page-wrap">
+
+    <!-- ── PLAYER CARD ── -->
+    <div class="player-card reveal-up delay-1">
+      <div class="card-bg-orb orb-blue"></div>
+      <div class="card-bg-orb orb-purple"></div>
+
+      <div class="player-card-inner">
+
+        <!-- Avatar -->
+        <div class="avatar-wrap">
+          <div class="avatar-frame">
+            <div class="avatar-img" id="player-avatar-inner">
+              <img id="player-avatar-img" alt="" decoding="async" />
+              <span id="player-avatar-fallback" class="avatar-fallback-emoji">⚔️</span>
+            </div>
+            <div class="avatar-ring"></div>
+            <div class="avatar-ring-2"></div>
+            <div class="online-badge" title="Online"></div>
+          </div>
+          <div class="avatar-edit-btn" onclick="alert('[Beru Hook] Connect to file upload / Firebase Storage')">✎ Edit
+          </div>
+        </div>
+
+        <!-- Info -->
+        <div class="player-info">
+          <div class="player-rank-tag">
+            <span class="rank-diamond">◆</span> <span id="player-rank-label">Guild Member</span>
+          </div>
+          <div class="player-username" id="player-username">Adventurer</div>
+          <div class="player-title">
+            <span id="player-title-motto">Your guild profile syncs from Firebase.</span> ·
+            <span id="player-rank-detail">Rank: —</span>
+          </div>
+
+          <!-- EXP Bar -->
+          <div class="exp-section">
+            <div class="exp-header">
+              <div class="exp-label-text">Experience Points</div>
+              <div class="exp-value" id="exp-display">7,300 / 10,000</div>
+            </div>
+            <div class="exp-bar-track">
+              <div class="exp-bar-fill" id="exp-fill"></div>
+              <div class="exp-bar-glow"></div>
+            </div>
+            <div class="exp-sublabel">
+              <span id="player-level-label">Level 1</span>
+              <span class="next" id="player-next-level">10,000 XP to Level 2 ⟶</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="player-right-panel">
+          <div class="level-orb">
+            <div class="level-num" id="player-level-num">1</div>
+            <div class="level-tag">LEVEL</div>
+          </div>
+          <div class="join-date">
+            <strong>Member Since</strong>
+            JAN · 2024
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── DASHBOARD LAYOUT ── -->
+    <div class="dashboard-layout">
+
+      <!-- LEFT COLUMN -->
+      <div class="left-col">
+
+        <!-- Stats -->
+        <div class="section-block reveal-up delay-2">
+          <div class="block-header">
+            <div class="block-title">Combat Statistics</div>
+            <div class="block-action">Season III</div>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-cell">
+              <span class="stat-icon">⚔️</span>
+              <div class="stat-value blue" data-count="128">0</div>
+              <div class="stat-label">Quests Completed</div>
+              <div class="stat-change">+12 this week</div>
+            </div>
+            <div class="stat-cell">
+              <span class="stat-icon">📰</span>
+              <div class="stat-value purple" data-count="34">0</div>
+              <div class="stat-label">News Contributions</div>
+              <div class="stat-change">+3 this week</div>
+            </div>
+            <div class="stat-cell">
+              <span class="stat-icon">💎</span>
+              <div class="stat-value gold" data-count="5840">0</div>
+              <div class="stat-label">Community Points</div>
+              <div class="stat-change">+420 this week</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Badges -->
+        <div class="section-block reveal-up delay-3">
+          <div class="block-header">
+            <div class="block-title">Achievement Vault</div>
+            <div class="block-action">8 / 20 Unlocked</div>
+          </div>
+          <div class="badges-grid">
+
+            <div class="badge-item unlocked gold-badge">
+              <div class="badge-icon-wrap">🏆</div>
+              <div class="badge-name">Guild Master</div>
+              <div class="badge-tooltip">Top 1% of all players</div>
+            </div>
+
+            <div class="badge-item unlocked">
+              <div class="badge-icon-wrap">⚔️</div>
+              <div class="badge-name">Quest Hunter</div>
+              <div class="badge-tooltip">Complete 100 quests</div>
+            </div>
+
+            <div class="badge-item unlocked">
+              <div class="badge-icon-wrap">🌙</div>
+              <div class="badge-name">Night Owl</div>
+              <div class="badge-tooltip">Active past midnight 10x</div>
+            </div>
+
+            <div class="badge-item unlocked gold-badge">
+              <div class="badge-icon-wrap">👑</div>
+              <div class="badge-name">S-Class</div>
+              <div class="badge-tooltip">Reach S-Class rank</div>
+            </div>
+
+            <div class="badge-item unlocked">
+              <div class="badge-icon-wrap">📰</div>
+              <div class="badge-name">Informant</div>
+              <div class="badge-tooltip">Contribute 25+ news items</div>
+            </div>
+
+            <div class="badge-item unlocked">
+              <div class="badge-icon-wrap">🎯</div>
+              <div class="badge-name">Sharpshooter</div>
+              <div class="badge-tooltip">100% on any quiz</div>
+            </div>
+
+            <div class="badge-item unlocked">
+              <div class="badge-icon-wrap">🔥</div>
+              <div class="badge-name">On Fire</div>
+              <div class="badge-tooltip">7-day activity streak</div>
+            </div>
+
+            <div class="badge-item unlocked">
+              <div class="badge-icon-wrap">🌸</div>
+              <div class="badge-name">Season I</div>
+              <div class="badge-tooltip">Season 1 Veteran</div>
+            </div>
+
+            <!-- Locked badges -->
+            <div class="badge-item locked">
+              <div class="badge-icon-wrap">
+                🐉
+                <div class="lock-overlay">🔒</div>
+              </div>
+              <div class="badge-name">Dragon Slayer</div>
+              <div class="badge-tooltip">Complete all S-rank quests</div>
+            </div>
+
+            <div class="badge-item locked">
+              <div class="badge-icon-wrap">
+                💀
+                <div class="lock-overlay">🔒</div>
+              </div>
+              <div class="badge-name">Reaper</div>
+              <div class="badge-tooltip">Reach Level 50</div>
+            </div>
+
+            <div class="badge-item locked">
+              <div class="badge-icon-wrap">
+                🌑
+                <div class="lock-overlay">🔒</div>
+              </div>
+              <div class="badge-name">Void Walker</div>
+              <div class="badge-tooltip">Unlock Secret Quest chain</div>
+            </div>
+
+            <div class="badge-item locked">
+              <div class="badge-icon-wrap">
+                ✍️
+                <div class="lock-overlay">🔒</div>
+              </div>
+              <div class="badge-name">Creator</div>
+              <div class="badge-tooltip">Earn Creator ID</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Activity Log -->
+        <div class="section-block reveal-up delay-4">
+          <div class="block-header">
+            <div class="block-title">Activity Log</div>
+            <div class="block-action">View Full History</div>
+          </div>
+          <div class="activity-list">
+            <div class="activity-item">
+              <div class="activity-dot dot-gold"></div>
+              <div class="activity-text">Completed <strong>S-Rank Quest</strong> — "Sukuna's Cursed Technique"</div>
+              <div class="activity-xp">+500 XP</div>
+              <div class="activity-time">2h ago</div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot dot-blue"></div>
+              <div class="activity-text">Submitted a <strong>News Contribution</strong> — JJK Season 3 Update</div>
+              <div class="activity-xp">+80 XP</div>
+              <div class="activity-time">5h ago</div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot dot-purple"></div>
+              <div class="activity-text">Ranked <strong>#1</strong> on the Daily Leaderboard</div>
+              <div class="activity-xp">+200 XP</div>
+              <div class="activity-time">1d ago</div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot dot-green"></div>
+              <div class="activity-text">Unlocked badge <strong>"S-Class"</strong></div>
+              <div class="activity-xp">+150 XP</div>
+              <div class="activity-time">3d ago</div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot dot-blue"></div>
+              <div class="activity-text">Completed <strong>A-Rank Quest</strong> — "Zoro's Lost Path"</div>
+              <div class="activity-xp">+350 XP</div>
+              <div class="activity-time">4d ago</div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /left-col -->
+
+      <!-- RIGHT SIDEBAR -->
+      <aside class="sidebar-stack reveal-up delay-3">
+
+        <!-- Rank Ladder -->
+        <div class="section-block">
+          <div class="block-header">
+            <div class="block-title">Rank Ladder</div>
+          </div>
+          <div class="rank-ladder">
+            <div class="ladder-item locked-rank">
+              <div class="ladder-dot"></div>
+              <div class="ladder-rank-name">SS — Ruler</div>
+              <div class="ladder-arrow">🔒</div>
+            </div>
+            <div class="ladder-item current">
+              <div class="ladder-dot"></div>
+              <div class="ladder-rank-name">S — Shadow Monarch</div>
+              <div class="ladder-arrow">◀</div>
+            </div>
+            <div class="ladder-item">
+              <div class="ladder-dot"></div>
+              <div class="ladder-rank-name">A — National Level</div>
+            </div>
+            <div class="ladder-item">
+              <div class="ladder-dot"></div>
+              <div class="ladder-rank-name">B — Advanced</div>
+            </div>
+            <div class="ladder-item">
+              <div class="ladder-dot"></div>
+              <div class="ladder-rank-name">C — Intermediate</div>
+            </div>
+            <div class="ladder-item">
+              <div class="ladder-dot"></div>
+              <div class="ladder-rank-name">D — Apprentice</div>
+            </div>
+            <div class="ladder-item">
+              <div class="ladder-dot"></div>
+              <div class="ladder-rank-name">E — Initiate</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="section-block">
+          <div class="block-header">
+            <div class="block-title">Guild Vitals</div>
+          </div>
+          <div style="padding: 4px 0;">
+            <div class="mini-stat-row">
+              <div class="mini-stat-label">Win Rate</div>
+              <div class="mini-stat-val">87.4%</div>
+            </div>
+            <div class="mini-stat-row">
+              <div class="mini-stat-label">Quiz Avg. Score</div>
+              <div class="mini-stat-val">94 / 100</div>
+            </div>
+            <div class="mini-stat-row">
+              <div class="mini-stat-label">Global Rank</div>
+              <div class="mini-stat-val">#3</div>
+            </div>
+            <div class="mini-stat-row">
+              <div class="mini-stat-label">Active Streak</div>
+              <div class="mini-stat-val" style="color: var(--neon-teal);">21 Days 🔥</div>
+            </div>
+            <div class="mini-stat-row">
+              <div class="mini-stat-label">Guild Coins</div>
+              <div class="mini-stat-val" style="color: var(--neon-gold);">2,400 ◆</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Creator CTA -->
+        <div class="creator-cta-panel reveal-up delay-5">
+          <span class="cta-glyph">✍️</span>
+          <div class="cta-title">Ascend to Creator</div>
+          <div class="cta-sub">
+            Share your anime passion with Nepal. Publish content, earn Creator XP, and claim your Creator ID badge.
+          </div>
+          <button class="creator-apply-btn" onclick="openCreatorModal()">
+            ⟡ Apply for Creator ID
+          </button>
+        </div>
+
+      </aside>
+
+    </div><!-- /dashboard-layout -->
+
+  </div><!-- /page-wrap -->
+
+  <!-- ════════════════════════════════════
+     BOTTOM NAV BAR (Mobile)
+════════════════════════════════════ -->
+  <nav class="bottom-nav">
+    <div class="bottom-nav-inner">
+      <div class="bottom-nav-item" onclick="window.location.href='index-1.html'">
+        <div class="bnav-icon">🏠</div>
+        <div class="bnav-label">Home</div>
+      </div>
+      <div class="bottom-nav-item" onclick="window.location.href='quest-arena.html'">
+        <div class="bnav-icon">⚔️</div>
+        <div class="bnav-label">Quests</div>
+        <div class="bnav-badge">3</div>
+      </div>
+      <div class="bottom-nav-item active">
+        <div class="bnav-icon">🛡️</div>
+        <div class="bnav-label">Profile</div>
+      </div>
+      <div class="bottom-nav-item">
+        <div class="bnav-icon">🏆</div>
+        <div class="bnav-label">Ranks</div>
+      </div>
+      <div class="bottom-nav-item" onclick="openDrawer()">
+        <div class="bnav-icon">☰</div>
+        <div class="bnav-label">Menu</div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ════════════════════════════════════
+     SLIDE-OUT DRAWER
+════════════════════════════════════ -->
+  <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()">
+    <div class="drawer" onclick="event.stopPropagation()">
+      <div class="drawer-header">
+        <div class="drawer-title">Anime Aawaj</div>
+        <div class="drawer-close" onclick="closeDrawer()">✕</div>
+      </div>
+      <div class="drawer-body">
+        <div class="drawer-section-label">Navigation</div>
+        <div class="drawer-item" onclick="window.location.href='index-1.html'">
+          <div class="drawer-item-icon">🏠</div> Home
+        </div>
+        <div class="drawer-item active">
+          <div class="drawer-item-icon">🛡️</div> Player Profile
+        </div>
+        <div class="drawer-item" onclick="window.location.href='quest-arena.html'">
+          <div class="drawer-item-icon">⚔️</div> Quest Board
+        </div>
+        <div class="drawer-item">
+          <div class="drawer-item-icon">🏆</div> Guild Rankings
+        </div>
+        <div class="drawer-item" onclick="window.location.href='news-hub.html'">
+          <div class="drawer-item-icon">📰</div> Anime News
+        </div>
+        <div class="drawer-section-label" style="margin-top:10px;">Creator</div>
+        <div class="drawer-item" onclick="openCreatorModal(); closeDrawer()">
+          <div class="drawer-item-icon">✍️</div> Apply for Creator ID
+        </div>
+        <div class="drawer-item">
+          <div class="drawer-item-icon">🎖️</div> Hall of Fame
+        </div>
+        <div class="drawer-section-label" style="margin-top:10px;">Account</div>
+        <div class="drawer-item">
+          <div class="drawer-item-icon">⚙️</div> Settings
+        </div>
+        <div class="drawer-item" id="aa-drawer-logout" style="color: var(--neon-crimson);">
+          <div class="drawer-item-icon">🚪</div> Log Out
+        </div>
+      </div>
+      <div class="drawer-footer">
+        <div style="font-family:'Orbitron',monospace; font-size:0.58rem; color:var(--text-ghost); letter-spacing:1px;">
+          SEASON III · GUILD SYSTEM v0.1
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+     CREATOR ID MULTI-STEP MODAL
+════════════════════════════════════ -->
+  <div class="modal-overlay" id="creator-modal">
+    <div class="modal-box">
+
+      <!-- Header -->
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-label">⟡ Guild Application</div>
+          <div class="modal-title">Creator ID Request</div>
+        </div>
+        <button class="modal-close" onclick="closeCreatorModal()">✕</button>
+      </div>
+
+      <!-- Step Indicator -->
+      <div class="step-indicator">
+        <div class="step-dot active" id="step-dot-1">
+          <div style="display:flex;flex-direction:column;align-items:center;">
+            <div class="step-num">1</div>
+            <div class="step-text">Identity</div>
+          </div>
+        </div>
+        <div class="step-line" id="step-line-1"></div>
+        <div class="step-dot" id="step-dot-2">
+          <div style="display:flex;flex-direction:column;align-items:center;">
+            <div class="step-num">2</div>
+            <div class="step-text">Platforms</div>
+          </div>
+        </div>
+        <div class="step-line" id="step-line-2"></div>
+        <div class="step-dot" id="step-dot-3">
+          <div style="display:flex;flex-direction:column;align-items:center;">
+            <div class="step-num">3</div>
+            <div class="step-text">Vision</div>
+          </div>
+        </div>
+        <div class="step-line" id="step-line-3"></div>
+        <div class="step-dot" id="step-dot-4">
+          <div style="display:flex;flex-direction:column;align-items:center;">
+            <div class="step-num">4</div>
+            <div class="step-text">Oath</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+
+        <!-- STEP 1: Identity -->
+        <div class="step-panel active" id="step-1">
+          <div class="step-heading">Who Are You, Adventurer?</div>
+          <div class="step-desc">Tell the Guild about yourself. This information will appear on your public Creator
+            profile.</div>
+
+          <div class="form-group">
+            <label class="form-label">Display Name</label>
+            <input type="text" class="form-input" placeholder="e.g. ShadowKing_NP" id="f-name" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Real Name (kept private)</label>
+            <input type="text" class="form-input" placeholder="e.g. Ayan Tamang" id="f-realname" />
+            <div class="form-hint">Only visible to Guild Admins. Never made public.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Content Category</label>
+            <select class="form-select" id="f-category">
+              <option value="">Select your primary focus...</option>
+              <option value="news">Anime News & Updates</option>
+              <option value="review">Reviews & Rankings</option>
+              <option value="quiz">Quiz / Game Creator</option>
+              <option value="art">Fan Art & Illustrations</option>
+              <option value="analysis">Deep Lore Analysis</option>
+              <option value="general">General / Mixed</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Bio / Tagline</label>
+            <textarea class="form-textarea"
+              placeholder="Describe yourself in 2-3 sentences. What makes you unique as an anime creator?"
+              id="f-bio"></textarea>
+          </div>
+        </div>
+
+        <!-- STEP 2: Platforms -->
+        <div class="step-panel" id="step-2">
+          <div class="step-heading">Your Kingdom</div>
+          <div class="step-desc">Share your existing platforms. You need at least ONE active platform to qualify.</div>
+
+          <div class="form-group">
+            <label class="form-label">YouTube Channel (Optional)</label>
+            <input type="url" class="form-input" placeholder="https://youtube.com/@yourchannel" id="f-yt" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Facebook Page (Optional)</label>
+            <input type="url" class="form-input" placeholder="https://facebook.com/yourpage" id="f-fb" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Instagram / TikTok (Optional)</label>
+            <input type="url" class="form-input" placeholder="https://instagram.com/yourhandle" id="f-insta" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Approximate Follower Count</label>
+            <select class="form-select" id="f-followers">
+              <option value="">Select range...</option>
+              <option value="under-500">Under 500</option>
+              <option value="500-2k">500 – 2,000</option>
+              <option value="2k-10k">2,000 – 10,000</option>
+              <option value="10k-50k">10,000 – 50,000</option>
+              <option value="50k+">50,000+</option>
+            </select>
+            <div class="form-hint">Across all platforms combined. Approximate is fine.</div>
+          </div>
+        </div>
+
+        <!-- STEP 3: Vision -->
+        <div class="step-panel" id="step-3">
+          <div class="step-heading">Your Contribution Quest</div>
+          <div class="step-desc">The Guild needs to know your vision. What will you create, and how will it serve the
+            community?</div>
+
+          <div class="form-group">
+            <label class="form-label">What content will you publish here?</label>
+            <textarea class="form-textarea"
+              placeholder="e.g. Weekly anime news roundups in Nepali, Solo Leveling lore deep-dives, original quizzes..."
+              id="f-content-plan" style="min-height:100px;"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">How often do you plan to post?</label>
+            <select class="form-select" id="f-frequency">
+              <option value="">Select frequency...</option>
+              <option value="daily">Daily</option>
+              <option value="3x-week">2-3x per week</option>
+              <option value="weekly">Weekly</option>
+              <option value="biweekly">Every 2 weeks</option>
+              <option value="monthly">Monthly</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Why should Anime Aawaj choose you?</label>
+            <textarea class="form-textarea"
+              placeholder="Your honest answer. The Guild values authenticity over perfection..." id="f-why"
+              style="min-height:90px;"></textarea>
+          </div>
+        </div>
+
+        <!-- STEP 4: Guild Oath (Rules) -->
+        <div class="step-panel" id="step-4">
+          <div class="step-heading">The Guild Oath</div>
+          <div class="step-desc">Before you receive your Creator ID, you must swear the Oath. Read and accept each
+            clause.</div>
+
+          <div class="rules-list">
+
+            <label class="rule-check" onclick="toggleRule(this)">
+              <input type="checkbox" />
+              <div class="check-box"><span class="check-mark">✓</span></div>
+              <div class="rule-text"><strong>I will only post original content</strong> — No piracy, no content theft.
+                All content must be my own or properly credited.</div>
+            </label>
+
+            <label class="rule-check" onclick="toggleRule(this)">
+              <input type="checkbox" />
+              <div class="check-box"><span class="check-mark">✓</span></div>
+              <div class="rule-text"><strong>I respect the community</strong> — No hate speech, no harassment, and no
+                discrimination against any anime fandom.</div>
+            </label>
+
+            <label class="rule-check" onclick="toggleRule(this)">
+              <input type="checkbox" />
+              <div class="check-box"><span class="check-mark">✓</span></div>
+              <div class="rule-text"><strong>I accept Guild moderation</strong> — Guild Admins may remove content that
+                violates community standards without prior notice.</div>
+            </label>
+
+            <label class="rule-check" onclick="toggleRule(this)">
+              <input type="checkbox" />
+              <div class="check-box"><span class="check-mark">✓</span></div>
+              <div class="rule-text"><strong>I agree to the Creator Program Terms</strong> — including the revenue
+                sharing model (if applicable) and content ownership policies.</div>
+            </label>
+
+          </div>
+
+          <div id="oath-warning"
+            style="display:none; font-family:'Orbitron',monospace; font-size:0.62rem; color:var(--neon-crimson); letter-spacing:1px; text-align:center; padding:8px 0;">
+            ⚠ ALL CLAUSES MUST BE ACCEPTED TO PROCEED
+          </div>
+        </div>
+
+        <!-- STEP 5: Success -->
+        <div class="step-panel" id="step-5">
+          <div class="success-step">
+            <span class="success-glyph">⚔️</span>
+            <div class="success-title">Application Submitted!</div>
+            <div class="success-msg">
+              Your Creator ID application has been received by the Guild Council. You will be notified within <strong
+                style="color:var(--neon-blue);">3-5 days</strong>. Watch your notifications, adventurer.
+            </div>
+            <div
+              style="margin-top:24px; font-family:'Orbitron',monospace; font-size:0.62rem; color:var(--text-ghost); letter-spacing:1px;">
+              APPLICATION ID: #AA-<span id="app-id"></span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /modal-body -->
+
+      <!-- Footer Nav -->
+      <div class="modal-footer" id="modal-footer">
+        <button class="modal-btn btn-ghost" id="modal-back-btn" onclick="modalBack()" style="display:none;">←
+          Back</button>
+        <div class="step-counter" id="step-counter">Step 1 of 4</div>
+        <button class="modal-btn btn-primary" id="modal-next-btn" onclick="modalNext()">Next →</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════ -->
+  <script>
+    /* ─────────────────────────────
+       EXP BAR ANIMATION ON LOAD
+    ───────────────────────────── */
+    window.addEventListener('load', () => {
+      // Animate stat counters
+      document.querySelectorAll('[data-count]').forEach(el => {
+        const target = parseInt(el.dataset.count);
+        let current = 0;
+        const step = Math.ceil(target / 60);
+        const timer = setInterval(() => {
+          current = Math.min(current + step, target);
+          el.textContent = current.toLocaleString();
+          if (current >= target) clearInterval(timer);
+        }, 22);
+      });
+    });
+
+    /* ─────────────────────────────
+       MODAL — MULTI-STEP LOGIC
+    ───────────────────────────── */
+    let currentStep = 1;
+    const totalSteps = 4;
+
+    function openCreatorModal() {
+      document.getElementById('creator-modal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+      currentStep = 1;
+      renderStep(1);
+    }
+
+    // If user comes from another page requesting creator application,
+    // open the modal automatically after this script finishes evaluating.
+    try {
+      if (sessionStorage.getItem('aa_open_creator_modal') === '1') {
+        sessionStorage.removeItem('aa_open_creator_modal');
+        setTimeout(() => openCreatorModal(), 60);
+      }
+    } catch (e) {
+      // ignore storage errors
+    }
+
+    function closeCreatorModal() {
+      document.getElementById('creator-modal').classList.remove('open');
+      document.body.style.overflow = '';
+      // reset
+      currentStep = 1;
+      setTimeout(() => renderStep(1, true), 400);
+    }
+
+    function renderStep(step, silent) {
+      // Hide all panels
+      document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('step-' + step).classList.add('active');
+
+      // Update dots
+      for (let i = 1; i <= 4; i++) {
+        const dot = document.getElementById('step-dot-' + i);
+        dot.classList.remove('active', 'done');
+        if (i < step) dot.classList.add('done');
+        if (i === step) dot.classList.add('active');
+      }
+
+      // Update lines
+      for (let i = 1; i <= 3; i++) {
+        const line = document.getElementById('step-line-' + i);
+        line.classList.toggle('done', i < step);
+      }
+
+      // Buttons
+      const backBtn = document.getElementById('modal-back-btn');
+      const nextBtn = document.getElementById('modal-next-btn');
+      const counter = document.getElementById('step-counter');
+      const footer = document.getElementById('modal-footer');
+
+      backBtn.style.display = step > 1 && step <= totalSteps ? 'inline-flex' : 'none';
+
+      if (step === 5) {
+        // Success screen
+        footer.style.display = 'flex';
+        nextBtn.textContent = '✕ Close';
+        nextBtn.className = 'modal-btn btn-primary';
+        nextBtn.onclick = closeCreatorModal;
+        backBtn.style.display = 'none';
+        counter.textContent = 'Complete!';
+        document.getElementById('app-id').textContent = Math.floor(100000 + Math.random() * 900000);
+      } else if (step === totalSteps) {
+        nextBtn.textContent = 'Submit Oath ⟶';
+        nextBtn.className = 'modal-btn btn-submit';
+        nextBtn.onclick = modalNext;
+        counter.textContent = `Step ${step} of ${totalSteps}`;
+      } else {
+        nextBtn.textContent = 'Next →';
+        nextBtn.className = 'modal-btn btn-primary';
+        nextBtn.onclick = modalNext;
+        counter.textContent = `Step ${step} of ${totalSteps}`;
+      }
+    }
+
+    function modalNext() {
+      if (currentStep === 4) {
+        // Validate all checkboxes
+        const rules = document.querySelectorAll('#step-4 .rule-check');
+        const allChecked = Array.from(rules).every(r => r.classList.contains('checked'));
+        if (!allChecked) {
+          document.getElementById('oath-warning').style.display = 'block';
+          rules.forEach(r => {
+            if (!r.classList.contains('checked')) {
+              r.style.borderColor = 'rgba(255,62,108,0.4)';
+              setTimeout(() => r.style.borderColor = '', 1800);
+            }
+          });
+          return;
+        }
+        (async () => {
+          try {
+            if (typeof window.submitCreatorFormToFirebase === 'function') {
+              await window.submitCreatorFormToFirebase();
+            }
+            currentStep = 5;
+            renderStep(5);
+          } catch (e) {
+            console.error(e);
+            alert('Could not submit application. Check your connection and Firestore rules, then try again.');
+          }
+        })();
+        return;
+      }
+
+      if (currentStep < totalSteps) {
+        currentStep++;
+        renderStep(currentStep);
+      }
+    }
+
+    function modalBack() {
+      if (currentStep > 1) {
+        currentStep--;
+        renderStep(currentStep);
+      }
+    }
+
+    /* ─────────────────────────────
+       RULES CHECKBOX TOGGLE
+    ───────────────────────────── */
+    function toggleRule(el) {
+      el.classList.toggle('checked');
+      const cb = el.querySelector('input[type=checkbox]');
+      cb.checked = el.classList.contains('checked');
+      document.getElementById('oath-warning').style.display = 'none';
+      el.style.borderColor = '';
+    }
+
+    /* ─────────────────────────────
+       DRAWER
+    ───────────────────────────── */
+    function openDrawer() {
+      document.getElementById('drawer-overlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      document.getElementById('drawer-overlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    /* ─────────────────────────────
+       MODAL KEYBOARD DISMISS
+    ───────────────────────────── */
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        closeCreatorModal();
+        closeDrawer();
+      }
+    });
+
+    /* ─────────────────────────────
+       MODAL OVERLAY CLICK
+    ───────────────────────────── */
+    document.getElementById('creator-modal').addEventListener('click', function (e) {
+      if (e.target === this) closeCreatorModal();
+    });
+  </script>
+
+  <script type="module">
+    import './firebase-config.js';
+    import { getCurrentPlayer, getCurrentUser, guildSignOut } from './guild-auth.js';
+
+    const gate = document.getElementById('aa-auth-gate');
+    const drawerLogout = document.getElementById('aa-drawer-logout');
+
+    const user = getCurrentUser();
+    const player = getCurrentPlayer();
+
+    if (!user) {
+      // guild-auth onAuthStateChanged will handle redirect, but keep gate visible until then
+      if (gate) gate.hidden = false;
+    } else {
+      if (gate) gate.hidden = true;
+      const name = player?.username || user.displayName || 'Adventurer';
+
+      const setEl = (id, val) => {
+        const el = document.getElementById(id);
+        if (el && val != null) el.textContent = val;
+      };
+
+      setEl('player-username', name);
+      setEl('player-level', player?.level || 1);
+      setEl('player-rank-label', (player?.rank || 'E') + ' Guild Member');
+      setEl('player-rank-detail', 'Rank: ' + (player?.rank || 'E'));
+
+      const exp = player?.xp || 0;
+      const xpToNext = player?.xpToNext || 1000;
+      const pct = Math.min((exp / xpToNext) * 100, 100);
+      const expEl = document.getElementById('exp-display');
+      const fillEl = document.getElementById('exp-fill');
+      if (expEl) expEl.textContent = `${exp.toLocaleString()} / ${xpToNext.toLocaleString()}`;
+      if (fillEl) fillEl.style.width = pct + '%';
+
+      const nextLbl = document.getElementById('player-next-level');
+      if (nextLbl) {
+        nextLbl.textContent = `${(xpToNext - (exp % xpToNext)).toLocaleString()} XP to next level ⟶`;
+      }
+
+      const navBtn = document.getElementById('aa-nav-avatar-btn');
+      const topImg = document.getElementById('aa-top-avatar');
+      const pImg = document.getElementById('player-avatar-img');
+      const pInner = document.getElementById('player-avatar-inner');
+      const photo = player?.photoURL || user.photoURL || '';
+      if (photo && topImg && pImg && navBtn && pInner) {
+        topImg.src = photo;
+        topImg.alt = name;
+        pImg.src = photo;
+        pImg.alt = name;
+        navBtn.classList.add('has-photo');
+        pInner.classList.add('has-photo');
+      }
+    }
+
+    if (drawerLogout) {
+      drawerLogout.addEventListener('click', () => guildSignOut());
+    }
+  </script>
+
+</body>
+
+</html>

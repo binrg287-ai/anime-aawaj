@@ -1,0 +1,2704 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Guild Rankings — Anime Aawaj</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;600;900&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --void: #04060F;
+      --abyss: #080C1A;
+      --deep: #0D1229;
+      --glass: rgba(13, 18, 41, 0.6);
+      --blue: #00D4FF;
+      --purple: #7B5CF5;
+      --gold: #FFD700;
+      --crimson: #FF3E6C;
+      --teal: #00FFB3;
+      --rose: #FF6B9D;
+      --silver: #C0C0C0;
+      --bronze: #CD7F32;
+      --text: #E8EEFF;
+      --muted: #7B8DB0;
+      --ghost: #3D4F6B;
+      --b-glow: rgba(0, 212, 255, 0.20);
+      --b-soft: rgba(123, 92, 245, 0.17);
+      --safe-b: env(safe-area-inset-bottom, 0px);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html {
+      scroll-behavior: smooth
+    }
+
+    body {
+      background: var(--void);
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      overflow-x: hidden;
+      padding-bottom: calc(64px + var(--safe-b));
+    }
+
+    @media(min-width:1024px) {
+      body {
+        padding-bottom: 0
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 4px
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--void)
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--purple);
+      border-radius: 2px
+    }
+
+    /* ── GRID BG ── */
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        repeating-linear-gradient(0deg, rgba(0, 212, 255, .012) 0, transparent 1px, transparent 60px),
+        repeating-linear-gradient(90deg, rgba(0, 212, 255, .012) 0, transparent 1px, transparent 60px)
+    }
+
+    /* ── PARTICLE CANVAS ── */
+    #fx-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: .4
+    }
+
+    /* ── NAVBAR ── */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: rgba(4, 6, 15, .9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--b-glow);
+      height: 60px;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .nav-logo {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: .95rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, var(--blue), var(--purple));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .nav-center {
+      font-family: 'Orbitron', monospace;
+      font-size: .62rem;
+      letter-spacing: 2px;
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .live-pip {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--teal);
+      animation: blink 1.2s infinite
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .2
+      }
+    }
+
+    .nav-player-btn {
+      padding: 7px 16px;
+      font-family: 'Orbitron', monospace;
+      font-size: .6rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: 1px solid var(--purple);
+      color: var(--purple);
+      background: transparent;
+      clip-path: polygon(7px 0%, 100% 0%, calc(100% - 7px) 100%, 0% 100%);
+      transition: all .25s;
+      white-space: nowrap;
+    }
+
+    .nav-player-btn:hover {
+      background: var(--purple);
+      color: #fff;
+      box-shadow: 0 0 20px rgba(123, 92, 245, .4)
+    }
+
+    /* ── PAGE ── */
+    .page {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 32px 20px 60px;
+      position: relative;
+      z-index: 1
+    }
+
+    /* ── SEASON BANNER ── */
+    .season-banner {
+      position: relative;
+      border-radius: 6px;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(13, 18, 41, .98), rgba(8, 12, 26, .98));
+      border: 1px solid var(--b-glow);
+      padding: 36px 32px;
+      margin-bottom: 28px;
+    }
+
+    .season-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 50%, rgba(255, 215, 0, .06), transparent 60%);
+      pointer-events: none;
+    }
+
+    .season-banner::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), var(--purple), var(--gold), transparent);
+    }
+
+    .banner-particles {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden
+    }
+
+    .b-particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+      animation: p-rise linear infinite;
+    }
+
+    @keyframes p-rise {
+      0% {
+        transform: translateY(0) translateX(0);
+        opacity: .7
+      }
+
+      100% {
+        transform: translateY(-120px) translateX(var(--dx, 8px));
+        opacity: 0
+      }
+    }
+
+    .banner-inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      flex-wrap: wrap
+    }
+
+    .banner-crown {
+      font-size: 3.5rem;
+      animation: crown-float 4s ease-in-out infinite;
+      flex-shrink: 0
+    }
+
+    @keyframes crown-float {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(-5deg)
+      }
+
+      50% {
+        transform: translateY(-8px) rotate(5deg)
+      }
+    }
+
+    .banner-text {
+      display: flex;
+      flex-direction: column;
+      gap: 10px
+    }
+
+    .banner-season-chip {
+      font-family: 'Orbitron', monospace;
+      font-size: .6rem;
+      letter-spacing: 2px;
+      padding: 4px 14px;
+      background: rgba(255, 215, 0, .1);
+      color: var(--gold);
+      border: 1px solid rgba(255, 215, 0, .3);
+      display: inline-block;
+      margin-bottom: 10px;
+      clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+    }
+
+    .banner-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.4rem, 4vw, 2.6rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, #FFD700, #FF8C00, #FFD700);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 16px rgba(255, 215, 0, .35));
+      margin-bottom: 6px;
+    }
+
+    .banner-sub {
+      font-family: 'Cinzel', serif;
+      font-size: .85rem;
+      letter-spacing: 2px;
+      color: var(--muted)
+    }
+
+    .banner-stats {
+      margin-left: auto;
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .b-stat {
+      text-align: center
+    }
+
+    .b-stat-val {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.4rem;
+      font-weight: 900;
+      display: block
+    }
+
+    .b-stat-label {
+      font-size: .7rem;
+      color: var(--ghost);
+      letter-spacing: 1px;
+      text-transform: uppercase
+    }
+
+    /* ── RANK TIER CARDS ── */
+    .tier-section {
+      margin-bottom: 32px
+    }
+
+    .section-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px
+    }
+
+    .eyebrow-bar {
+      width: 28px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--blue), var(--purple))
+    }
+
+    .eyebrow-txt {
+      font-family: 'Orbitron', monospace;
+      font-size: .62rem;
+      letter-spacing: 3px;
+      color: var(--blue);
+      text-transform: uppercase
+    }
+
+    .tier-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px
+    }
+
+    @media(max-width:900px) {
+      .tier-grid {
+        grid-template-columns: repeat(4, 1fr)
+      }
+    }
+
+    @media(max-width:480px) {
+      .tier-grid {
+        grid-template-columns: repeat(3, 1fr)
+      }
+    }
+
+    .tier-card {
+      border-radius: 4px;
+      padding: 14px 10px 12px;
+      text-align: center;
+      border: 1px solid;
+      cursor: pointer;
+      transition: transform .3s, box-shadow .3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tier-card:hover {
+      transform: translateY(-4px)
+    }
+
+    .tier-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      background: radial-gradient(ellipse at 50% 0%, var(--tier-glow, rgba(0, 212, 255, .15)), transparent 70%);
+      transition: opacity .3s;
+    }
+
+    .tier-card:hover::before {
+      opacity: 1
+    }
+
+    .tier-card.active-tier {
+      transform: translateY(-6px)
+    }
+
+    .t-ss {
+      background: linear-gradient(160deg, rgba(255, 62, 108, .1), rgba(13, 18, 41, .98));
+      border-color: rgba(255, 62, 108, .4);
+      --tier-glow: rgba(255, 62, 108, .2)
+    }
+
+    .t-s {
+      background: linear-gradient(160deg, rgba(255, 215, 0, .1), rgba(13, 18, 41, .98));
+      border-color: rgba(255, 215, 0, .35);
+      --tier-glow: rgba(255, 215, 0, .15)
+    }
+
+    .t-a {
+      background: linear-gradient(160deg, rgba(123, 92, 245, .1), rgba(13, 18, 41, .98));
+      border-color: rgba(123, 92, 245, .3);
+      --tier-glow: rgba(123, 92, 245, .15)
+    }
+
+    .t-b {
+      background: linear-gradient(160deg, rgba(0, 212, 255, .08), rgba(13, 18, 41, .98));
+      border-color: rgba(0, 212, 255, .25);
+      --tier-glow: rgba(0, 212, 255, .1)
+    }
+
+    .t-c {
+      background: linear-gradient(160deg, rgba(0, 255, 179, .07), rgba(13, 18, 41, .98));
+      border-color: rgba(0, 255, 179, .2);
+      --tier-glow: rgba(0, 255, 179, .1)
+    }
+
+    .t-d {
+      background: linear-gradient(160deg, rgba(255, 107, 157, .07), rgba(13, 18, 41, .98));
+      border-color: rgba(255, 107, 157, .2);
+      --tier-glow: rgba(255, 107, 157, .1)
+    }
+
+    .t-e {
+      background: linear-gradient(160deg, rgba(100, 116, 139, .07), rgba(13, 18, 41, .98));
+      border-color: rgba(100, 116, 139, .2);
+      --tier-glow: rgba(100, 116, 139, .1)
+    }
+
+    .tier-icon {
+      font-size: 1.6rem;
+      display: block;
+      margin-bottom: 6px
+    }
+
+    .tier-letter {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 1.3rem;
+      font-weight: 900;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .tier-label {
+      font-family: 'Orbitron', monospace;
+      font-size: .5rem;
+      letter-spacing: 1px;
+      display: block;
+      color: var(--ghost)
+    }
+
+    .tier-count {
+      font-family: 'Orbitron', monospace;
+      font-size: .6rem;
+      margin-top: 6px;
+      display: block
+    }
+
+    .col-ss .tier-letter {
+      color: var(--crimson)
+    }
+
+    .col-s .tier-letter {
+      color: var(--gold)
+    }
+
+    .col-a .tier-letter {
+      color: var(--purple)
+    }
+
+    .col-b .tier-letter {
+      color: var(--blue)
+    }
+
+    .col-c .tier-letter {
+      color: var(--teal)
+    }
+
+    .col-d .tier-letter {
+      color: var(--rose)
+    }
+
+    .col-e .tier-letter {
+      color: var(--muted)
+    }
+
+    /* ── CONTENT LAYOUT ── */
+    .content-layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 24px;
+      align-items: start
+    }
+
+    @media(max-width:1100px) {
+      .content-layout {
+        grid-template-columns: 1fr
+      }
+    }
+
+    /* ── FILTER BAR ── */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 4px;
+      background: var(--deep);
+      border: 1px solid var(--b-soft);
+      border-radius: 3px;
+      padding: 4px
+    }
+
+    .f-btn {
+      padding: 7px 16px;
+      font-family: 'Orbitron', monospace;
+      font-size: .6rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      background: transparent;
+      color: var(--ghost);
+      border: none;
+      border-radius: 2px;
+      transition: all .2s;
+    }
+
+    .f-btn:hover {
+      color: var(--muted)
+    }
+
+    .f-btn.active {
+      background: rgba(0, 212, 255, .12);
+      color: var(--blue)
+    }
+
+    .filter-search {
+      flex: 1;
+      min-width: 160px;
+      background: var(--deep);
+      border: 1px solid var(--b-soft);
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: .9rem;
+      padding: 9px 14px;
+      outline: none;
+      border-radius: 2px;
+      transition: border-color .25s;
+    }
+
+    .filter-search::placeholder {
+      color: var(--ghost)
+    }
+
+    .filter-search:focus {
+      border-color: var(--blue)
+    }
+
+    .my-rank-btn {
+      padding: 9px 16px;
+      font-family: 'Orbitron', monospace;
+      font-size: .6rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      background: transparent;
+      border: 1px solid var(--teal);
+      color: var(--teal);
+      border-radius: 2px;
+      transition: all .25s;
+      white-space: nowrap;
+    }
+
+    .my-rank-btn:hover {
+      background: rgba(0, 255, 179, .08)
+    }
+
+    /* ── MAIN LEADERBOARD ── */
+    .leaderboard-wrap {
+      background: var(--deep);
+      border: 1px solid var(--b-glow);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .lb-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--b-glow);
+      background: linear-gradient(90deg, rgba(0, 212, 255, .05), transparent);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .lb-header-title {
+      font-family: 'Orbitron', monospace;
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--blue);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .lb-header-meta {
+      margin-left: auto;
+      font-family: 'Orbitron', monospace;
+      font-size: .58rem;
+      color: var(--ghost);
+      letter-spacing: 1px;
+    }
+
+    .lb-col-labels {
+      display: grid;
+      grid-template-columns: 48px 40px 1fr 100px 90px 80px 80px;
+      gap: 8px;
+      padding: 9px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, .04);
+      font-family: 'Orbitron', monospace;
+      font-size: .55rem;
+      letter-spacing: 1.5px;
+      color: var(--ghost);
+      text-transform: uppercase;
+    }
+
+    @media(max-width:768px) {
+      .lb-col-labels {
+        grid-template-columns: 40px 36px 1fr 80px;
+        display: none
+      }
+    }
+
+    .lb-body {
+      min-height: 200px
+    }
+
+    /* PLAYER ROW */
+    .player-row {
+      display: grid;
+      grid-template-columns: 48px 40px 1fr 100px 90px 80px 80px;
+      gap: 8px;
+      padding: 12px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, .03);
+      align-items: center;
+      cursor: pointer;
+      transition: background .2s;
+      position: relative;
+      animation: row-in .4s ease both;
+    }
+
+    @keyframes row-in {
+      from {
+        opacity: 0;
+        transform: translateX(-10px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    .player-row:hover {
+      background: rgba(0, 212, 255, .03)
+    }
+
+    .player-row:last-child {
+      border-bottom: none
+    }
+
+    /* Top 3 special rows */
+    .player-row.pos-1 {
+      background: rgba(255, 215, 0, .03)
+    }
+
+    .player-row.pos-1:hover {
+      background: rgba(255, 215, 0, .06)
+    }
+
+    .player-row.pos-2 {
+      background: rgba(192, 192, 192, .02)
+    }
+
+    .player-row.pos-3 {
+      background: rgba(205, 127, 50, .02)
+    }
+
+    /* Current user highlight */
+    .player-row.is-me {
+      background: rgba(0, 212, 255, .05);
+      border-left: 2px solid var(--blue);
+    }
+
+    .player-row.is-me:hover {
+      background: rgba(0, 212, 255, .08)
+    }
+
+    @media(max-width:768px) {
+      .player-row {
+        grid-template-columns: 40px 36px 1fr 80px
+      }
+    }
+
+    /* Row cells */
+    .cell-rank {
+      font-family: 'Orbitron', monospace;
+      font-size: .8rem;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .rank-icon {
+      font-size: 1.2rem;
+      display: block;
+      text-align: center
+    }
+
+    .cell-class {
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .class-badge {
+      font-family: 'Orbitron', monospace;
+      font-size: .58rem;
+      font-weight: 700;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid;
+    }
+
+    .cb-ss {
+      background: rgba(255, 62, 108, .12);
+      color: var(--crimson);
+      border-color: rgba(255, 62, 108, .35)
+    }
+
+    .cb-s {
+      background: rgba(255, 215, 0, .12);
+      color: var(--gold);
+      border-color: rgba(255, 215, 0, .35)
+    }
+
+    .cb-a {
+      background: rgba(123, 92, 245, .12);
+      color: var(--purple);
+      border-color: rgba(123, 92, 245, .3)
+    }
+
+    .cb-b {
+      background: rgba(0, 212, 255, .1);
+      color: var(--blue);
+      border-color: rgba(0, 212, 255, .25)
+    }
+
+    .cb-c {
+      background: rgba(0, 255, 179, .08);
+      color: var(--teal);
+      border-color: rgba(0, 255, 179, .2)
+    }
+
+    .cb-d {
+      background: rgba(255, 107, 157, .08);
+      color: var(--rose);
+      border-color: rgba(255, 107, 157, .2)
+    }
+
+    .cb-e {
+      background: rgba(100, 116, 139, .08);
+      color: var(--muted);
+      border-color: rgba(100, 116, 139, .2)
+    }
+
+    .cell-player {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      overflow: hidden
+    }
+
+    .row-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      border: 1.5px solid var(--b-soft);
+      background: rgba(13, 18, 41, .8);
+    }
+
+    .pos-1 .row-avatar {
+      border-color: rgba(255, 215, 0, .4)
+    }
+
+    .pos-2 .row-avatar {
+      border-color: rgba(192, 192, 192, .3)
+    }
+
+    .pos-3 .row-avatar {
+      border-color: rgba(205, 127, 50, .3)
+    }
+
+    .is-me .row-avatar {
+      border-color: rgba(0, 212, 255, .5)
+    }
+
+    .row-info {
+      flex: 1;
+      overflow: hidden
+    }
+
+    .row-name {
+      font-size: .95rem;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .row-title {
+      font-size: .72rem;
+      color: var(--ghost);
+      margin-top: 1px
+    }
+
+    .row-badges {
+      display: flex;
+      gap: 4px;
+      margin-top: 3px;
+      flex-wrap: wrap
+    }
+
+    .row-badge {
+      font-size: .5rem;
+      padding: 1px 5px;
+      border-radius: 20px;
+      font-family: 'Orbitron', monospace;
+      letter-spacing: .5px;
+    }
+
+    .rb-creator {
+      background: rgba(123, 92, 245, .12);
+      color: var(--purple);
+      border: 1px solid rgba(123, 92, 245, .25)
+    }
+
+    .rb-speed {
+      background: rgba(0, 255, 179, .08);
+      color: var(--teal);
+      border: 1px solid rgba(0, 255, 179, .2)
+    }
+
+    .rb-streak {
+      background: rgba(255, 215, 0, .08);
+      color: var(--gold);
+      border: 1px solid rgba(255, 215, 0, .2)
+    }
+
+    .cell-score,
+    .cell-xp,
+    .cell-quests,
+    .cell-streak {
+      font-family: 'Orbitron', monospace;
+      font-size: .72rem;
+      text-align: right;
+    }
+
+    .cell-score {
+      color: var(--gold);
+      font-size: .8rem;
+      font-weight: 700
+    }
+
+    .cell-xp {
+      color: var(--blue)
+    }
+
+    .cell-quests {
+      color: var(--muted)
+    }
+
+    .cell-streak {
+      color: var(--teal)
+    }
+
+    @media(max-width:768px) {
+
+      .cell-xp,
+      .cell-quests,
+      .cell-streak {
+        display: none
+      }
+    }
+
+    /* Trend arrow */
+    .trend-up {
+      color: var(--teal);
+      font-size: .7rem;
+      margin-left: 4px
+    }
+
+    .trend-down {
+      color: var(--crimson);
+      font-size: .7rem;
+      margin-left: 4px
+    }
+
+    .trend-same {
+      color: var(--ghost);
+      font-size: .7rem;
+      margin-left: 4px
+    }
+
+    /* Loading skeleton */
+    .skeleton-row {
+      display: grid;
+      grid-template-columns: 48px 40px 1fr 100px 90px 80px 80px;
+      gap: 8px;
+      padding: 14px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, .03);
+    }
+
+    .skel {
+      height: 14px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, rgba(255, 255, 255, .04), rgba(255, 255, 255, .08), rgba(255, 255, 255, .04));
+      background-size: 200%;
+      animation: skel-wave 1.5s linear infinite;
+    }
+
+    @keyframes skel-wave {
+      0% {
+        background-position: 200%
+      }
+
+      100% {
+        background-position: -200%
+      }
+    }
+
+    /* Pagination */
+    .lb-footer {
+      padding: 14px 20px;
+      border-top: 1px solid var(--b-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .lb-footer-info {
+      font-family: 'Orbitron', monospace;
+      font-size: .58rem;
+      color: var(--ghost)
+    }
+
+    .pagination {
+      display: flex;
+      gap: 6px
+    }
+
+    .page-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 2px;
+      background: transparent;
+      border: 1px solid var(--b-soft);
+      color: var(--muted);
+      font-family: 'Orbitron', monospace;
+      font-size: .65rem;
+      cursor: pointer;
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .page-btn:hover {
+      border-color: var(--blue);
+      color: var(--blue)
+    }
+
+    .page-btn.active {
+      background: rgba(0, 212, 255, .1);
+      border-color: var(--blue);
+      color: var(--blue)
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      position: sticky;
+      top: 76px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    @media(max-width:1100px) {
+      .sidebar {
+        position: static
+      }
+    }
+
+    .s-panel {
+      background: var(--deep);
+      border: 1px solid var(--b-glow);
+      border-radius: 4px;
+      overflow: hidden
+    }
+
+    .s-header {
+      padding: 13px 18px;
+      border-bottom: 1px solid var(--b-glow);
+      background: linear-gradient(90deg, rgba(0, 212, 255, .05), transparent);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .s-title {
+      font-family: 'Orbitron', monospace;
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--blue);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* My Rank Card */
+    .my-rank-card {
+      position: relative;
+      border-radius: 4px;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(0, 212, 255, .08), rgba(123, 92, 245, .08));
+      border: 1px solid rgba(0, 212, 255, .25);
+      padding: 20px;
+    }
+
+    .my-rank-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 80% 20%, rgba(0, 212, 255, .08), transparent 60%);
+      pointer-events: none;
+    }
+
+    .mrc-top {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1
+    }
+
+    .mrc-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      border: 2px solid rgba(0, 212, 255, .4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+
+    .mrc-name {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 2px
+    }
+
+    .mrc-rank {
+      font-family: 'Orbitron', monospace;
+      font-size: .62rem;
+      color: var(--blue)
+    }
+
+    .mrc-pos {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: var(--gold);
+      text-align: center;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1
+    }
+
+    .mrc-pos-label {
+      font-size: .65rem;
+      color: var(--ghost);
+      display: block;
+      margin-top: -4px
+    }
+
+    /* XP Progress */
+    .xp-section {
+      position: relative;
+      z-index: 1
+    }
+
+    .xp-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-family: 'Orbitron', monospace;
+      font-size: .58rem;
+      color: var(--ghost)
+    }
+
+    .xp-row .val {
+      color: var(--blue)
+    }
+
+    .xp-track {
+      height: 6px;
+      background: rgba(255, 255, 255, .05);
+      border-radius: 3px;
+      overflow: hidden
+    }
+
+    .xp-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--blue), var(--purple), var(--teal));
+      width: 0%;
+      transition: width 1.8s cubic-bezier(0.16, 1, 0.3, 1)
+    }
+
+    /* Mini stats */
+    .mrc-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 14px;
+      position: relative;
+      z-index: 1
+    }
+
+    .mrc-stat {
+      background: rgba(4, 6, 15, .5);
+      border: 1px solid var(--b-soft);
+      border-radius: 3px;
+      padding: 8px 10px;
+      text-align: center
+    }
+
+    .mrc-stat-val {
+      font-family: 'Orbitron', monospace;
+      font-size: .85rem;
+      font-weight: 700;
+      color: var(--blue);
+      display: block
+    }
+
+    .mrc-stat-label {
+      font-size: .62rem;
+      color: var(--ghost)
+    }
+
+    /* Rank Progression */
+    .rank-prog-list {
+      padding: 6px 0
+    }
+
+    .rp-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 9px 18px;
+      transition: background .2s;
+    }
+
+    .rp-item:hover {
+      background: rgba(0, 212, 255, .03)
+    }
+
+    .rp-item.current {
+      background: rgba(0, 212, 255, .05)
+    }
+
+    .rp-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0
+    }
+
+    .rp-info {
+      flex: 1
+    }
+
+    .rp-rank-name {
+      font-size: .85rem;
+      font-weight: 600
+    }
+
+    .rp-xp-req {
+      font-family: 'Orbitron', monospace;
+      font-size: .55rem;
+      color: var(--ghost)
+    }
+
+    .rp-status {
+      font-family: 'Orbitron', monospace;
+      font-size: .55rem;
+      flex-shrink: 0
+    }
+
+    .status-done {
+      color: var(--teal)
+    }
+
+    .status-current {
+      color: var(--blue)
+    }
+
+    .status-locked {
+      color: var(--ghost)
+    }
+
+    /* Season Timer */
+    .season-timer {
+      padding: 16px 18px
+    }
+
+    .timer-label-txt {
+      font-family: 'Orbitron', monospace;
+      font-size: .58rem;
+      letter-spacing: 1px;
+      color: var(--ghost);
+      margin-bottom: 10px
+    }
+
+    .timer-digits {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px
+    }
+
+    .t-digit {
+      background: rgba(4, 6, 15, .8);
+      border: 1px solid var(--b-soft);
+      border-radius: 3px;
+      padding: 10px 6px;
+      text-align: center
+    }
+
+    .t-num {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.2rem;
+      font-weight: 900;
+      color: var(--blue);
+      display: block
+    }
+
+    .t-unit {
+      font-family: 'Orbitron', monospace;
+      font-size: .5rem;
+      color: var(--ghost);
+      letter-spacing: 1px
+    }
+
+    .season-end-bar {
+      margin-top: 12px;
+      height: 4px;
+      background: rgba(255, 255, 255, .05);
+      border-radius: 2px;
+      overflow: hidden
+    }
+
+    .season-end-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--blue), var(--purple));
+      border-radius: 2px;
+      width: 72%
+    }
+
+    /* Near you */
+    .near-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 9px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, .03);
+      cursor: pointer;
+      transition: background .2s;
+    }
+
+    .near-row:hover {
+      background: rgba(0, 212, 255, .03)
+    }
+
+    .near-row:last-child {
+      border-bottom: none
+    }
+
+    .near-pos {
+      font-family: 'Orbitron', monospace;
+      font-size: .65rem;
+      color: var(--ghost);
+      width: 20px;
+      text-align: center;
+      flex-shrink: 0
+    }
+
+    .near-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--deep);
+      border: 1px solid var(--b-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .9rem;
+      flex-shrink: 0
+    }
+
+    .near-name {
+      flex: 1;
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--muted)
+    }
+
+    .near-score {
+      font-family: 'Orbitron', monospace;
+      font-size: .65rem;
+      color: var(--blue)
+    }
+
+    .near-gap {
+      font-family: 'Orbitron', monospace;
+      font-size: .55rem;
+      color: var(--crimson);
+      margin-top: 1px
+    }
+
+    .near-row.is-me .near-name {
+      color: var(--blue)
+    }
+
+    /* ── PLAYER DETAIL PANEL ── */
+    .player-detail {
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      width: 100%;
+      max-width: 400px;
+      background: var(--abyss);
+      border-top: 1px solid var(--b-glow);
+      border-left: 1px solid var(--b-glow);
+      border-radius: 8px 0 0 0;
+      z-index: 300;
+      transform: translateY(100%);
+      transition: transform .35s cubic-bezier(0.16, 1, 0.3, 1);
+      padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+
+    .player-detail.open {
+      transform: translateY(0)
+    }
+
+    @media(min-width:768px) {
+      .player-detail {
+        bottom: auto;
+        top: 50%;
+        right: 24px;
+        transform: translateY(-50%) translateX(110%);
+        border-radius: 6px;
+        border: 1px solid var(--b-glow)
+      }
+
+      .player-detail.open {
+        transform: translateY(-50%) translateX(0)
+      }
+    }
+
+    .pd-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--b-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between
+    }
+
+    .pd-title {
+      font-family: 'Orbitron', monospace;
+      font-size: .65rem;
+      letter-spacing: 2px;
+      color: var(--blue);
+      text-transform: uppercase
+    }
+
+    .pd-close {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .05);
+      border: 1px solid var(--b-soft);
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .8rem;
+      transition: all .2s
+    }
+
+    .pd-close:hover {
+      border-color: var(--crimson);
+      color: var(--crimson)
+    }
+
+    .pd-body {
+      padding: 20px
+    }
+
+    .pd-player-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px
+    }
+
+    .pd-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 2px solid var(--b-glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      background: var(--deep);
+      position: relative;
+      flex-shrink: 0
+    }
+
+    .pd-ring {
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 212, 255, .2);
+      animation: pd-spin 6s linear infinite
+    }
+
+    @keyframes pd-spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    .pd-name {
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px
+    }
+
+    .pd-rank-chip {
+      display: inline-block;
+      font-family: 'Orbitron', monospace;
+      font-size: .58rem;
+      padding: 3px 10px;
+      clip-path: polygon(5px 0%, 100% 0%, calc(100% - 5px) 100%, 0% 100%)
+    }
+
+    .pd-stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px
+    }
+
+    .pd-stat {
+      background: rgba(4, 6, 15, .6);
+      border: 1px solid var(--b-soft);
+      border-radius: 3px;
+      padding: 12px;
+      text-align: center
+    }
+
+    .pd-stat-val {
+      font-family: 'Orbitron', monospace;
+      font-size: 1rem;
+      font-weight: 900;
+      display: block;
+      margin-bottom: 2px
+    }
+
+    .pd-stat-label {
+      font-size: .65rem;
+      color: var(--ghost)
+    }
+
+    .pd-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 16px
+    }
+
+    .pd-badge {
+      font-family: 'Orbitron', monospace;
+      font-size: .52rem;
+      padding: 3px 9px;
+      border-radius: 20px
+    }
+
+    .challenge-btn {
+      width: 100%;
+      padding: 12px;
+      background: transparent;
+      border: 1px solid var(--blue);
+      color: var(--blue);
+      font-family: 'Orbitron', monospace;
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+      transition: all .3s;
+    }
+
+    .challenge-btn:hover {
+      background: rgba(0, 212, 255, .1);
+      box-shadow: 0 0 20px rgba(0, 212, 255, .25)
+    }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      z-index: 600;
+      background: var(--deep);
+      border: 1px solid var(--teal);
+      border-radius: 4px;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Orbitron', monospace;
+      font-size: .62rem;
+      letter-spacing: 1px;
+      color: var(--teal);
+      transform: translateY(20px);
+      opacity: 0;
+      transition: all .35s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+      max-width: 300px
+    }
+
+    .toast.show {
+      transform: none;
+      opacity: 1
+    }
+
+    /* ── BOTTOM NAV ── */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 300;
+      background: rgba(4, 6, 15, .95);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid var(--b-glow);
+      display: none;
+      padding-bottom: var(--safe-b)
+    }
+
+    @media(max-width:1023px) {
+      .bottom-nav {
+        display: flex !important
+      }
+    }
+
+    .bnav-inner {
+      display: flex;
+      width: 100%
+    }
+
+    .bnav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      padding: 8px 4px;
+      cursor: pointer;
+      position: relative
+    }
+
+    .bnav-item.active::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 28px;
+      height: 2px;
+      background: var(--blue)
+    }
+
+    .bnav-icon {
+      font-size: 1.2rem
+    }
+
+    .bnav-label {
+      font-family: 'Orbitron', monospace;
+      font-size: .5rem;
+      letter-spacing: .5px;
+      color: var(--ghost);
+      text-transform: uppercase
+    }
+
+    .bnav-item.active .bnav-label {
+      color: var(--blue)
+    }
+
+    /* ═══════════════════════════════════════
+       SLIDE-OUT DRAWER (mobile menu)
+    ═══════════════════════════════════════ */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 400;
+      background: rgba(4, 6, 15, 0.6);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    .drawer-overlay.open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: -300px;
+      bottom: 0;
+      width: 280px;
+      z-index: 401;
+      background: var(--abyss);
+      border-left: 1px solid var(--b-glow);
+      transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    .drawer-overlay.open .drawer {
+      right: 0
+    }
+
+    .drawer-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--b-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .drawer-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.9rem;
+      background: linear-gradient(90deg, var(--blue), var(--purple));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .drawer-close {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--b-soft);
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .drawer-close:hover {
+      border-color: var(--crimson);
+      color: var(--crimson)
+    }
+
+    .drawer-body {
+      padding: 12px 0;
+      flex: 1;
+      overflow-y: auto
+    }
+
+    .drawer-section-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 2px;
+      color: var(--ghost);
+      text-transform: uppercase;
+      padding: 8px 20px 6px;
+    }
+
+    .drawer-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .drawer-item:hover {
+      background: rgba(0, 212, 255, 0.04);
+      color: var(--text)
+    }
+
+    .drawer-item.active {
+      color: var(--blue)
+    }
+
+    .drawer-item-icon {
+      width: 20px;
+      text-align: center;
+      font-size: 1rem
+    }
+
+    .drawer-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--b-soft)
+    }
+
+    /* ANIMATIONS */
+    .reveal {
+      opacity: 0;
+      transform: translateY(16px);
+      animation: rev .5s ease both
+    }
+
+    @keyframes rev {
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    .d1 {
+      animation-delay: .04s
+    }
+
+    .d2 {
+      animation-delay: .1s
+    }
+
+    .d3 {
+      animation-delay: .17s
+    }
+
+    .d4 {
+      animation-delay: .24s
+    }
+  </style>
+</head>
+
+<body>
+  <div class="grid-bg"></div>
+  <canvas id="fx-canvas"></canvas>
+
+  <!-- ════ NAVBAR ════ -->
+  <nav class="navbar">
+    <a href="index-1.html" class="nav-logo">Anime Aawaj</a>
+    <div class="nav-center">
+      <div class="live-pip"></div>
+      <span>Live Rankings</span>
+    </div>
+    <div>
+      <button class="nav-player-btn" id="nav-login-btn" data-auth="login-btn" onclick="openLoginModal()">
+        ⊞ Player Login
+      </button>
+    </div>
+  </nav>
+
+  <!-- ════ PAGE ════ -->
+  <div class="page">
+
+    <!-- SEASON BANNER -->
+    <div class="season-banner reveal d1">
+      <div class="banner-particles" id="banner-particles"></div>
+      <div class="banner-inner">
+        <div class="banner-crown">👑</div>
+        <div class="banner-text">
+          <div class="banner-season-chip">◆ Season III — Active</div>
+          <div class="banner-title">Guild Rankings</div>
+          <div class="banner-sub">Nepal's Strongest Anime Players</div>
+        </div>
+        <div class="banner-stats">
+          <div class="b-stat">
+            <span class="b-stat-val" style="color:var(--gold)" id="stat-total-players">—</span>
+            <span class="b-stat-label">Total Players</span>
+          </div>
+          <div class="b-stat">
+            <span class="b-stat-val" style="color:var(--blue)" id="stat-quests-today">—</span>
+            <span class="b-stat-label">Quests Today</span>
+          </div>
+          <div class="b-stat">
+            <span class="b-stat-val" style="color:var(--teal)" id="stat-online-now">—</span>
+            <span class="b-stat-label">Online Now</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TIER CARDS -->
+    <div class="tier-section reveal d2">
+      <div class="section-eyebrow">
+        <div class="eyebrow-bar"></div>
+        <div class="eyebrow-txt">Rank Tiers — Click to Filter</div>
+      </div>
+      <div class="tier-grid">
+        <div class="tier-card t-ss col-ss" onclick="filterByTier('SS')">
+          <span class="tier-icon">💀</span>
+          <span class="tier-letter">SS</span>
+          <span class="tier-label">Ruler</span>
+          <span class="tier-count" style="color:var(--crimson)" id="count-ss">— Players</span>
+        </div>
+        <div class="tier-card t-s col-s" onclick="filterByTier('S')">
+          <span class="tier-icon">👑</span>
+          <span class="tier-letter">S</span>
+          <span class="tier-label">Monarch</span>
+          <span class="tier-count" style="color:var(--gold)" id="count-s">— Players</span>
+        </div>
+        <div class="tier-card t-a col-a" onclick="filterByTier('A')">
+          <span class="tier-icon">⚡</span>
+          <span class="tier-letter">A</span>
+          <span class="tier-label">National</span>
+          <span class="tier-count" style="color:var(--purple)" id="count-a">— Players</span>
+        </div>
+        <div class="tier-card t-b col-b" onclick="filterByTier('B')">
+          <span class="tier-icon">⚔️</span>
+          <span class="tier-letter">B</span>
+          <span class="tier-label">Advanced</span>
+          <span class="tier-count" style="color:var(--blue)" id="count-b">— Players</span>
+        </div>
+        <div class="tier-card t-c col-c" onclick="filterByTier('C')">
+          <span class="tier-icon">🛡️</span>
+          <span class="tier-letter">C</span>
+          <span class="tier-label">Intermediate</span>
+          <span class="tier-count" style="color:var(--teal)" id="count-c">— Players</span>
+        </div>
+        <div class="tier-card t-d col-d" onclick="filterByTier('D')">
+          <span class="tier-icon">🗡️</span>
+          <span class="tier-letter">D</span>
+          <span class="tier-label">Apprentice</span>
+          <span class="tier-count" style="color:var(--rose)" id="count-d">— Players</span>
+        </div>
+        <div class="tier-card t-e col-e" onclick="filterByTier('E')">
+          <span class="tier-icon">🔰</span>
+          <span class="tier-letter">E</span>
+          <span class="tier-label">Initiate</span>
+          <span class="tier-count" style="color:var(--muted)" id="count-e">— Players</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENT LAYOUT -->
+    <div class="content-layout">
+
+      <!-- MAIN LEADERBOARD -->
+      <div>
+        <!-- Filter Bar -->
+        <div class="filter-bar reveal d3">
+          <div class="filter-group">
+            <button class="f-btn active" onclick="setTimeFilter(this,'alltime')">All Time</button>
+            <button class="f-btn" onclick="setTimeFilter(this,'season')">Season III</button>
+            <button class="f-btn" onclick="setTimeFilter(this,'weekly')">This Week</button>
+            <button class="f-btn" onclick="setTimeFilter(this,'daily')">Today</button>
+          </div>
+          <input type="text" class="filter-search" placeholder="Search player..." id="search-input"
+            oninput="handleSearch(this.value)" />
+          <button class="my-rank-btn" onclick="scrollToMyRank()">⟡ My Rank</button>
+        </div>
+
+        <!-- Leaderboard Table -->
+        <div class="leaderboard-wrap reveal d3">
+          <div class="lb-header">
+            <div class="lb-header-title">
+              <div class="live-pip"></div>
+              Live Guild Rankings
+            </div>
+            <div class="lb-header-meta" id="lb-update-time">Updated just now</div>
+          </div>
+
+          <div class="lb-col-labels">
+            <div>Rank</div>
+            <div>Tier</div>
+            <div>Player</div>
+            <div style="text-align:right">Score</div>
+            <div style="text-align:right">Total XP</div>
+            <div style="text-align:right">Quests</div>
+            <div style="text-align:right">Streak</div>
+          </div>
+
+          <div class="lb-body" id="lb-body">
+            <!-- Skeleton -->
+            <div id="lb-skeleton">
+              <!-- generated by JS -->
+            </div>
+            <!-- Real rows injected here -->
+          </div>
+
+          <div class="lb-footer">
+            <div class="lb-footer-info" id="lb-count-info">Loading...</div>
+            <div class="pagination" id="pagination"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+
+        <!-- My Rank Card -->
+        <div class="my-rank-card" id="my-rank-card">
+          <div class="mrc-top">
+            <div class="mrc-avatar" id="mrc-avatar">⚔️</div>
+            <div>
+              <div class="mrc-name" id="mrc-name">ShadowKing_NP</div>
+              <div class="mrc-rank" id="mrc-rank">S-Class · Shadow Monarch</div>
+            </div>
+          </div>
+          <div class="mrc-pos">
+            #<span id="mrc-position">1</span>
+            <span class="mrc-pos-label">Guild Rank</span>
+          </div>
+          <div class="xp-section">
+            <div class="xp-row">
+              <span>EXP Progress</span>
+              <span class="val" id="mrc-xp-val">7,300 / 10,000</span>
+            </div>
+            <div class="xp-track">
+              <div class="xp-fill" id="mrc-xp-fill"></div>
+            </div>
+          </div>
+          <div class="mrc-stats">
+            <div class="mrc-stat">
+              <span class="mrc-stat-val" style="color:var(--gold)" id="mrc-score">18,430</span>
+              <span class="mrc-stat-label">Score</span>
+            </div>
+            <div class="mrc-stat">
+              <span class="mrc-stat-val" style="color:var(--teal)" id="mrc-streak">21🔥</span>
+              <span class="mrc-stat-label">Streak</span>
+            </div>
+            <div class="mrc-stat">
+              <span class="mrc-stat-val" style="color:var(--blue)" id="mrc-quests">128</span>
+              <span class="mrc-stat-label">Quests</span>
+            </div>
+            <div class="mrc-stat">
+              <span class="mrc-stat-val" style="color:var(--purple)" id="mrc-level">Lv.43</span>
+              <span class="mrc-stat-label">Level</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rank Progression -->
+        <div class="s-panel">
+          <div class="s-header">
+            <div class="s-title">⟡ Rank Ladder</div>
+          </div>
+          <div class="rank-prog-list">
+            <div class="rp-item">
+              <div class="rp-dot" style="background:var(--crimson);box-shadow:0 0 6px var(--crimson)"></div>
+              <div class="rp-info">
+                <div class="rp-rank-name" style="color:var(--crimson)">SS — Ruler</div>
+                <div class="rp-xp-req">50,000 XP required</div>
+              </div>
+              <div class="rp-status status-locked">🔒</div>
+            </div>
+            <div class="rp-item current">
+              <div class="rp-dot" style="background:var(--gold);box-shadow:0 0 8px var(--gold)"></div>
+              <div class="rp-info">
+                <div class="rp-rank-name" style="color:var(--gold)">S — Shadow Monarch</div>
+                <div class="rp-xp-req">25,000 XP required · You: 7,300 XP</div>
+              </div>
+              <div class="rp-status status-current">◀ YOU</div>
+            </div>
+            <div class="rp-item">
+              <div class="rp-dot" style="background:var(--purple);box-shadow:0 0 5px var(--purple)"></div>
+              <div class="rp-info">
+                <div class="rp-rank-name" style="color:var(--purple)">A — National Level</div>
+                <div class="rp-xp-req">12,000 XP required</div>
+              </div>
+              <div class="rp-status status-done">✓</div>
+            </div>
+            <div class="rp-item">
+              <div class="rp-dot" style="background:var(--blue)"></div>
+              <div class="rp-info">
+                <div class="rp-rank-name" style="color:var(--blue)">B — Advanced</div>
+                <div class="rp-xp-req">6,000 XP required</div>
+              </div>
+              <div class="rp-status status-done">✓</div>
+            </div>
+            <div class="rp-item">
+              <div class="rp-dot" style="background:var(--teal)"></div>
+              <div class="rp-info">
+                <div class="rp-rank-name" style="color:var(--teal)">C — Intermediate</div>
+                <div class="rp-xp-req">3,000 XP required</div>
+              </div>
+              <div class="rp-status status-done">✓</div>
+            </div>
+            <div class="rp-item">
+              <div class="rp-dot" style="background:var(--rose)"></div>
+              <div class="rp-info">
+                <div class="rp-rank-name" style="color:var(--rose)">D — Apprentice</div>
+                <div class="rp-xp-req">1,000 XP required</div>
+              </div>
+              <div class="rp-status status-done">✓</div>
+            </div>
+            <div class="rp-item">
+              <div class="rp-dot" style="background:var(--muted)"></div>
+              <div class="rp-info">
+                <div class="rp-rank-name" style="color:var(--muted)">E — Initiate</div>
+                <div class="rp-xp-req">Starting rank</div>
+              </div>
+              <div class="rp-status status-done">✓</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Season Countdown -->
+        <div class="s-panel">
+          <div class="s-header">
+            <div class="s-title">⏳ Season Ends In</div>
+          </div>
+          <div class="season-timer">
+            <div class="timer-label-txt">SEASON III CLOSES</div>
+            <div class="timer-digits">
+              <div class="t-digit"><span class="t-num" id="t-days">27</span><span class="t-unit">Days</span></div>
+              <div class="t-digit"><span class="t-num" id="t-hours">14</span><span class="t-unit">Hours</span></div>
+              <div class="t-digit"><span class="t-num" id="t-mins">32</span><span class="t-unit">Mins</span></div>
+              <div class="t-digit"><span class="t-num" id="t-secs">09</span><span class="t-unit">Secs</span></div>
+            </div>
+            <div class="season-end-bar">
+              <div class="season-end-fill"></div>
+            </div>
+            <div
+              style="font-family:'Orbitron',monospace;font-size:.55rem;color:var(--ghost);margin-top:6px;text-align:right">
+              72% of Season Elapsed</div>
+          </div>
+        </div>
+
+        <!-- Near You -->
+        <div class="s-panel">
+          <div class="s-header">
+            <div class="s-title">⚔️ Near Your Rank</div>
+          </div>
+          <div id="near-you-list">
+            <!-- populated by JS -->
+          </div>
+        </div>
+
+      </aside>
+    </div>
+
+  </div><!-- /page -->
+
+  <!-- ════ PLAYER DETAIL PANEL ════ -->
+  <div class="player-detail" id="player-detail">
+    <div class="pd-header">
+      <div class="pd-title">Player Profile</div>
+      <button class="pd-close" onclick="closeDetailPanel()">✕</button>
+    </div>
+    <div class="pd-body">
+      <div class="pd-player-header">
+        <div class="pd-avatar" id="pd-avatar">
+          ⚔️<div class="pd-ring"></div>
+        </div>
+        <div>
+          <div class="pd-name" id="pd-name">—</div>
+          <div class="pd-rank-chip cb-s" id="pd-rank-chip">S-Class</div>
+        </div>
+      </div>
+      <div class="pd-stats-grid">
+        <div class="pd-stat"><span class="pd-stat-val" style="color:var(--gold)" id="pd-score">—</span><span
+            class="pd-stat-label">Score</span></div>
+        <div class="pd-stat"><span class="pd-stat-val" style="color:var(--blue)" id="pd-xp">—</span><span
+            class="pd-stat-label">Total XP</span></div>
+        <div class="pd-stat"><span class="pd-stat-val" style="color:var(--teal)" id="pd-quests">—</span><span
+            class="pd-stat-label">Quests</span></div>
+        <div class="pd-stat"><span class="pd-stat-val" style="color:var(--purple)" id="pd-level">—</span><span
+            class="pd-stat-label">Level</span></div>
+      </div>
+      <div class="pd-badges" id="pd-badges"></div>
+      <button class="challenge-btn" onclick="challengePlayer()">⟡ Challenge Player</button>
+    </div>
+  </div>
+
+  <!-- ════ TOAST ════ -->
+  <div class="toast" id="toast"><span>✓</span><span id="toast-msg"></span></div>
+
+  <!-- MOBILE BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <div class="bnav-inner">
+      <div class="bnav-item" onclick="window.location.href='index-1.html'">
+        <div class="bnav-icon">🏠</div>
+        <div class="bnav-label">Home</div>
+      </div>
+      <div class="bnav-item" onclick="window.location.href='quest-arena.html'">
+        <div class="bnav-icon">⚔️</div>
+        <div class="bnav-label">Quest</div>
+      </div>
+      <div class="bnav-item active">
+        <div class="bnav-icon">🏆</div>
+        <div class="bnav-label">Ranks</div>
+      </div>
+      <div class="bnav-item" onclick="window.location.href='dashboard.html'">
+        <div class="bnav-icon">🛡️</div>
+        <div class="bnav-label">Profile</div>
+      </div>
+      <div class="bnav-item" onclick="window.location.href='news-hub.html'">
+        <div class="bnav-icon">📡</div>
+        <div class="bnav-label">News</div>
+      </div>
+      <div class="bnav-item" onclick="openDrawer()">
+        <div class="bnav-icon">☰</div>
+        <div class="bnav-label">Menu</div>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- ════════════════════════════════════
+     SLIDE-OUT DRAWER
+════════════════════════════════════ -->
+  <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()">
+    <div class="drawer" onclick="event.stopPropagation()">
+      <div class="drawer-header">
+        <div class="drawer-title">Anime Aawaj</div>
+        <div class="drawer-close" onclick="closeDrawer()">✕</div>
+      </div>
+      <div class="drawer-body">
+        <div class="drawer-section-label">Navigation</div>
+        <div class="drawer-item" onclick="window.location.href='index-1.html'">
+          <div class="drawer-item-icon">🏠</div> Home
+        </div>
+        <div class="drawer-item" onclick="window.location.href='dashboard.html'">
+          <div class="drawer-item-icon">🛡️</div> Player Profile
+        </div>
+        <div class="drawer-item" onclick="window.location.href='quest-arena.html'">
+          <div class="drawer-item-icon">⚔️</div> Quest Board
+        </div>
+        <div class="drawer-item active" onclick="window.location.href='rankings.html'">
+          <div class="drawer-item-icon">🏆</div> Guild Rankings
+        </div>
+        <div class="drawer-item" onclick="window.location.href='news-hub.html'">
+          <div class="drawer-item-icon">📰</div> Anime News
+        </div>
+        <div class="drawer-section-label" style="margin-top:10px;">Creator</div>
+        <div class="drawer-item" onclick="openCreatorModal(); closeDrawer()">
+          <div class="drawer-item-icon">✍️</div> Apply for Creator ID
+        </div>
+        <div class="drawer-item" onclick="window.location.href='rankings.html'">
+          <div class="drawer-item-icon">🎖️</div> Hall of Fame
+        </div>
+        <div class="drawer-section-label" style="margin-top:10px;">Account</div>
+        <div class="drawer-item" onclick="window.location.href='dashboard.html'">
+          <div class="drawer-item-icon">⚙️</div> Settings
+        </div>
+        <div class="drawer-item" id="aa-drawer-logout" style="color: var(--crimson);">
+          <div class="drawer-item-icon">🚪</div> Log Out
+        </div>
+      </div>
+      <div class="drawer-footer">
+        <div style="font-family:'Orbitron',monospace; font-size:0.58rem; color:var(--ghost); letter-spacing:1px;">
+          SEASON III · GUILD SYSTEM v0.1
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════
+     FIREBASE + RANKINGS ENGINE
+════════════════════════════════ -->
+  <script type="module">
+    /* ─────────────────────────────────────────────
+       FIREBASE IMPORTS
+       [Beru Hook] Replace 'YOUR_CONFIG' references
+       with actual firebase-config.js import once deployed.
+       For now this works as a live demo with mock data.
+    ───────────────────────────────────────────── */
+
+    // ════ MOCK DATA (Replace with Firestore listener in production) ════
+    // [Beru] Replace this array with:
+    // import { listenLeaderboard } from './js/guild-db.js';
+    // const unsubscribe = listenLeaderboard(renderLeaderboard, 100);
+
+    const MOCK_PLAYERS = [
+      { rank: 1, uid: 'u1', username: 'ShadowKing_NP', title: 'Shadow Monarch', emoji: '⚔️', tier: 'S', score: 18430, xp: 7300, quests: 128, streak: 21, level: 43, badges: ['creator', 'speed', 'streak'], trend: 0 },
+      { rank: 2, uid: 'u2', username: 'AnimeRei_07', title: 'The Moonlit Scholar', emoji: '🌙', tier: 'S', score: 15880, xp: 6200, quests: 110, streak: 14, level: 39, badges: ['scholar', 'speed'], trend: 1 },
+      { rank: 3, uid: 'u3', username: 'Bijuli_Sensei', title: 'The Thunder Sage', emoji: '⚡', tier: 'A', score: 13200, xp: 5100, quests: 95, streak: 8, level: 35, badges: ['sensei'], trend: -1 },
+      { rank: 4, uid: 'u4', username: 'KageNoShin', title: 'Blade of Shadows', emoji: '🗡️', tier: 'B', score: 10750, xp: 4400, quests: 82, streak: 5, level: 30, badges: [], trend: 0 },
+      { rank: 5, uid: 'u5', username: 'SakuraNP', title: 'The Cherry Blossom', emoji: '🌸', tier: 'B', score: 9600, xp: 3900, quests: 74, streak: 3, level: 28, badges: ['creator'], trend: 2 },
+      { rank: 6, uid: 'u6', username: 'Agni_Kathmandu', title: 'Fire of the Valley', emoji: '🔥', tier: 'B', score: 8350, xp: 3200, quests: 68, streak: 0, level: 25, badges: [], trend: -2 },
+      { rank: 7, uid: 'u7', username: 'OtakuHunter', title: 'The Relentless Scout', emoji: '🎯', tier: 'A', score: 7100, xp: 2800, quests: 60, streak: 7, level: 22, badges: ['speed'], trend: 0 },
+      { rank: 8, uid: 'u8', username: 'DragonPokhari', title: 'Serpent of the Lake', emoji: '🐉', tier: 'B', score: 6400, xp: 2400, quests: 52, streak: 4, level: 20, badges: [], trend: 1 },
+      { rank: 9, uid: 'u9', username: 'StarGazer_NP', title: 'Watcher of the Void', emoji: '⭐', tier: 'B', score: 5200, xp: 1900, quests: 44, streak: 2, level: 18, badges: [], trend: 0 },
+      { rank: 10, uid: 'u10', username: 'MizunoKai', title: 'The Still Current', emoji: '🌊', tier: 'A', score: 4800, xp: 1700, quests: 38, streak: 1, level: 15, badges: [], trend: -1 },
+      { rank: 11, uid: 'u11', username: 'YukiStorm', title: 'Blizzard Tempest', emoji: '❄️', tier: 'C', score: 4200, xp: 1400, quests: 32, streak: 0, level: 13, badges: [], trend: 0 },
+      { rank: 12, uid: 'u12', username: 'RinNP', title: 'The Quiet Blade', emoji: '🌺', tier: 'C', score: 3700, xp: 1200, quests: 28, streak: 5, level: 11, badges: ['speed'], trend: 3 },
+      { rank: 13, uid: 'u13', username: 'GhostMaru', title: 'Invisible Step', emoji: '👻', tier: 'C', score: 3100, xp: 980, quests: 24, streak: 0, level: 10, badges: [], trend: 0 },
+      { rank: 14, uid: 'u14', username: 'KatanaKP', title: 'Sword Saint Hopeful', emoji: '⚔️', tier: 'D', score: 2600, xp: 800, quests: 20, streak: 2, level: 8, badges: [], trend: -1 },
+      { rank: 15, uid: 'u15', username: 'NewbieNP', title: 'E-Rank Adventurer', emoji: '🔰', tier: 'E', score: 400, xp: 200, quests: 4, streak: 0, level: 2, badges: [], trend: 0 },
+    ];
+
+    // ════ STATE ════
+    let allPlayers = [...MOCK_PLAYERS];
+    let filteredPlayers = [...MOCK_PLAYERS];
+    let currentPage = 1;
+    const PAGE_SIZE = 10;
+    let activeTimeFilter = 'alltime';
+    let activeTierFilter = null;
+    let searchQuery = '';
+    let selectedPlayer = null;
+    const CURRENT_USER_UID = 'u1'; // [Beru] Replace: auth.currentUser?.uid
+
+    // ════ INIT ════
+    window.addEventListener('load', () => {
+      spawnBannerParticles();
+      initParticles();
+      renderSkeleton();
+      setTimeout(() => {
+        renderBannerStats();
+        renderTierCounts();
+        renderLeaderboard();
+        renderNearYou();
+        populateMyRankCard();
+        startSeasonTimer();
+        startXPBarAnim();
+        startLiveUpdateClock();
+      }, 600); // simulate network fetch
+    });
+
+    // ════ BANNER PARTICLES ════
+    function spawnBannerParticles() {
+      const wrap = document.getElementById('banner-particles');
+      const colors = ['#FFD700', '#FF8C00', '#7B5CF5', '#00D4FF'];
+      for (let i = 0; i < 18; i++) {
+        const p = document.createElement('div');
+        p.className = 'b-particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.bottom = Math.random() * 60 + '%';
+        p.style.background = colors[i % colors.length];
+        p.style.animationDuration = (3 + Math.random() * 5) + 's';
+        p.style.animationDelay = (Math.random() * 4) + 's';
+        p.style.setProperty('--dx', (Math.random() * 30 - 15) + 'px');
+        wrap.appendChild(p);
+      }
+    }
+
+    // ════ FX CANVAS ════
+    function initParticles() {
+      const canvas = document.getElementById('fx-canvas');
+      const ctx = canvas.getContext('2d');
+      let W, H, particles = [];
+      const resize = () => { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; };
+      const spawn = () => ({
+        x: Math.random() * W, y: H + 10,
+        vx: (Math.random() - .5) * .3, vy: -(Math.random() * .5 + .15),
+        size: Math.random() * 1.5 + .3,
+        alpha: Math.random() * .4 + .1,
+        color: Math.random() > .5 ? '#00D4FF' : '#7B5CF5'
+      });
+      function tick() {
+        ctx.clearRect(0, 0, W, H);
+        if (particles.length < 50) particles.push(spawn());
+        particles = particles.filter(p => p.y > -10);
+        particles.forEach(p => {
+          p.x += p.vx; p.y += p.vy;
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = p.color; ctx.globalAlpha = p.alpha; ctx.fill();
+        });
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(tick);
+      }
+      resize(); window.addEventListener('resize', resize); tick();
+    }
+
+    // ════ BANNER STATS ════
+    function renderBannerStats() {
+      animCount('stat-total-players', 0, allPlayers.length, 800);
+      animCount('stat-quests-today', 0, 247, 1000);
+      animCount('stat-online-now', 0, 38, 700);
+    }
+
+    function animCount(id, from, to, duration) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const step = (to - from) / (duration / 16);
+      let cur = from;
+      const t = setInterval(() => {
+        cur = Math.min(cur + step, to);
+        el.textContent = Math.round(cur).toLocaleString();
+        if (cur >= to) clearInterval(t);
+      }, 16);
+    }
+
+    // ════ TIER COUNTS ════
+    function renderTierCounts() {
+      const counts = {};
+      allPlayers.forEach(p => { counts[p.tier] = (counts[p.tier] || 0) + 1; });
+      ['SS', 'S', 'A', 'B', 'C', 'D', 'E'].forEach(t => {
+        const el = document.getElementById('count-' + t.toLowerCase());
+        if (el) el.textContent = (counts[t] || 0) + ' Players';
+      });
+    }
+
+    // ════ SKELETON LOADING ════
+    function renderSkeleton() {
+      const body = document.getElementById('lb-skeleton');
+      body.innerHTML = Array.from({ length: 8 }, () => `
+    <div class="skeleton-row">
+      <div class="skel" style="width:80%;height:16px"></div>
+      <div class="skel" style="width:60%;height:16px"></div>
+      <div class="skel" style="width:90%;height:16px"></div>
+      <div class="skel" style="width:70%;height:16px"></div>
+      <div class="skel" style="width:60%;height:16px"></div>
+      <div class="skel" style="width:50%;height:16px"></div>
+      <div class="skel" style="width:50%;height:16px"></div>
+    </div>
+  `).join('');
+    }
+
+    // ════ MAIN RENDER ════
+    function renderLeaderboard() {
+      document.getElementById('lb-skeleton').innerHTML = '';
+
+      // Apply filters
+      filteredPlayers = allPlayers.filter(p => {
+        const matchTier = !activeTierFilter || p.tier === activeTierFilter;
+        const matchSearch = !searchQuery || p.username.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchTier && matchSearch;
+      });
+
+      // Re-rank filtered list
+      const ranked = filteredPlayers.map((p, i) => ({ ...p, displayRank: i + 1 }));
+
+      // Paginate
+      const start = (currentPage - 1) * PAGE_SIZE;
+      const pageData = ranked.slice(start, start + PAGE_SIZE);
+      const total = ranked.length;
+
+      const body = document.getElementById('lb-body');
+      body.innerHTML = '';
+
+      if (pageData.length === 0) {
+        body.innerHTML = '<div style="padding:40px;text-align:center;font-family:\'Orbitron\',monospace;font-size:.65rem;color:var(--ghost)">⚠ No players found</div>';
+        return;
+      }
+
+      pageData.forEach((p, i) => {
+        const isMe = p.uid === CURRENT_USER_UID;
+        const posClass = p.displayRank === 1 ? 'pos-1' : p.displayRank === 2 ? 'pos-2' : p.displayRank === 3 ? 'pos-3' : '';
+        const rankIcon = p.displayRank === 1 ? '👑' : p.displayRank === 2 ? '🥈' : p.displayRank === 3 ? '🥉' : p.displayRank;
+        const classMap = { SS: 'cb-ss', S: 'cb-s', A: 'cb-a', B: 'cb-b', C: 'cb-c', D: 'cb-d', E: 'cb-e' };
+        const trendIcon = p.trend > 0 ? `<span class="trend-up">↑${p.trend}</span>` :
+          p.trend < 0 ? `<span class="trend-down">↓${Math.abs(p.trend)}</span>` :
+            `<span class="trend-same">—</span>`;
+        const badgesHtml = p.badges.map(b => {
+          const map = { creator: 'rb-creator Creator', speed: 'rb-speed Speed⚡', streak: 'rb-streak Streak🔥', sensei: 'rb-creator Sensei', scholar: 'rb-speed Scholar' };
+          const parts = (map[b] || '').split(' ');
+          return `<span class="row-badge ${parts[0]}">${parts.slice(1).join(' ')}</span>`;
+        }).join('');
+
+        const row = document.createElement('div');
+        row.className = `player-row ${posClass} ${isMe ? 'is-me' : ''}`;
+        row.style.animationDelay = (i * 0.04) + 's';
+        row.id = isMe ? 'my-row' : '';
+        row.onclick = () => openDetailPanel(p);
+        row.innerHTML = `
+      <div class="cell-rank">
+        <span class="rank-icon">${typeof rankIcon === 'number' ? rankIcon : rankIcon}</span>
+        ${trendIcon}
+      </div>
+      <div class="cell-class">
+        <div class="class-badge ${classMap[p.tier]}">${p.tier}</div>
+      </div>
+      <div class="cell-player">
+        <div class="row-avatar">${p.emoji}</div>
+        <div class="row-info">
+          <div class="row-name">${p.username} ${isMe ? '<span style="font-size:.6rem;color:var(--blue);font-family:\'Orbitron\',monospace;"> ← YOU</span>' : ''}</div>
+          <div class="row-title">${p.title}</div>
+          <div class="row-badges">${badgesHtml}</div>
+        </div>
+      </div>
+      <div class="cell-score">${p.score.toLocaleString()}</div>
+      <div class="cell-xp">${p.xp.toLocaleString()} XP</div>
+      <div class="cell-quests">${p.quests}</div>
+      <div class="cell-streak">${p.streak}🔥</div>
+    `;
+        body.appendChild(row);
+      });
+
+      // Footer
+      document.getElementById('lb-count-info').textContent =
+        `Showing ${start + 1}–${Math.min(start + PAGE_SIZE, total)} of ${total} players`;
+
+      // Pagination
+      renderPagination(Math.ceil(total / PAGE_SIZE));
+    }
+
+    function renderPagination(totalPages) {
+      const wrap = document.getElementById('pagination');
+      wrap.innerHTML = '';
+      for (let i = 1; i <= Math.min(totalPages, 5); i++) {
+        const btn = document.createElement('button');
+        btn.className = 'page-btn' + (i === currentPage ? ' active' : '');
+        btn.textContent = i;
+        btn.onclick = () => { currentPage = i; renderLeaderboard(); };
+        wrap.appendChild(btn);
+      }
+    }
+
+    // ════ FILTERS ════
+    window.setTimeFilter = function (el, val) {
+      document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+      activeTimeFilter = val;
+      currentPage = 1;
+      // [Beru] In production, pass val to Firestore query here
+      renderLeaderboard();
+      showToast('⟡ ' + val.charAt(0).toUpperCase() + val.slice(1) + ' rankings loaded');
+    };
+
+    window.filterByTier = function (tier) {
+      activeTierFilter = activeTierFilter === tier ? null : tier;
+      document.querySelectorAll('.tier-card').forEach(c => c.classList.remove('active-tier'));
+      if (activeTierFilter) {
+        event.currentTarget.classList.add('active-tier');
+      }
+      currentPage = 1;
+      renderLeaderboard();
+    };
+
+    window.handleSearch = function (val) {
+      searchQuery = val;
+      currentPage = 1;
+      renderLeaderboard();
+    };
+
+    window.scrollToMyRank = function () {
+      const myRow = document.getElementById('my-row');
+      if (myRow) {
+        myRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        myRow.style.boxShadow = '0 0 20px rgba(0,212,255,.3)';
+        setTimeout(() => myRow.style.boxShadow = '', 2000);
+      } else {
+        showToast('⚠ Log in to see your rank', true);
+      }
+    };
+
+    // ════ MY RANK CARD ════
+    function populateMyRankCard() {
+      const me = allPlayers.find(p => p.uid === CURRENT_USER_UID);
+      if (!me) return;
+      const card = document.getElementById('my-rank-card');
+      document.getElementById('mrc-avatar').textContent = me.emoji;
+      document.getElementById('mrc-name').textContent = me.username;
+      document.getElementById('mrc-rank').textContent = me.tier + '-Class · ' + me.title;
+      document.getElementById('mrc-position').textContent = me.rank;
+      document.getElementById('mrc-score').textContent = me.score.toLocaleString();
+      document.getElementById('mrc-streak').textContent = me.streak + '🔥';
+      document.getElementById('mrc-quests').textContent = me.quests;
+      document.getElementById('mrc-level').textContent = 'Lv.' + me.level;
+      document.getElementById('mrc-xp-val').textContent = me.xp.toLocaleString() + ' / 10,000 XP';
+    }
+
+    function startXPBarAnim() {
+      const me = allPlayers.find(p => p.uid === CURRENT_USER_UID);
+      if (!me) return;
+      const pct = Math.min((me.xp / 10000) * 100, 100);
+      setTimeout(() => { document.getElementById('mrc-xp-fill').style.width = pct + '%'; }, 700);
+    }
+
+    // ════ NEAR YOU ════
+    function renderNearYou() {
+      const myIdx = allPlayers.findIndex(p => p.uid === CURRENT_USER_UID);
+      const me = allPlayers[myIdx];
+      if (!me) return;
+
+      const start = Math.max(0, myIdx - 2);
+      const nearby = allPlayers.slice(start, myIdx + 3);
+
+      const wrap = document.getElementById('near-you-list');
+      wrap.innerHTML = nearby.map(p => {
+        const isMe = p.uid === CURRENT_USER_UID;
+        const gap = isMe ? '' : `<div class="near-gap">${me.score > p.score ? '+' + (me.score - p.score).toLocaleString() : '-' + (p.score - me.score).toLocaleString()} pts</div>`;
+        return `
+      <div class="near-row ${isMe ? 'is-me' : ''}" onclick="openDetailPanel(${JSON.stringify(p).replace(/"/g, '&quot;')})">
+        <div class="near-pos">${p.rank}</div>
+        <div class="near-avatar">${p.emoji}</div>
+        <div style="flex:1">
+          <div class="near-name">${p.username}${isMe ? ' ← YOU' : ''}</div>
+          ${gap}
+        </div>
+        <div class="near-score">${p.score.toLocaleString()}</div>
+      </div>
+    `;
+      }).join('');
+    }
+
+    // ════ DETAIL PANEL ════
+    window.openDetailPanel = function (p) {
+      selectedPlayer = p;
+      const classMap = { SS: 'cb-ss', S: 'cb-s', A: 'cb-a', B: 'cb-b', C: 'cb-c', D: 'cb-d', E: 'cb-e' };
+      document.getElementById('pd-avatar').innerHTML = p.emoji + '<div class="pd-ring"></div>';
+      document.getElementById('pd-name').textContent = p.username;
+      document.getElementById('pd-rank-chip').className = 'pd-rank-chip ' + classMap[p.tier];
+      document.getElementById('pd-rank-chip').textContent = p.tier + '-Class';
+      document.getElementById('pd-score').textContent = p.score.toLocaleString();
+      document.getElementById('pd-xp').textContent = p.xp.toLocaleString();
+      document.getElementById('pd-quests').textContent = p.quests;
+      document.getElementById('pd-level').textContent = 'Lv.' + p.level;
+
+      const badgesMap = { creator: 'rb-creator Creator', speed: 'rb-speed Speed⚡', streak: 'rb-streak Streak🔥', sensei: 'rb-creator Sensei', scholar: 'rb-speed Scholar' };
+      document.getElementById('pd-badges').innerHTML = (p.badges || []).map(b => {
+        const parts = (badgesMap[b] || '').split(' ');
+        return `<span class="pd-badge ${parts[0]}">${parts.slice(1).join(' ')}</span>`;
+      }).join('') || '<span style="font-size:.75rem;color:var(--ghost)">No badges yet</span>';
+
+      document.getElementById('player-detail').classList.add('open');
+    };
+
+    window.closeDetailPanel = function () {
+      document.getElementById('player-detail').classList.remove('open');
+    };
+
+    window.challengePlayer = function () {
+      if (selectedPlayer) {
+        showToast('⟡ Challenge sent to ' + selectedPlayer.username + '!');
+        closeDetailPanel();
+        // [Beru Hook] Create challenge document in Firestore:
+        // firestore.collection('challenges').add({ from: currentUser.uid, to: selectedPlayer.uid, ... })
+      }
+    };
+
+    // ════ SEASON COUNTDOWN ════
+    function startSeasonTimer() {
+      // Season ends April 30, 2026
+      const END = new Date('2026-04-30T23:59:59').getTime();
+
+      function tick() {
+        const now = Date.now();
+        const diff = Math.max(0, END - now);
+        const d = Math.floor(diff / 86400000);
+        const h = Math.floor((diff % 86400000) / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        document.getElementById('t-days').textContent = String(d).padStart(2, '0');
+        document.getElementById('t-hours').textContent = String(h).padStart(2, '0');
+        document.getElementById('t-mins').textContent = String(m).padStart(2, '0');
+        document.getElementById('t-secs').textContent = String(s).padStart(2, '0');
+      }
+      tick();
+      setInterval(tick, 1000);
+    }
+
+    // ════ LIVE UPDATE CLOCK ════
+    function startLiveUpdateClock() {
+      let secs = 0;
+      const el = document.getElementById('lb-update-time');
+      setInterval(() => {
+        secs++;
+        if (secs < 60) el.textContent = 'Updated ' + secs + 's ago';
+        else el.textContent = 'Updated ' + Math.floor(secs / 60) + 'm ago';
+
+        // Simulate occasional live rank changes
+        if (secs % 15 === 0) {
+          simulateLiveUpdate();
+        }
+      }, 1000);
+    }
+
+    function simulateLiveUpdate() {
+      // Randomly update one player's score slightly
+      const idx = Math.floor(Math.random() * allPlayers.length);
+      const gain = Math.floor(Math.random() * 80) + 20;
+      allPlayers[idx].score += gain;
+      allPlayers[idx].xp += gain;
+
+      // Re-sort by score
+      allPlayers.sort((a, b) => b.score - a.score);
+      allPlayers.forEach((p, i) => { p.rank = i + 1; });
+
+      // Re-render silently
+      renderLeaderboard();
+      renderNearYou();
+      renderTierCounts();
+      document.getElementById('lb-update-time').textContent = 'Updated just now';
+    }
+
+    // ════ TOAST ════
+    function showToast(msg, isErr = false) {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg;
+      t.style.borderColor = isErr ? '#FF3E6C' : '#00FFB3';
+      t.style.color = isErr ? '#FF3E6C' : '#00FFB3';
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+    window.showToast = showToast;
+
+    // ════ ESCAPE KEY ════
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        closeDetailPanel();
+        window.closeDrawer?.();
+      }
+    });
+
+    // ════ DRAWER (mobile menu) ════
+    window.openDrawer = function () {
+      document.getElementById('drawer-overlay')?.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.closeDrawer = function () {
+      document.getElementById('drawer-overlay')?.classList.remove('open');
+      document.body.style.overflow = '';
+    };
+
+    window.openCreatorModal = function () {
+      try { sessionStorage.setItem('aa_open_creator_modal', '1'); } catch (e) { }
+      window.closeDrawer?.();
+      window.location.href = 'dashboard.html';
+    };
+
+    // ════ LOGIN PLACEHOLDER ════
+    window.openLoginModal = function () {
+      import('./guild-auth.js').then(mod => {
+        mod.loginWithGoogle().catch(err => console.error('[Ranks] login error', err));
+      });
+    };
+
+  </script>
+
+</body>
+
+</html>

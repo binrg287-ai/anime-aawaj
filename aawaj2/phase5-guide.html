@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Phase 5A — Firebase Integration Kit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;600;900&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --void:    #04060F; --abyss:  #080C1A; --deep:   #0D1229;
+      --blue:    #00D4FF; --purple: #7B5CF5; --gold:   #FFD700;
+      --crimson: #FF3E6C; --teal:   #00FFB3;
+      --text:    #E8EEFF; --muted:  #7B8DB0; --ghost:  #3D4F6B;
+      --b-glow:  rgba(0,212,255,.22); --b-soft: rgba(123,92,245,.18);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{background:var(--void);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;padding:32px 20px 80px}
+    ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--void)}::-webkit-scrollbar-thumb{background:var(--purple);border-radius:2px}
+
+    .grid-bg{position:fixed;inset:0;pointer-events:none;z-index:0;background-image:repeating-linear-gradient(0deg,rgba(0,212,255,.012) 0,transparent 1px,transparent 60px),repeating-linear-gradient(90deg,rgba(0,212,255,.012) 0,transparent 1px,transparent 60px)}
+
+    /* PAGE */
+    .page{max-width:900px;margin:0 auto;position:relative;z-index:1}
+
+    .page-title{font-family:'Cinzel Decorative',serif;font-size:clamp(1.4rem,4vw,2.2rem);font-weight:900;background:linear-gradient(135deg,#fff,var(--blue),var(--purple));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+    .page-sub{font-family:'Orbitron',monospace;font-size:.65rem;letter-spacing:2px;color:var(--blue);text-transform:uppercase;margin-bottom:36px}
+
+    /* SECTION */
+    .guide-section{background:var(--deep);border:1px solid var(--b-soft);border-radius:4px;margin-bottom:24px;overflow:hidden}
+    .guide-header{padding:14px 20px;border-bottom:1px solid var(--b-soft);background:linear-gradient(90deg,rgba(0,212,255,.05),transparent);display:flex;align-items:center;gap:12px}
+    .guide-num{font-family:'Orbitron',monospace;font-size:.65rem;font-weight:900;width:24px;height:24px;border-radius:50%;background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.3);color:var(--blue);display:flex;align-items:center;justify-content:center}
+    .guide-title{font-family:'Orbitron',monospace;font-size:.68rem;font-weight:700;letter-spacing:2px;color:var(--blue);text-transform:uppercase}
+    .guide-body{padding:20px}
+
+    /* CODE BLOCKS */
+    pre{background:rgba(4,6,15,.9);border:1px solid var(--b-soft);border-radius:3px;padding:16px;overflow-x:auto;margin:10px 0;position:relative}
+    code{font-family:'Courier New',monospace;font-size:.82rem;color:var(--teal);line-height:1.6}
+    .code-comment{color:var(--ghost)}
+    .code-key{color:var(--blue)}
+    .code-str{color:var(--gold)}
+    .code-fn{color:var(--purple)}
+    .code-kw{color:var(--crimson)}
+
+    /* COPY BTN */
+    .copy-btn{position:absolute;top:8px;right:8px;padding:4px 10px;font-family:'Orbitron',monospace;font-size:.55rem;letter-spacing:1px;background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);color:var(--blue);cursor:pointer;border-radius:2px;transition:all .2s}
+    .copy-btn:hover{background:rgba(0,212,255,.2)}
+    .copy-btn.copied{color:var(--teal);border-color:var(--teal)}
+
+    /* PROSE */
+    p{font-size:.9rem;color:var(--muted);line-height:1.6;margin-bottom:12px}
+    strong{color:var(--text)}
+    .warn{color:var(--crimson);font-family:'Orbitron',monospace;font-size:.65rem;letter-spacing:1px;padding:10px 14px;background:rgba(255,62,108,.08);border:1px solid rgba(255,62,108,.2);border-radius:3px;margin:10px 0;display:block}
+    .tip{color:var(--teal);font-family:'Orbitron',monospace;font-size:.65rem;letter-spacing:1px;padding:10px 14px;background:rgba(0,255,179,.06);border:1px solid rgba(0,255,179,.18);border-radius:3px;margin:10px 0;display:block}
+
+    /* FILE TREE */
+    .file-tree{background:rgba(4,6,15,.9);border:1px solid var(--b-soft);border-radius:3px;padding:16px;font-family:'Courier New',monospace;font-size:.82rem;line-height:1.8;color:var(--muted)}
+    .ft-folder{color:var(--blue)}
+    .ft-file{color:var(--teal)}
+    .ft-new{color:var(--gold)}
+    .ft-comment{color:var(--ghost)}
+
+    /* CHECKLIST */
+    .checklist{list-style:none;padding:0}
+    .checklist li{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.88rem;color:var(--muted);display:flex;gap:10px;align-items:flex-start}
+    .checklist li:last-child{border-bottom:none}
+    .ci{font-size:1rem;flex-shrink:0}
+
+    /* ════ LOGIN MODAL ════ */
+    .modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(4,6,15,.94);backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:all .35s}
+    .modal-overlay.open{opacity:1;visibility:visible}
+    .modal-box{width:100%;max-width:420px;background:var(--deep);border:1px solid var(--b-glow);border-radius:6px;overflow:hidden;transform:translateY(20px) scale(.97);transition:transform .35s cubic-bezier(0.16,1,0.3,1)}
+    .modal-overlay.open .modal-box{transform:none}
+    .modal-header{padding:20px 24px 0;display:flex;justify-content:space-between;align-items:flex-start}
+    .modal-logo{font-family:'Cinzel Decorative',serif;font-size:1rem;background:linear-gradient(90deg,var(--blue),var(--purple));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+    .modal-close-btn{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid var(--b-soft);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.85rem;transition:all .2s;flex-shrink:0}
+    .modal-close-btn:hover{border-color:var(--crimson);color:var(--crimson)}
+    .modal-body{padding:20px 24px 24px}
+    .modal-welcome{font-family:'Cinzel',serif;font-size:1.2rem;font-weight:700;color:var(--text);margin-bottom:4px}
+    .modal-tagline{font-size:.8rem;color:var(--muted);margin-bottom:20px}
+
+    /* Auth Tabs */
+    .auth-tabs{display:flex;border-bottom:1px solid var(--b-soft);margin-bottom:20px}
+    .auth-tab{flex:1;padding:9px;font-family:'Orbitron',monospace;font-size:.6rem;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;background:transparent;color:var(--ghost);border:none;border-bottom:2px solid transparent;transition:all .2s}
+    .auth-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+
+    /* Auth Panels */
+    .auth-panel{display:none}
+    .auth-panel.active{display:block;animation:panel-in .25s ease}
+    @keyframes panel-in{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:none}}
+
+    /* Google btn */
+    .google-btn{width:100%;padding:12px;display:flex;align-items:center;justify-content:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:3px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;transition:all .25s;margin-bottom:16px}
+    .google-btn:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2)}
+    .google-icon{width:18px;height:18px}
+
+    /* Divider */
+    .auth-divider{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+    .auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--b-soft)}
+    .auth-divider-txt{font-family:'Orbitron',monospace;font-size:.55rem;color:var(--ghost);letter-spacing:1px;white-space:nowrap}
+
+    /* Form */
+    .auth-group{margin-bottom:14px}
+    .auth-label{display:block;font-family:'Orbitron',monospace;font-size:.58rem;letter-spacing:1.5px;color:var(--ghost);text-transform:uppercase;margin-bottom:5px}
+    .auth-input{width:100%;background:rgba(4,6,15,.8);border:1px solid var(--b-soft);border-radius:2px;color:var(--text);font-family:'Rajdhani',sans-serif;font-size:.95rem;padding:10px 14px;outline:none;transition:border-color .25s,box-shadow .25s;clip-path:polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%)}
+    .auth-input::placeholder{color:var(--ghost)}
+    .auth-input:focus{border-color:var(--blue);box-shadow:0 0 12px rgba(0,212,255,.12)}
+
+    /* Error */
+    .auth-error{display:none;font-family:'Orbitron',monospace;font-size:.6rem;letter-spacing:1px;color:var(--crimson);padding:8px 12px;background:rgba(255,62,108,.08);border:1px solid rgba(255,62,108,.2);border-radius:2px;margin-bottom:12px}
+
+    /* Submit btn */
+    .auth-submit{width:100%;padding:13px;background:transparent;border:1px solid var(--blue);color:var(--blue);font-family:'Orbitron',monospace;font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);transition:all .3s;margin-top:4px}
+    .auth-submit:hover{background:rgba(0,212,255,.1);box-shadow:0 0 20px rgba(0,212,255,.25)}
+    .auth-submit:disabled{opacity:.4;cursor:not-allowed}
+
+    /* Loading spinner */
+    .auth-submit.loading::after{content:' ...';animation:dots 1s infinite}
+    @keyframes dots{0%{content:' .'}33%{content:' ..'}66%{content:' ...'}}
+
+    .auth-footer-note{font-size:.72rem;color:var(--ghost);text-align:center;margin-top:14px;line-height:1.5}
+
+    /* TOAST */
+    .toast{position:fixed;bottom:24px;right:20px;z-index:600;background:var(--deep);border:1px solid var(--teal);border-radius:4px;padding:14px 20px;display:flex;align-items:center;gap:12px;font-family:'Orbitron',monospace;font-size:.65rem;letter-spacing:1px;color:var(--teal);transform:translateY(20px);opacity:0;transition:all .35s cubic-bezier(0.16,1,0.3,1);pointer-events:none;max-width:320px}
+    .toast.show{transform:none;opacity:1}
+
+    /* DEMO BUTTON */
+    .demo-btn{padding:12px 28px;background:transparent;border:1px solid var(--blue);color:var(--blue);font-family:'Orbitron',monospace;font-size:.72rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);transition:all .3s}
+    .demo-btn:hover{background:rgba(0,212,255,.1);box-shadow:0 0 20px rgba(0,212,255,.2)}
+  </style>
+</head>
+<body>
+<div class="grid-bg"></div>
+
+<div class="page">
+
+  <div class="page-title">Phase 5A — Firebase Integration</div>
+  <div class="page-sub">⟡ Iron's Complete Wiring Guide for the Guild</div>
+
+  <!-- ═══ FILE STRUCTURE ═══ -->
+  <div class="guide-section">
+    <div class="guide-header">
+      <div class="guide-num">📁</div>
+      <div class="guide-title">New Folder Structure</div>
+    </div>
+    <div class="guide-body">
+      <p>Tपाईंको project folder यस्तो हुनुपर्छ:</p>
+      <div class="file-tree">
+<span class="ft-folder">anime-aawaj-guild/</span>
+├── <span class="ft-file">index.html</span>         <span class="ft-comment">← Phase 1</span>
+├── <span class="ft-file">dashboard.html</span>     <span class="ft-comment">← Phase 2</span>
+├── <span class="ft-file">quest-arena.html</span>   <span class="ft-comment">← Phase 3</span>
+├── <span class="ft-file">news-hub.html</span>      <span class="ft-comment">← Phase 4</span>
+├── <span class="ft-new">firebase.json</span>       <span class="ft-comment">← auto-created by firebase init</span>
+├── <span class="ft-new">.firebaserc</span>         <span class="ft-comment">← auto-created by firebase init</span>
+└── <span class="ft-folder">js/</span>               <span class="ft-comment">← NEW folder tपाईंले banaunuhos</span>
+    ├── <span class="ft-new">firebase-config.js</span>  <span class="ft-comment">← Phase 5A ✅</span>
+    ├── <span class="ft-new">guild-auth.js</span>       <span class="ft-comment">← Phase 5A ✅</span>
+    └── <span class="ft-new">guild-db.js</span>         <span class="ft-comment">← Phase 5A ✅</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 1: CONFIG ═══ -->
+  <div class="guide-section">
+    <div class="guide-header">
+      <div class="guide-num">1</div>
+      <div class="guide-title">firebase-config.js मा आफ्नो Key राख्नुस्</div>
+    </div>
+    <div class="guide-body">
+      <span class="warn">⚠ SECURITY: तपाईंको API key यहाँ share नगर्नुस्। firebase-config.js मा मात्रै राख्नुस् र .gitignore मा थप्नुस्।</span>
+      <p><strong>js/firebase-config.js</strong> खोल्नुस् र <code>YOUR_API_KEY</code> भएको ठाउँमा तपाईंको actual values राख्नुस्:</p>
+      <pre><code><span class="code-comment">// js/firebase-config.js</span>
+<span class="code-kw">const</span> <span class="code-key">firebaseConfig</span> = {
+  <span class="code-key">apiKey</span>:            <span class="code-str">"AIzaSy..."</span>,   <span class="code-comment">// ← तपाईंको key</span>
+  <span class="code-key">authDomain</span>:        <span class="code-str">"anime-aawaj.firebaseapp.com"</span>,
+  <span class="code-key">projectId</span>:         <span class="code-str">"anime-aawaj"</span>,
+  <span class="code-key">storageBucket</span>:     <span class="code-str">"anime-aawaj.firebasestorage.app"</span>,
+  <span class="code-key">messagingSenderId</span>: <span class="code-str">"1010486..."</span>,  <span class="code-comment">// ← तपाईंको ID</span>
+  <span class="code-key">appId</span>:             <span class="code-str">"1:1010486..."</span>,  <span class="code-comment">// ← तपाईंको appId</span>
+  <span class="code-key">measurementId</span>:     <span class="code-str">"G-HWE3..."</span>     <span class="code-comment">// ← तपाईंको measurementId</span>
+};</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 2: SCRIPT TAGS ═══ -->
+  <div class="guide-section">
+    <div class="guide-header">
+      <div class="guide-num">2</div>
+      <div class="guide-title">हरेक HTML Page मा Script Tags थप्नुस्</div>
+    </div>
+    <div class="guide-body">
+      <p>हरेक HTML file को <strong>closing &lt;/body&gt; tag भन्दा अगाडि</strong> यो code थप्नुस्:</p>
+      <pre><code><span class="code-comment">&lt;!-- Firebase Scripts — सबै page मा थप्नुस् --&gt;</span>
+<span class="code-kw">&lt;script</span> <span class="code-key">type</span>=<span class="code-str">"module"</span><span class="code-kw">&gt;</span>
+  <span class="code-kw">import</span> { <span class="code-fn">openLoginModal</span>, <span class="code-fn">guildSignOut</span> }
+    <span class="code-kw">from</span> <span class="code-str">'./js/guild-auth.js'</span>;
+  <span class="code-kw">import</span> { <span class="code-fn">renderLeaderboardIntoDOM</span> }
+    <span class="code-str">'./js/guild-db.js'</span>;
+
+  <span class="code-comment">// Login button wiring</span>
+  <span class="code-fn">document</span>.<span class="code-fn">querySelectorAll</span>(<span class="code-str">'[data-auth="login-btn"]'</span>)
+    .<span class="code-fn">forEach</span>(btn =&gt; btn.onclick = openLoginModal);
+
+  <span class="code-comment">// Live leaderboard (if element exists on this page)</span>
+  <span class="code-fn">renderLeaderboardIntoDOM</span>(<span class="code-str">'leaderboard-list'</span>);
+<span class="code-kw">&lt;/script&gt;</span></code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+      <span class="tip">✅ type="module" → Firebase SDK ko lagi required. Sab kaam garcha.</span>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 3: LOGIN MODAL ═══ -->
+  <div class="guide-section">
+    <div class="guide-header">
+      <div class="guide-num">3</div>
+      <div class="guide-title">Login Modal — हरेक Page मा थप्नुस् (Demo तल छ)</div>
+    </div>
+    <div class="guide-body">
+      <p>यो HTML snippet हरेक page को <strong>&lt;/body&gt; अगाडि</strong> copy गर्नुस्। Live demo तल छ — "Open Login Modal" थिच्नुस्:</p>
+      <button class="demo-btn" onclick="document.getElementById('login-modal').classList.add('open');document.body.style.overflow='hidden'">
+        ⊞ Open Login Modal Demo
+      </button>
+      <pre style="margin-top:16px"><code><span class="code-comment">&lt;!-- LOGIN MODAL — paste before &lt;/body&gt; --&gt;</span>
+<span class="code-kw">&lt;div</span> <span class="code-key">class</span>=<span class="code-str">"modal-overlay"</span> <span class="code-key">id</span>=<span class="code-str">"login-modal"</span><span class="code-kw">&gt;</span>
+  <span class="code-kw">&lt;div</span> <span class="code-key">class</span>=<span class="code-str">"modal-box"</span><span class="code-kw">&gt;</span>
+    <span class="code-comment">&lt;!-- Copy full HTML from this page's source --&gt;</span>
+    <span class="code-comment">&lt;!-- id="login-modal" is the key reference --&gt;</span>
+  <span class="code-kw">&lt;/div&gt;</span>
+<span class="code-kw">&lt;/div&gt;</span>
+
+<span class="code-comment">&lt;!-- TOAST --&gt;</span>
+<span class="code-kw">&lt;div</span> <span class="code-key">class</span>=<span class="code-str">"toast"</span> <span class="code-key">id</span>=<span class="code-str">"toast"</span><span class="code-kw">&gt;</span>
+  <span class="code-kw">&lt;span&gt;</span>✓<span class="code-kw">&lt;/span&gt;</span>
+  <span class="code-kw">&lt;span</span> <span class="code-key">id</span>=<span class="code-str">"toast-msg"</span><span class="code-kw">&gt;&lt;/span&gt;</span>
+<span class="code-kw">&lt;/div&gt;</span></code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 4: AUTH SETUP ═══ -->
+  <div class="guide-section">
+    <div class="guide-header">
+      <div class="guide-num">4</div>
+      <div class="guide-title">Firebase Console मा Google Auth Enable गर्नुस्</div>
+    </div>
+    <div class="guide-body">
+      <ul class="checklist">
+        <li><span class="ci">1️⃣</span> <span><strong>console.firebase.google.com</strong> → anime-aawaj project → Authentication</span></li>
+        <li><span class="ci">2️⃣</span> <span>"Get started" → Sign-in method → <strong>Google</strong> → Enable → Save</span></li>
+        <li><span class="ci">3️⃣</span> <span>Email/Password → Enable → Save</span></li>
+        <li><span class="ci">4️⃣</span> <span>Authorized domains मा <strong>localhost</strong> र तपाईंको live domain थप्नुस्</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 5: FIRESTORE RULES ═══ -->
+  <div class="guide-section">
+    <div class="guide-header">
+      <div class="guide-num">5</div>
+      <div class="guide-title">Firestore Security Rules — Copy गर्नुस्</div>
+    </div>
+    <div class="guide-body">
+      <p><strong>Firestore → Rules</strong> tab मा जानुस् र यो paste गर्नुस्:</p>
+      <pre><code><span class="code-fn">rules_version</span> = <span class="code-str">'2'</span>;
+<span class="code-kw">service</span> cloud.firestore {
+  <span class="code-kw">match</span> /databases/{database}/documents {
+
+    <span class="code-comment">// Players — read public, write own only</span>
+    <span class="code-kw">match</span> /players/{uid} {
+      <span class="code-kw">allow</span> read:  <span class="code-kw">if</span> true;
+      <span class="code-kw">allow</span> write: <span class="code-kw">if</span> request.auth.uid == uid;
+    }
+
+    <span class="code-comment">// Posts — read public, write creators only</span>
+    <span class="code-kw">match</span> /posts/{postId} {
+      <span class="code-kw">allow</span> read:   <span class="code-kw">if</span> true;
+      <span class="code-kw">allow</span> create: <span class="code-kw">if</span> request.auth != null
+        && get(/databases/$(database)/documents/players/$(request.auth.uid))
+           .data.isCreator == true;
+      <span class="code-kw">allow</span> update,delete: <span class="code-kw">if</span>
+        request.auth.uid == resource.data.authorId;
+    }
+
+    <span class="code-comment">// Quest Results — write own, read own</span>
+    <span class="code-kw">match</span> /quest_results/{resultId} {
+      <span class="code-kw">allow</span> read,write: <span class="code-kw">if</span>
+        request.auth.uid == request.resource.data.userId;
+    }
+
+    <span class="code-comment">// Gallery — read public, write logged-in</span>
+    <span class="code-kw">match</span> /gallery/{imageId} {
+      <span class="code-kw">allow</span> read:   <span class="code-kw">if</span> true;
+      <span class="code-kw">allow</span> create: <span class="code-kw">if</span> request.auth != null;
+      <span class="code-kw">allow</span> delete: <span class="code-kw">if</span>
+        request.auth.uid == resource.data.uid;
+    }
+
+    <span class="code-comment">// Creator Apps — write own, read admin only</span>
+    <span class="code-kw">match</span> /creator_apps/{appId} {
+      <span class="code-kw">allow</span> create: <span class="code-kw">if</span> request.auth != null;
+      <span class="code-kw">allow</span> read,update: <span class="code-kw">if</span>
+        request.auth.uid == resource.data.uid;
+    }
+
+    <span class="code-comment">// Quests — read only</span>
+    <span class="code-kw">match</span> /quests/{questId} {
+      <span class="code-kw">allow</span> read: <span class="code-kw">if</span> true;
+      <span class="code-kw">allow</span> write: <span class="code-kw">if</span> false; <span class="code-comment">// Admin only via console</span>
+      <span class="code-kw">match</span> /questions/{qId} {
+        <span class="code-kw">allow</span> read: <span class="code-kw">if</span> true;
+      }
+    }
+  }
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 6: DEPLOY ═══ -->
+  <div class="guide-section">
+    <div class="guide-header">
+      <div class="guide-num">6</div>
+      <div class="guide-title">Deploy गर्नुस् → anime-aawaj.web.app</div>
+    </div>
+    <div class="guide-body">
+      <pre><code><span class="code-comment"># Terminal मा project folder भित्र जानुस्</span>
+cd anime-aawaj-guild
+
+<span class="code-comment"># Firebase project initialize (एकपटक मात्र)</span>
+firebase init
+
+<span class="code-comment"># Public directory? → . (dot)
+# Single page app? → N
+# Overwrite index.html? → N</span>
+
+<span class="code-comment"># Deploy</span>
+firebase deploy
+
+<span class="code-comment"># Output:</span>
+<span class="code-str">✔ Deploy complete!
+  Hosting URL: https://anime-aawaj.web.app</span></code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+      <span class="tip">✅ Free Spark plan मा 10GB/month hosting, 1GB Firestore reads/day — Guild ko lagi enough cha suru ma.</span>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+
+<!-- ═════════════════════════
+     LOGIN MODAL (Full Demo)
+═════════════════════════ -->
+<div class="modal-overlay" id="login-modal" onclick="handleModalOverlayClick(event)">
+  <div class="modal-box">
+
+    <div class="modal-header">
+      <div class="modal-logo">Anime Aawaj</div>
+      <button class="modal-close-btn" onclick="closeModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="modal-welcome">Enter the Guild</div>
+      <div class="modal-tagline">Login to track your rank, earn XP, and claim glory.</div>
+
+      <!-- Auth Tabs -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="setAuthTab(this,'signin')">Sign In</button>
+        <button class="auth-tab" onclick="setAuthTab(this,'register')">Register</button>
+      </div>
+
+      <!-- Error display -->
+      <div class="auth-error" id="auth-error-1"></div>
+
+      <!-- SIGN IN PANEL -->
+      <div class="auth-panel active" id="panel-signin">
+
+        <!-- Google -->
+        <button class="google-btn" onclick="handleGoogleLogin()">
+          <svg class="google-icon" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          Continue with Google
+        </button>
+
+        <div class="auth-divider"><div class="auth-divider-txt">OR</div></div>
+
+        <div class="auth-group">
+          <label class="auth-label">Email</label>
+          <input type="email" class="auth-input" id="si-email" placeholder="your@email.com"/>
+        </div>
+        <div class="auth-group">
+          <label class="auth-label">Password</label>
+          <input type="password" class="auth-input" id="si-password" placeholder="••••••••"
+            onkeydown="if(event.key==='Enter')handleEmailLogin()"/>
+        </div>
+        <button class="auth-submit" id="si-btn" onclick="handleEmailLogin()">
+          ⟡ Enter the Guild
+        </button>
+        <div class="auth-footer-note">Forgot password? <span style="color:var(--blue);cursor:pointer">Reset here</span></div>
+      </div>
+
+      <!-- REGISTER PANEL -->
+      <div class="auth-panel" id="panel-register">
+
+        <button class="google-btn" onclick="handleGoogleLogin()">
+          <svg class="google-icon" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          Register with Google
+        </button>
+
+        <div class="auth-divider"><div class="auth-divider-txt">OR</div></div>
+
+        <div class="auth-group">
+          <label class="auth-label">Guild Username</label>
+          <input type="text" class="auth-input" id="reg-username" placeholder="e.g. ShadowKing_NP"/>
+        </div>
+        <div class="auth-group">
+          <label class="auth-label">Email</label>
+          <input type="email" class="auth-input" id="reg-email" placeholder="your@email.com"/>
+        </div>
+        <div class="auth-group">
+          <label class="auth-label">Password (min 6 characters)</label>
+          <input type="password" class="auth-input" id="reg-password" placeholder="••••••••"/>
+        </div>
+        <button class="auth-submit" id="reg-btn" onclick="handleEmailRegister()">
+          ⟡ Join the Guild
+        </button>
+        <div class="auth-footer-note">By joining, you accept the Guild's <span style="color:var(--blue);cursor:pointer">Terms of Battle</span></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span>✓</span>
+  <span id="toast-msg">Welcome to the Guild!</span>
+</div>
+
+
+<script>
+  /* ── Modal UI (non-Firebase) ── */
+  function setAuthTab(el, id) {
+    document.querySelectorAll('.auth-tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('panel-' + id).classList.add('active');
+    document.getElementById('auth-error-1').style.display = 'none';
+  }
+
+  function closeModal() {
+    document.getElementById('login-modal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function handleModalOverlayClick(e) {
+    if (e.target === document.getElementById('login-modal')) closeModal();
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  /* ── Firebase Auth calls (module) ── */
+  async function handleGoogleLogin() {
+    /* [Beru Hook] In actual pages, import loginWithGoogle from guild-auth.js
+       import { loginWithGoogle } from './js/guild-auth.js';
+       await loginWithGoogle();
+    */
+    // DEMO only:
+    showToastDemo('⟡ Google login works in deployed site!', false);
+    closeModal();
+  }
+
+  async function handleEmailLogin() {
+    const email    = document.getElementById('si-email').value;
+    const password = document.getElementById('si-password').value;
+    if (!email || !password) {
+      showError('⚠ Please fill in both fields.');
+      return;
+    }
+    /* [Beru Hook]
+       import { loginWithEmail } from './js/guild-auth.js';
+       await loginWithEmail(email, password);
+    */
+    showToastDemo('⟡ Email login works in deployed site!', false);
+    closeModal();
+  }
+
+  async function handleEmailRegister() {
+    const username = document.getElementById('reg-username').value;
+    const email    = document.getElementById('reg-email').value;
+    const password = document.getElementById('reg-password').value;
+    if (!username || !email || !password) {
+      showError('⚠ All fields are required.');
+      return;
+    }
+    /* [Beru Hook]
+       import { registerWithEmail } from './js/guild-auth.js';
+       await registerWithEmail(username, email, password);
+    */
+    showToastDemo('⟡ Registration works in deployed site!', false);
+    closeModal();
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('auth-error-1');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  function showToastDemo(msg, isErr) {
+    const t = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    t.style.borderColor = isErr ? '#FF3E6C' : '#00FFB3';
+    t.style.color       = isErr ? '#FF3E6C' : '#00FFB3';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  /* ── Copy button ── */
+  function copyCode(btn) {
+    const pre  = btn.parentElement;
+    const text = pre.querySelector('code').innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+</script>
+
+</body>
+</html>

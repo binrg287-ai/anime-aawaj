@@ -1,0 +1,2616 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Quest Arena — Anime Aawaj Guild</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;600;900&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* ═══════════════════════════════════════
+       ROOT PALETTE
+    ═══════════════════════════════════════ */
+    :root {
+      --bg-void: #04060F;
+      --bg-abyss: #080C1A;
+      --bg-deep: #0D1229;
+      --bg-glass: rgba(13, 18, 41, 0.6);
+      --neon-blue: #00D4FF;
+      --neon-purple: #7B5CF5;
+      --neon-gold: #FFD700;
+      --neon-crimson: #FF3E6C;
+      --neon-teal: #00FFB3;
+      --neon-green: #39FF14;
+      --text-primary: #E8EEFF;
+      --text-muted: #7B8DB0;
+      --text-ghost: #3D4F6B;
+      --border-glow: rgba(0, 212, 255, 0.22);
+      --border-soft: rgba(123, 92, 245, 0.18);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg-void);
+      color: var(--text-primary);
+      font-family: 'Rajdhani', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-void);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--neon-purple);
+      border-radius: 2px;
+    }
+
+    /* ══ GLOBAL GRID ══ */
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        repeating-linear-gradient(0deg, rgba(0, 212, 255, 0.013) 0, transparent 1px, transparent 60px),
+        repeating-linear-gradient(90deg, rgba(0, 212, 255, 0.013) 0, transparent 1px, transparent 60px);
+    }
+
+    /* Particle canvas */
+    #particle-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.5;
+    }
+
+    /* ══ NAVBAR ══ */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: rgba(4, 6, 15, 0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-glow);
+      height: 58px;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .nav-center {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 2px;
+      color: var(--neon-blue);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .live-pip {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--neon-teal);
+      animation: blink 1.2s infinite;
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .2
+      }
+    }
+
+    .nav-player {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.62rem;
+      color: var(--text-muted);
+    }
+
+    .nav-player-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      border: 1.5px solid rgba(0, 212, 255, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-player-avatar img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      display: none;
+    }
+
+    .nav-player-avatar.has-photo img {
+      display: block;
+    }
+
+    .nav-player-avatar.has-photo .nav-player-fallback {
+      display: none;
+    }
+
+    .aa-auth-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 25000;
+      background: rgba(4, 6, 15, 0.92);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .aa-auth-gate[hidden] {
+      display: none !important;
+    }
+
+    .aa-auth-gate-spinner {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 2px solid rgba(0, 212, 255, 0.2);
+      border-top-color: var(--neon-blue);
+      animation: spin-quest 0.85s linear infinite;
+    }
+
+    @keyframes spin-quest {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .aa-auth-gate-text {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 2px;
+      color: var(--text-ghost);
+      text-transform: uppercase;
+    }
+
+    /* ══ SCREENS ══ */
+    .screen {
+      display: none;
+      position: relative;
+      z-index: 1;
+    }
+
+    .screen.active {
+      display: block;
+      animation: screen-fade 0.4s ease;
+    }
+
+    @keyframes screen-fade {
+      from {
+        opacity: 0;
+        transform: translateY(10px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    /* ══════════════════════════════════
+       SCREEN 1: QUEST LOBBY
+    ══════════════════════════════════ */
+    .lobby-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    .lobby-banner {
+      position: relative;
+      border-radius: 6px;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(13, 18, 41, 0.95), rgba(8, 12, 26, 0.98));
+      border: 1px solid var(--border-glow);
+      padding: 36px 32px 32px;
+      margin-bottom: 32px;
+    }
+
+    .lobby-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 85% 50%, rgba(0, 212, 255, 0.06), transparent 65%);
+      pointer-events: none;
+    }
+
+    .lobby-banner::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--neon-blue), var(--neon-purple), transparent);
+    }
+
+    .quest-rank-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      padding: 4px 14px;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+      margin-bottom: 16px;
+    }
+
+    .chip-s {
+      background: rgba(255, 215, 0, .12);
+      color: var(--neon-gold);
+      border: 1px solid rgba(255, 215, 0, .3);
+    }
+
+    .chip-a {
+      background: rgba(123, 92, 245, .12);
+      color: var(--neon-purple);
+      border: 1px solid rgba(123, 92, 245, .3);
+    }
+
+    .chip-b {
+      background: rgba(0, 212, 255, .10);
+      color: var(--neon-blue);
+      border: 1px solid rgba(0, 212, 255, .25);
+    }
+
+    .quest-title-lg {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      line-height: 1.1;
+    }
+
+    .quest-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    .quest-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    .quest-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.65rem;
+      color: var(--text-ghost);
+      letter-spacing: 1px;
+    }
+
+    .quest-meta-item strong {
+      color: var(--neon-blue);
+      font-size: 0.72rem;
+    }
+
+    .quest-meta-item.gold strong {
+      color: var(--neon-gold);
+    }
+
+    .quest-meta-item.purple strong {
+      color: var(--neon-purple);
+    }
+
+    .quest-meta-item.teal strong {
+      color: var(--neon-teal);
+    }
+
+    .lobby-art {
+      position: absolute;
+      right: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 6rem;
+      opacity: 0.12;
+      pointer-events: none;
+      animation: float-slow 5s ease-in-out infinite;
+    }
+
+    @keyframes float-slow {
+
+      0%,
+      100% {
+        transform: translateY(-50%) translateX(0)
+      }
+
+      50% {
+        transform: translateY(calc(-50% - 10px)) translateX(4px)
+      }
+    }
+
+    .start-quest-btn {
+      position: relative;
+      padding: 16px 48px;
+      background: transparent;
+      border: 1px solid var(--neon-blue);
+      color: var(--neon-blue);
+      font-family: 'Orbitron', monospace;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      cursor: pointer;
+      overflow: hidden;
+      clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+      transition: all .35s;
+    }
+
+    .start-quest-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 212, 255, .15), rgba(123, 92, 245, .1));
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .start-quest-btn:hover {
+      box-shadow: 0 0 40px rgba(0, 212, 255, .35), 0 0 80px rgba(0, 212, 255, .1);
+      transform: translateY(-2px);
+      color: #fff;
+    }
+
+    .start-quest-btn:hover::before {
+      opacity: 1;
+    }
+
+    .start-quest-btn span {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Leaderboard preview */
+    .lobby-section-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--neon-blue);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .lobby-section-title::before {
+      content: '';
+      display: inline-block;
+      width: 3px;
+      height: 14px;
+      background: linear-gradient(180deg, var(--neon-blue), var(--neon-purple));
+    }
+
+    .lobby-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media(max-width:640px) {
+      .lobby-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .lobby-panel {
+      background: var(--bg-deep);
+      border: 1px solid var(--border-soft);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .lobby-panel-header {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-soft);
+      background: linear-gradient(90deg, rgba(0, 212, 255, .04), transparent);
+    }
+
+    .lb-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 9px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, .03);
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .lb-row:last-child {
+      border-bottom: none;
+    }
+
+    .lb-pos {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.65rem;
+      color: var(--text-ghost);
+      width: 18px;
+    }
+
+    .lb-pos.g {
+      color: var(--neon-gold);
+    }
+
+    .lb-pos.s {
+      color: #C0C0C0;
+    }
+
+    .lb-pos.b {
+      color: #CD7F32;
+    }
+
+    .lb-name {
+      flex: 1;
+      color: var(--text-muted);
+    }
+
+    .lb-score {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.65rem;
+      color: var(--neon-blue);
+    }
+
+    .rule-pill {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, .03);
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .rule-pill:last-child {
+      border-bottom: none;
+    }
+
+    .rule-num {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.62rem;
+      color: var(--neon-blue);
+      background: rgba(0, 212, 255, .08);
+      border: 1px solid rgba(0, 212, 255, .2);
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════════
+       SCREEN 2: COUNTDOWN
+    ══════════════════════════════════ */
+    .countdown-screen {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .countdown-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 4px;
+      color: var(--neon-blue);
+      text-transform: uppercase;
+      margin-bottom: 28px;
+      animation: pulse-text 1s ease-in-out infinite;
+    }
+
+    @keyframes pulse-text {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .5
+      }
+    }
+
+    .countdown-num {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(6rem, 20vw, 12rem);
+      font-weight: 900;
+      line-height: 1;
+      background: linear-gradient(135deg, #fff, var(--neon-blue), var(--neon-purple));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: count-pop 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      filter: drop-shadow(0 0 30px rgba(0, 212, 255, 0.4));
+    }
+
+    @keyframes count-pop {
+      from {
+        transform: scale(1.3);
+        opacity: 0
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1
+      }
+    }
+
+    .countdown-ring {
+      width: 220px;
+      height: 220px;
+      position: relative;
+      margin-bottom: 32px;
+    }
+
+    .countdown-ring svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .ring-track {
+      fill: none;
+      stroke: rgba(0, 212, 255, 0.08);
+      stroke-width: 4;
+    }
+
+    .ring-fill {
+      fill: none;
+      stroke: url(#ringGrad);
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-dasharray: 628;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s linear;
+    }
+
+    .countdown-num-inner {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .countdown-go {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(4rem, 15vw, 8rem);
+      font-weight: 900;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--neon-teal), var(--neon-blue));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: count-pop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      filter: drop-shadow(0 0 40px rgba(0, 255, 179, 0.5));
+      display: none;
+    }
+
+    .countdown-quest-name {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      color: var(--text-muted);
+      letter-spacing: 2px;
+      margin-top: 12px;
+    }
+
+    /* ══════════════════════════════════
+       SCREEN 3: QUIZ ARENA
+    ══════════════════════════════════ */
+    .arena-wrap {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 24px 20px 80px;
+    }
+
+    /* HUD Bar */
+    .hud-bar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    .hud-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.65rem;
+      color: var(--text-ghost);
+      letter-spacing: 1px;
+      background: var(--bg-deep);
+      border: 1px solid var(--border-soft);
+      padding: 7px 14px;
+      border-radius: 2px;
+      clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+    }
+
+    .hud-item strong {
+      color: var(--neon-blue);
+      font-size: 0.72rem;
+    }
+
+    .hud-item.hud-score strong {
+      color: var(--neon-gold);
+    }
+
+    .hud-item.hud-streak strong {
+      color: var(--neon-teal);
+    }
+
+    .hud-progress-wrap {
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .hud-progress-bar {
+      height: 5px;
+      background: rgba(255, 255, 255, .05);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .hud-progress-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+      transition: width .5s ease;
+    }
+
+    .hud-qcount {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.58rem;
+      color: var(--text-ghost);
+      margin-top: 4px;
+    }
+
+    /* Timer Ring */
+    .timer-ring-wrap {
+      position: relative;
+      width: 72px;
+      height: 72px;
+      flex-shrink: 0;
+    }
+
+    .timer-ring-wrap svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .t-track {
+      fill: none;
+      stroke: rgba(255, 255, 255, .06);
+      stroke-width: 4;
+    }
+
+    .t-fill {
+      fill: none;
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-dasharray: 201;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s linear, stroke .5s;
+    }
+
+    .timer-label {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Orbitron', monospace;
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: var(--neon-blue);
+    }
+
+    /* Question Card */
+    .question-card {
+      background: var(--bg-glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-glow);
+      border-radius: 6px;
+      padding: 28px 28px 24px;
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+      animation: q-enter .35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes q-enter {
+      from {
+        opacity: 0;
+        transform: translateY(16px) scale(.98)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    .question-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--neon-blue), transparent);
+      animation: line-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes line-pulse {
+
+      0%,
+      100% {
+        opacity: .5
+      }
+
+      50% {
+        opacity: 1
+      }
+    }
+
+    .q-number {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 2px;
+      color: var(--neon-blue);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .q-text {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1rem, 3vw, 1.25rem);
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    .q-emoji {
+      font-size: 1.6rem;
+      margin-bottom: 8px;
+      display: block;
+      filter: drop-shadow(0 0 8px rgba(0, 212, 255, .3));
+    }
+
+    /* Answer Options */
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media(max-width:500px) {
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .option-btn {
+      position: relative;
+      width: 100%;
+      text-align: left;
+      padding: 14px 16px 14px 48px;
+      background: var(--bg-deep);
+      border: 1px solid var(--border-soft);
+      border-radius: 3px;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .22s;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+      line-height: 1.35;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: rgba(0, 212, 255, .4);
+      color: var(--text-primary);
+      background: rgba(0, 212, 255, .04);
+      transform: translateX(3px);
+    }
+
+    .option-letter {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Orbitron', monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--text-ghost);
+      background: rgba(255, 255, 255, .05);
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .2s;
+    }
+
+    .option-btn:hover:not(:disabled) .option-letter {
+      background: rgba(0, 212, 255, .15);
+      color: var(--neon-blue);
+    }
+
+    /* Correct / Wrong states */
+    .option-btn.correct {
+      border-color: var(--neon-teal) !important;
+      background: rgba(0, 255, 179, .08) !important;
+      color: var(--neon-teal) !important;
+      animation: correct-glow .5s ease;
+    }
+
+    .option-btn.correct .option-letter {
+      background: var(--neon-teal);
+      color: var(--bg-void);
+    }
+
+    @keyframes correct-glow {
+      0% {
+        box-shadow: 0 0 0 rgba(0, 255, 179, 0)
+      }
+
+      50% {
+        box-shadow: 0 0 30px rgba(0, 255, 179, .35)
+      }
+
+      100% {
+        box-shadow: 0 0 12px rgba(0, 255, 179, .1)
+      }
+    }
+
+    .option-btn.wrong {
+      border-color: var(--neon-crimson) !important;
+      background: rgba(255, 62, 108, .07) !important;
+      color: var(--neon-crimson) !important;
+      animation: shake .45s ease;
+    }
+
+    .option-btn.wrong .option-letter {
+      background: var(--neon-crimson);
+      color: #fff;
+    }
+
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: translateX(0)
+      }
+
+      20% {
+        transform: translateX(-6px)
+      }
+
+      40% {
+        transform: translateX(6px)
+      }
+
+      60% {
+        transform: translateX(-4px)
+      }
+
+      80% {
+        transform: translateX(4px)
+      }
+    }
+
+    .option-btn.dimmed {
+      opacity: 0.3;
+      cursor: default;
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+    }
+
+    /* Feedback Banner */
+    .feedback-banner {
+      padding: 12px 20px;
+      border-radius: 3px;
+      margin-bottom: 20px;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      animation: banner-in .3s ease;
+    }
+
+    @keyframes banner-in {
+      from {
+        opacity: 0;
+        transform: translateY(-8px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    .feedback-banner.correct-fb {
+      display: flex;
+      background: rgba(0, 255, 179, .08);
+      border: 1px solid rgba(0, 255, 179, .3);
+      color: var(--neon-teal);
+    }
+
+    .feedback-banner.wrong-fb {
+      display: flex;
+      background: rgba(255, 62, 108, .08);
+      border: 1px solid rgba(255, 62, 108, .3);
+      color: var(--neon-crimson);
+    }
+
+    .fb-xp {
+      margin-left: auto;
+      font-size: 0.8rem;
+      color: var(--neon-gold);
+      white-space: nowrap;
+    }
+
+    .next-btn {
+      width: 100%;
+      padding: 14px;
+      background: transparent;
+      border: 1px solid var(--neon-blue);
+      color: var(--neon-blue);
+      font-family: 'Orbitron', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all .3s;
+      clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+      display: none;
+    }
+
+    .next-btn:hover {
+      background: rgba(0, 212, 255, .1);
+      box-shadow: 0 0 25px rgba(0, 212, 255, .25);
+      transform: translateY(-2px);
+    }
+
+    /* Bonus XP flash */
+    .xp-float {
+      position: fixed;
+      pointer-events: none;
+      z-index: 999;
+      font-family: 'Orbitron', monospace;
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--neon-gold);
+      text-shadow: 0 0 16px rgba(255, 215, 0, .6);
+      animation: xp-rise 1.6s ease forwards;
+    }
+
+    @keyframes xp-rise {
+      0% {
+        opacity: 1;
+        transform: translateY(0) scale(1)
+      }
+
+      80% {
+        opacity: 1;
+        transform: translateY(-80px) scale(1.2)
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(-120px) scale(0.8)
+      }
+    }
+
+    /* ══════════════════════════════════
+       SCREEN 4: RESULTS
+    ══════════════════════════════════ */
+    .results-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    .results-header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .results-crown {
+      font-size: 4rem;
+      display: block;
+      margin-bottom: 12px;
+      animation: crown-bounce .6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes crown-bounce {
+      from {
+        transform: scale(0) rotate(-20deg)
+      }
+
+      to {
+        transform: scale(1) rotate(0)
+      }
+    }
+
+    .results-grade {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(3rem, 12vw, 6rem);
+      font-weight: 900;
+      line-height: 1;
+      animation: grade-reveal .5s .2s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes grade-reveal {
+      from {
+        opacity: 0;
+        transform: scale(0.6)
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1)
+      }
+    }
+
+    .grade-s {
+      background: linear-gradient(135deg, #FFD700, #FF8C00);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 20px rgba(255, 215, 0, .5));
+    }
+
+    .grade-a {
+      background: linear-gradient(135deg, var(--neon-purple), #A855F7);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 20px rgba(123, 92, 245, .5));
+    }
+
+    .grade-b {
+      background: linear-gradient(135deg, var(--neon-blue), var(--neon-teal));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 20px rgba(0, 212, 255, .4));
+    }
+
+    .grade-c {
+      background: linear-gradient(135deg, #94a3b8, #64748b);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .grade-f {
+      background: linear-gradient(135deg, var(--neon-crimson), #dc2626);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .results-verdict {
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-top: 8px;
+      letter-spacing: 2px;
+    }
+
+    .results-score-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    @media(max-width:480px) {
+      .results-score-row {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .score-card {
+      background: var(--bg-deep);
+      border: 1px solid var(--border-soft);
+      border-radius: 4px;
+      padding: 18px 14px;
+      text-align: center;
+      animation: score-rise .5s ease both;
+    }
+
+    @keyframes score-rise {
+      from {
+        opacity: 0;
+        transform: translateY(14px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    .score-card:nth-child(1) {
+      animation-delay: .1s
+    }
+
+    .score-card:nth-child(2) {
+      animation-delay: .18s
+    }
+
+    .score-card:nth-child(3) {
+      animation-delay: .26s
+    }
+
+    .sc-icon {
+      font-size: 1.5rem;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .sc-val {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.4rem;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .sc-val.blue {
+      color: var(--neon-blue);
+    }
+
+    .sc-val.gold {
+      color: var(--neon-gold);
+    }
+
+    .sc-val.teal {
+      color: var(--neon-teal);
+    }
+
+    .sc-val.crimson {
+      color: var(--neon-crimson);
+    }
+
+    .sc-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      letter-spacing: .5px;
+    }
+
+    /* XP Reward Bar */
+    .xp-reward-panel {
+      background: linear-gradient(135deg, rgba(123, 92, 245, .1), rgba(0, 212, 255, .08));
+      border: 1px solid rgba(123, 92, 245, .3);
+      border-radius: 4px;
+      padding: 22px 24px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .xp-reward-panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--neon-purple), var(--neon-blue));
+    }
+
+    .xp-panel-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      color: var(--neon-purple);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .xp-earned-big {
+      font-family: 'Orbitron', monospace;
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--neon-gold);
+      letter-spacing: -1px;
+    }
+
+    .xp-bar-track {
+      height: 8px;
+      background: rgba(255, 255, 255, .05);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 12px;
+      position: relative;
+    }
+
+    .xp-bar-before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      background: rgba(0, 212, 255, .25);
+      border-radius: 4px;
+    }
+
+    .xp-bar-after {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple), var(--neon-teal));
+      border-radius: 4px;
+      transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1) .5s;
+    }
+
+    .xp-bar-after::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 8px;
+      height: 100%;
+      background: white;
+      opacity: .6;
+      filter: blur(2px);
+    }
+
+    .xp-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 6px;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.58rem;
+      color: var(--text-ghost);
+    }
+
+    .xp-meta .new-val {
+      color: var(--neon-teal);
+    }
+
+    /* Breakdown */
+    .breakdown-list {
+      margin-bottom: 24px;
+    }
+
+    .breakdown-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, .03);
+      font-size: 0.85rem;
+    }
+
+    .breakdown-item:last-child {
+      border-bottom: none;
+    }
+
+    .bd-q {
+      flex: 1;
+      color: var(--text-muted);
+    }
+
+    .bd-q strong {
+      color: var(--text-primary);
+    }
+
+    .bd-result {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.65rem;
+    }
+
+    .bd-result.c {
+      color: var(--neon-teal);
+    }
+
+    .bd-result.w {
+      color: var(--neon-crimson);
+    }
+
+    .bd-time {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.6rem;
+      color: var(--text-ghost);
+    }
+
+    .bd-xp {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.65rem;
+      color: var(--neon-gold);
+    }
+
+    /* Action buttons */
+    .results-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    @media(max-width:420px) {
+      .results-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .res-btn {
+      padding: 14px 20px;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all .3s;
+      border-radius: 2px;
+    }
+
+    .res-btn-primary {
+      background: transparent;
+      border: 1px solid var(--neon-blue);
+      color: var(--neon-blue);
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    }
+
+    .res-btn-primary:hover {
+      background: rgba(0, 212, 255, .1);
+      box-shadow: 0 0 20px rgba(0, 212, 255, .25);
+      transform: translateY(-2px);
+    }
+
+    .res-btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border-soft);
+      color: var(--text-muted);
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    }
+
+    .res-btn-secondary:hover {
+      border-color: var(--text-muted);
+      color: var(--text-primary);
+    }
+
+    .share-strip {
+      text-align: center;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.58rem;
+      color: var(--text-ghost);
+      letter-spacing: 1px;
+    }
+
+    /* ══ MOBILE BOTTOM NAV ══ */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 300;
+      background: rgba(4, 6, 15, .95);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border-glow);
+      display: none;
+      padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+
+    @media(max-width:1023px) {
+      .bottom-nav {
+        display: flex !important;
+      }
+    }
+
+    .bnav-inner {
+      display: flex;
+      width: 100%;
+    }
+
+    .bnav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      padding: 8px 4px;
+      cursor: pointer;
+      transition: background .2s;
+      position: relative;
+    }
+
+    .bnav-item.active::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 28px;
+      height: 2px;
+      background: var(--neon-blue);
+    }
+
+    .bnav-icon {
+      font-size: 1.2rem;
+    }
+
+    .bnav-label {
+      font-family: 'Orbitron', monospace;
+      font-size: .5rem;
+      letter-spacing: .5px;
+      color: var(--text-ghost);
+      text-transform: uppercase;
+    }
+
+    .bnav-item.active .bnav-label {
+      color: var(--neon-blue);
+    }
+
+    /* ═══════════════════════════════════════
+       SLIDE-OUT DRAWER (mobile menu)
+    ═══════════════════════════════════════ */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 400;
+      background: rgba(4, 6, 15, 0.6);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    .drawer-overlay.open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: -300px;
+      bottom: 0;
+      width: 280px;
+      z-index: 401;
+      background: var(--bg-abyss);
+      border-left: 1px solid var(--border-glow);
+      transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    .drawer-overlay.open .drawer {
+      right: 0
+    }
+
+    .drawer-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .drawer-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.9rem;
+      background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .drawer-close {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-soft);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .drawer-close:hover {
+      border-color: var(--neon-crimson);
+      color: var(--neon-crimson)
+    }
+
+    .drawer-body {
+      padding: 12px 0;
+      flex: 1;
+      overflow-y: auto
+    }
+
+    .drawer-section-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 2px;
+      color: var(--text-ghost);
+      text-transform: uppercase;
+      padding: 8px 20px 6px;
+    }
+
+    .drawer-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .drawer-item:hover {
+      background: rgba(0, 212, 255, 0.04);
+      color: var(--text-primary)
+    }
+
+    .drawer-item.active {
+      color: var(--neon-blue)
+    }
+
+    .drawer-item-icon {
+      width: 20px;
+      text-align: center;
+      font-size: 1rem
+    }
+
+    .drawer-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border-soft)
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="aa-auth-gate" class="aa-auth-gate">
+    <div class="aa-auth-gate-spinner" aria-hidden="true"></div>
+    <div class="aa-auth-gate-text">Syncing with guild network…</div>
+  </div>
+
+  <div class="grid-bg"></div>
+  <canvas id="particle-canvas"></canvas>
+
+  <!-- ══ NAVBAR ══ -->
+  <nav class="navbar">
+    <a href="index-1.html" class="nav-logo">Anime Aawaj</a>
+    <div class="nav-center">
+      <div class="live-pip"></div>
+      <span id="nav-mode-label">Quest Arena</span>
+    </div>
+    <div class="nav-player">
+      <span id="nav-player-name" class="nav-player-name"
+        style="max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+      <span id="nav-live-score" style="color:var(--neon-gold);display:none;">0 pts</span>
+      <div class="nav-player-avatar" id="aa-quest-avatar-wrap">
+        <img id="aa-quest-avatar" alt="" width="32" height="32" decoding="async" />
+        <span class="nav-player-fallback">⚔️</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════
+     SCREEN 1: LOBBY
+═══════════════════════════════════ -->
+  <div class="screen active" id="screen-lobby">
+    <div class="lobby-wrap">
+
+      <div class="lobby-banner">
+        <div class="lobby-art">🗡️</div>
+
+        <div class="quest-rank-chip chip-s">◆ S — RANK QUEST</div>
+        <div class="quest-title-lg">Zoro's Lost Path</div>
+        <div class="quest-subtitle">
+          Navigate the cursed sea of questions aboard the Thousand Sunny.
+          Only the sharpest swordsman knows every wrong turn Zoro ever took.
+        </div>
+
+        <div class="quest-meta-row">
+          <div class="quest-meta-item">
+            📋 <span>Questions: <strong>5</strong></span>
+          </div>
+          <div class="quest-meta-item gold">
+            ⏱ Time: <strong>20s / Q</strong>
+          </div>
+          <div class="quest-meta-item purple">
+            💎 Max XP: <strong>+500</strong>
+          </div>
+          <div class="quest-meta-item teal">
+            👥 Played: <strong>2,418</strong>
+          </div>
+          <div class="quest-meta-item">
+            🎯 Avg Score: <strong>64%</strong>
+          </div>
+        </div>
+
+        <button type="button" class="start-quest-btn" id="btn-begin-quest" disabled onclick="startCountdown()">
+          <span>⟡ Begin Quest ⟡</span>
+        </button>
+      </div>
+
+      <div class="lobby-grid">
+
+        <!-- Leaderboard Preview -->
+        <div class="lobby-panel">
+          <div class="lobby-panel-header">
+            <div class="lobby-section-title">Top Adventurers</div>
+          </div>
+          <div class="lb-row">
+            <div class="lb-pos g">1</div>
+            <div class="lb-name">ShadowKing_NP</div>
+            <div class="lb-score">500 pts</div>
+          </div>
+          <div class="lb-row">
+            <div class="lb-pos s">2</div>
+            <div class="lb-name">AnimeRei_07</div>
+            <div class="lb-score">490 pts</div>
+          </div>
+          <div class="lb-row">
+            <div class="lb-pos b">3</div>
+            <div class="lb-name">Bijuli_Sensei</div>
+            <div class="lb-score">470 pts</div>
+          </div>
+          <div class="lb-row">
+            <div class="lb-pos">4</div>
+            <div class="lb-name">KageNoShin</div>
+            <div class="lb-score">460 pts</div>
+          </div>
+          <div class="lb-row">
+            <div class="lb-pos">5</div>
+            <div class="lb-name">SakuraNP</div>
+            <div class="lb-score">440 pts</div>
+          </div>
+        </div>
+
+        <!-- Rules -->
+        <div class="lobby-panel">
+          <div class="lobby-panel-header">
+            <div class="lobby-section-title">Quest Rules</div>
+          </div>
+          <div class="rule-pill">
+            <div class="rule-num">1</div>You have <strong>20 seconds</strong> per question. Faster answers earn Bonus
+            XP.
+          </div>
+          <div class="rule-pill">
+            <div class="rule-num">2</div>Correct streak builds multipliers — don't break the chain.
+          </div>
+          <div class="rule-pill">
+            <div class="rule-num">3</div>Wrong answers still earn <strong>0 XP</strong> — never negative. Keep fighting.
+          </div>
+          <div class="rule-pill">
+            <div class="rule-num">4</div>S-Rank requires <strong>100%</strong> accuracy. A-Rank needs 80%+.
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+     SCREEN 2: COUNTDOWN
+═══════════════════════════════════ -->
+  <div class="screen" id="screen-countdown">
+    <div class="countdown-screen">
+      <div class="countdown-label" id="countdown-label">Preparing Arena...</div>
+      <div class="countdown-ring">
+        <svg viewBox="0 0 220 220">
+          <defs>
+            <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#00D4FF" />
+              <stop offset="100%" stop-color="#7B5CF5" />
+            </linearGradient>
+          </defs>
+          <circle class="ring-track" cx="110" cy="110" r="100" />
+          <circle class="ring-fill" cx="110" cy="110" r="100" id="ring-fill" />
+        </svg>
+        <div class="countdown-num-inner">
+          <div class="countdown-num" id="countdown-num">3</div>
+          <div class="countdown-go" id="countdown-go">GO!</div>
+        </div>
+      </div>
+      <div class="countdown-quest-name">Zoro's Lost Path — S Rank</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+     SCREEN 3: ARENA (QUIZ)
+═══════════════════════════════════ -->
+  <div class="screen" id="screen-arena">
+    <div class="arena-wrap">
+
+      <!-- HUD -->
+      <div class="hud-bar">
+        <div class="hud-item">
+          <span>Q</span><strong id="hud-q-num">1/5</strong>
+        </div>
+        <div class="hud-item hud-score">
+          <span>Score</span><strong id="hud-score">0</strong>
+        </div>
+        <div class="hud-item hud-streak">
+          <span>Streak</span><strong id="hud-streak">0🔥</strong>
+        </div>
+        <div class="hud-progress-wrap">
+          <div class="hud-progress-bar">
+            <div class="hud-progress-fill" id="hud-progress" style="width:0%"></div>
+          </div>
+          <div class="hud-qcount" id="hud-qcount">Question 1 of 5</div>
+        </div>
+        <div class="timer-ring-wrap">
+          <svg viewBox="0 0 72 72">
+            <defs>
+              <linearGradient id="timerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#00D4FF" />
+                <stop offset="100%" stop-color="#7B5CF5" />
+              </linearGradient>
+            </defs>
+            <circle class="t-track" cx="36" cy="36" r="32" />
+            <circle class="t-fill" cx="36" cy="36" r="32" id="timer-fill" stroke="url(#timerGrad)" />
+          </svg>
+          <div class="timer-label" id="timer-label">20</div>
+        </div>
+      </div>
+
+      <!-- Feedback Banner -->
+      <div class="feedback-banner" id="feedback-banner">
+        <span id="feedback-icon"></span>
+        <span id="feedback-text"></span>
+        <span class="fb-xp" id="feedback-xp"></span>
+      </div>
+
+      <!-- Question Card -->
+      <div class="question-card" id="question-card">
+        <div class="q-number" id="q-number">Question 01 of 05</div>
+        <span class="q-emoji" id="q-emoji">⚔️</span>
+        <div class="q-text" id="q-text">Loading question...</div>
+      </div>
+
+      <!-- Answer Options -->
+      <div class="options-grid" id="options-grid">
+        <button class="option-btn" id="opt-0" onclick="selectAnswer(0)">
+          <div class="option-letter">A</div>
+          <span id="opt-text-0"></span>
+        </button>
+        <button class="option-btn" id="opt-1" onclick="selectAnswer(1)">
+          <div class="option-letter">B</div>
+          <span id="opt-text-1"></span>
+        </button>
+        <button class="option-btn" id="opt-2" onclick="selectAnswer(2)">
+          <div class="option-letter">C</div>
+          <span id="opt-text-2"></span>
+        </button>
+        <button class="option-btn" id="opt-3" onclick="selectAnswer(3)">
+          <div class="option-letter">D</div>
+          <span id="opt-text-3"></span>
+        </button>
+      </div>
+
+      <!-- Next Button -->
+      <button class="next-btn" id="next-btn" onclick="nextQuestion()">
+        Next Question →
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+     SCREEN 4: RESULTS
+═══════════════════════════════════ -->
+  <div class="screen" id="screen-results">
+    <div class="results-wrap">
+
+      <!-- Grade Header -->
+      <div class="results-header">
+        <span class="results-crown" id="result-crown">🏆</span>
+        <div class="results-grade" id="result-grade"></div>
+        <div class="results-verdict" id="result-verdict"></div>
+      </div>
+
+      <!-- Score Cards -->
+      <div class="results-score-row">
+        <div class="score-card">
+          <span class="sc-icon">⚔️</span>
+          <div class="sc-val blue" id="res-correct">0</div>
+          <div class="sc-label">Correct</div>
+        </div>
+        <div class="score-card">
+          <span class="sc-icon">💀</span>
+          <div class="sc-val crimson" id="res-wrong">0</div>
+          <div class="sc-label">Wrong</div>
+        </div>
+        <div class="score-card">
+          <span class="sc-icon">⚡</span>
+          <div class="sc-val teal" id="res-accuracy">0%</div>
+          <div class="sc-label">Accuracy</div>
+        </div>
+      </div>
+
+      <!-- XP Reward -->
+      <div class="xp-reward-panel">
+        <div class="xp-panel-label">
+          <span>⟡ XP Earned This Quest</span>
+          <span id="res-bonus-tag" style="color:var(--neon-teal); display:none;">Speed Bonus Applied ⚡</span>
+        </div>
+        <div class="xp-earned-big" id="res-xp-earned">+0 XP</div>
+        <div class="xp-bar-track">
+          <div class="xp-bar-before" id="xp-bar-before" style="width:73%"></div>
+          <div class="xp-bar-after" id="xp-bar-after" style="width:73%"></div>
+        </div>
+        <div class="xp-meta">
+          <span id="xp-meta-level">Lv.1 — 0 XP</span>
+          <span class="new-val" id="xp-new-val">→ 0 XP</span>
+        </div>
+      </div>
+
+      <!-- Breakdown -->
+      <div style="margin-bottom:10px;">
+        <div class="lobby-section-title">Question Breakdown</div>
+      </div>
+      <div class="section-block breakdown-list" id="breakdown-list"
+        style="background:var(--bg-deep);border:1px solid var(--border-soft);border-radius:4px;margin-bottom:24px;">
+      </div>
+
+      <!-- Actions -->
+      <div class="results-actions">
+        <button class="res-btn res-btn-primary" onclick="retryQuest()">↺ Retry Quest</button>
+        <button class="res-btn res-btn-secondary" onclick="goHome()">⟶ Quest Board</button>
+      </div>
+      <div class="share-strip">Share your result · #AnimeAawajGuild</div>
+
+    </div>
+  </div>
+
+  <!-- MOBILE BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <div class="bnav-inner">
+      <div class="bnav-item" onclick="goHome()">
+        <div class="bnav-icon">🏠</div>
+        <div class="bnav-label">Home</div>
+      </div>
+      <div class="bnav-item active">
+        <div class="bnav-icon">⚔️</div>
+        <div class="bnav-label">Quest</div>
+      </div>
+      <div class="bnav-item" onclick="window.location.href='dashboard.html'">
+        <div class="bnav-icon">🛡️</div>
+        <div class="bnav-label">Profile</div>
+      </div>
+      <div class="bnav-item" onclick="window.location.href='rankings.html'">
+        <div class="bnav-icon">🏆</div>
+        <div class="bnav-label">Ranks</div>
+      </div>
+      <div class="bnav-item" onclick="openDrawer()">
+        <div class="bnav-icon">☰</div>
+        <div class="bnav-label">Menu</div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ════════════════════════════════════
+     SLIDE-OUT DRAWER
+════════════════════════════════════ -->
+  <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()">
+    <div class="drawer" onclick="event.stopPropagation()">
+      <div class="drawer-header">
+        <div class="drawer-title">Anime Aawaj</div>
+        <div class="drawer-close" onclick="closeDrawer()">✕</div>
+      </div>
+      <div class="drawer-body">
+        <div class="drawer-section-label">Navigation</div>
+        <div class="drawer-item" onclick="window.location.href='index-1.html'">
+          <div class="drawer-item-icon">🏠</div> Home
+        </div>
+        <div class="drawer-item" onclick="window.location.href='dashboard.html'">
+          <div class="drawer-item-icon">🛡️</div> Player Profile
+        </div>
+        <div class="drawer-item active" onclick="window.location.href='quest-arena.html'">
+          <div class="drawer-item-icon">⚔️</div> Quest Board
+        </div>
+        <div class="drawer-item" onclick="window.location.href='rankings.html'">
+          <div class="drawer-item-icon">🏆</div> Guild Rankings
+        </div>
+        <div class="drawer-item" onclick="window.location.href='news-hub.html'">
+          <div class="drawer-item-icon">📰</div> Anime News
+        </div>
+        <div class="drawer-section-label" style="margin-top:10px;">Creator</div>
+        <div class="drawer-item" onclick="openCreatorModal(); closeDrawer()">
+          <div class="drawer-item-icon">✍️</div> Apply for Creator ID
+        </div>
+        <div class="drawer-item" onclick="window.location.href='rankings.html'">
+          <div class="drawer-item-icon">🎖️</div> Hall of Fame
+        </div>
+        <div class="drawer-section-label" style="margin-top:10px;">Account</div>
+        <div class="drawer-item" onclick="window.location.href='dashboard.html'">
+          <div class="drawer-item-icon">⚙️</div> Settings
+        </div>
+        <div class="drawer-item" id="aa-drawer-logout" style="color: var(--neon-crimson);">
+          <div class="drawer-item-icon">🚪</div> Log Out
+        </div>
+      </div>
+      <div class="drawer-footer">
+        <div style="font-family:'Orbitron',monospace; font-size:0.58rem; color:var(--text-ghost); letter-spacing:1px;">
+          SEASON III · GUILD SYSTEM v0.1
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+     JAVASCRIPT — QUIZ ENGINE
+═══════════════════════════════════ -->
+  <script>
+    /* ═══════════════════════════════
+       QUESTION DATA
+       [Beru Hook] Replace this array with:
+       const questions = await firebase.firestore()
+         .collection('quests').doc(questId)
+         .collection('questions').get()
+    ═══════════════════════════════ */
+    const QUESTIONS = [
+      {
+        emoji: "⚔️",
+        text: "What is Zoro's three-sword style called?",
+        options: ["Santoryu", "Nitoryu", "Ittoryu", "Kyutoryu"],
+        correct: 0,
+        xp: 100
+      },
+      {
+        emoji: "🧭",
+        text: "In which direction does Zoro always get lost, no matter what?",
+        options: ["He follows the wind", "He has no sense of direction whatsoever", "He always heads South", "He follows Luffy's instincts"],
+        correct: 1,
+        xp: 100
+      },
+      {
+        emoji: "🏴‍☠️",
+        text: "What is the name of Zoro's supreme grade black blade?",
+        options: ["Shusui", "Enma", "Wado Ichimonji", "Sandai Kitetsu"],
+        correct: 1,
+        xp: 100
+      },
+      {
+        emoji: "🌊",
+        text: "Which technique did Zoro use to cut through Pica's enormous stone body?",
+        options: ["Asura: Ichibugin", "Hyakuhachi Pound Ho", "Ittoryu: Shishi Sonson", "Three Sword: Great Dragon Shock"],
+        correct: 1,
+        xp: 100
+      },
+      {
+        emoji: "💀",
+        text: "Who trained Zoro before he joined the Straw Hats, making him promise to never lose again?",
+        options: ["Mihawk", "Kuina", "Rayleigh", "Shanks"],
+        correct: 1,
+        xp: 100
+      }
+    ];
+
+    const TIMER_MAX = 20;
+    const circumference = 201; // 2 * PI * 32
+
+    /* ═══ STATE ═══ */
+    let state = {
+      currentQ: 0,
+      score: 0,
+      streak: 0,
+      maxStreak: 0,
+      answers: [],   // {correct, timeLeft, xpEarned}
+      timer: null,
+      timeLeft: TIMER_MAX,
+      answered: false,
+      totalXP: 0
+    };
+    window.__QUEST_STATE = state;
+
+    /* ═══ SCREEN MANAGER ═══ */
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('screen-' + id).classList.add('active');
+    }
+
+    /* ═══ PARTICLES ═══ */
+    (function initParticles() {
+      const canvas = document.getElementById('particle-canvas');
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+      let W, H;
+
+      function resize() {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+      }
+
+      function spawnParticle() {
+        return {
+          x: Math.random() * W,
+          y: H + 10,
+          vx: (Math.random() - .5) * .4,
+          vy: -(Math.random() * .6 + .2),
+          size: Math.random() * 2 + .5,
+          alpha: Math.random() * .5 + .1,
+          color: Math.random() > .5 ? '#00D4FF' : '#7B5CF5'
+        };
+      }
+
+      function tick() {
+        ctx.clearRect(0, 0, W, H);
+        if (particles.length < 60) particles.push(spawnParticle());
+        particles = particles.filter(p => p.y > -10);
+        particles.forEach(p => {
+          p.x += p.vx; p.y += p.vy;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = p.alpha;
+          ctx.fill();
+        });
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(tick);
+      }
+
+      resize();
+      window.addEventListener('resize', resize);
+      tick();
+    })();
+
+    /* ═══ COUNTDOWN ═══ */
+    function startCountdown() {
+      showScreen('countdown');
+      document.getElementById('nav-mode-label').textContent = 'Entering Arena...';
+
+      let count = 3;
+      const numEl = document.getElementById('countdown-num');
+      const goEl = document.getElementById('countdown-go');
+      const labelEl = document.getElementById('countdown-label');
+      const ringEl = document.getElementById('ring-fill');
+
+      function tick() {
+        numEl.textContent = count;
+        numEl.style.display = 'block';
+        goEl.style.display = 'none';
+        labelEl.textContent = count === 3 ? 'Preparing Arena...'
+          : count === 2 ? 'Focus your blade...'
+            : 'Last chance to retreat...';
+
+        // Ring shrinks each second
+        const offset = circumference * (1 - count / 3);
+        ringEl.style.strokeDashoffset = offset;
+
+        if (count === 0) {
+          numEl.style.display = 'none';
+          goEl.style.display = 'block';
+          labelEl.textContent = 'Quest Begins!';
+          setTimeout(startArena, 700);
+          return;
+        }
+
+        count--;
+        setTimeout(tick, 1000);
+      }
+
+      tick();
+    }
+
+    /* ═══ ARENA ═══ */
+    function startArena() {
+      // Reset state
+      state.currentQ = 0;
+      state.score = 0;
+      state.streak = 0;
+      state.maxStreak = 0;
+      state.answers = [];
+      state.answered = false;
+
+      document.getElementById('nav-mode-label').textContent = 'Quest Arena — Active';
+      document.getElementById('nav-live-score').style.display = 'block';
+
+      showScreen('arena');
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      if (state.currentQ >= QUESTIONS.length) {
+        showResults();
+        return;
+      }
+
+      state.answered = false;
+      const q = QUESTIONS[state.currentQ];
+
+      // Reset UI
+      document.getElementById('q-number').textContent = `Question ${String(state.currentQ + 1).padStart(2, '0')} of ${String(QUESTIONS.length).padStart(2, '0')}`;
+      document.getElementById('q-emoji').textContent = q.emoji;
+      document.getElementById('q-text').textContent = q.text;
+      document.getElementById('feedback-banner').className = 'feedback-banner';
+
+      // Options
+      const letters = ['A', 'B', 'C', 'D'];
+      q.options.forEach((opt, i) => {
+        const btn = document.getElementById('opt-' + i);
+        btn.querySelector('span').textContent = opt;
+        btn.querySelector('.option-letter').textContent = letters[i];
+        btn.className = 'option-btn';
+        btn.disabled = false;
+      });
+
+      // Next btn
+      document.getElementById('next-btn').style.display = 'none';
+
+      // HUD
+      updateHUD();
+
+      // Timer
+      startTimer();
+
+      // Re-animate card
+      const card = document.getElementById('question-card');
+      card.style.animation = 'none';
+      void card.offsetWidth;
+      card.style.animation = '';
+    }
+
+    function updateHUD() {
+      const q = state.currentQ + 1;
+      const total = QUESTIONS.length;
+      document.getElementById('hud-q-num').textContent = `${q}/${total}`;
+      document.getElementById('hud-score').textContent = state.score;
+      document.getElementById('hud-streak').textContent = state.streak + (state.streak >= 3 ? '🔥' : '');
+      document.getElementById('hud-progress').style.width = ((state.currentQ) / total * 100) + '%';
+      document.getElementById('hud-qcount').textContent = `Question ${q} of ${total}`;
+      document.getElementById('nav-live-score').textContent = state.score + ' pts';
+    }
+
+    /* ─── Timer ─── */
+    function startTimer() {
+      clearInterval(state.timer);
+      state.timeLeft = TIMER_MAX;
+      renderTimer();
+
+      state.timer = setInterval(() => {
+        state.timeLeft--;
+        renderTimer();
+        if (state.timeLeft <= 0) {
+          clearInterval(state.timer);
+          if (!state.answered) timeOut();
+        }
+      }, 1000);
+    }
+
+    function renderTimer() {
+      const t = state.timeLeft;
+      const pct = t / TIMER_MAX;
+      const offset = circumference * (1 - pct);
+
+      const fill = document.getElementById('timer-fill');
+      const label = document.getElementById('timer-label');
+
+      fill.style.strokeDashoffset = offset;
+      label.textContent = t;
+
+      // Color shift: blue → gold → crimson
+      if (t > 10) {
+        fill.style.stroke = 'url(#timerGrad)';
+        label.style.color = 'var(--neon-blue)';
+      } else if (t > 5) {
+        fill.style.stroke = 'var(--neon-gold)';
+        label.style.color = 'var(--neon-gold)';
+      } else {
+        fill.style.stroke = 'var(--neon-crimson)';
+        label.style.color = 'var(--neon-crimson)';
+        label.style.animation = 'blink .5s infinite';
+      }
+    }
+
+    /* ─── Answer Selection ─── */
+    function selectAnswer(idx) {
+      if (state.answered) return;
+      state.answered = true;
+      clearInterval(state.timer);
+
+      const q = QUESTIONS[state.currentQ];
+      const isCorrect = idx === q.correct;
+
+      // Disable all buttons
+      for (let i = 0; i < 4; i++) {
+        const btn = document.getElementById('opt-' + i);
+        btn.disabled = true;
+        if (i === q.correct) btn.classList.add('correct');
+        else if (i === idx && !isCorrect) btn.classList.add('wrong');
+        else if (i !== q.correct) btn.classList.add('dimmed');
+      }
+
+      // XP calculation
+      let xpEarned = 0;
+      let bonus = 0;
+      if (isCorrect) {
+        bonus = Math.floor((state.timeLeft / TIMER_MAX) * 50); // Speed bonus up to +50
+        xpEarned = q.xp + bonus;
+        state.score += xpEarned;
+        state.streak++;
+        state.maxStreak = Math.max(state.maxStreak, state.streak);
+
+        // Streak multiplier
+        if (state.streak >= 3) {
+          const extra = Math.floor(xpEarned * 0.2);
+          xpEarned += extra;
+          state.score += extra;
+        }
+      } else {
+        state.streak = 0;
+      }
+
+      state.answers.push({ correct: isCorrect, timeLeft: state.timeLeft, xpEarned, questionIdx: state.currentQ });
+
+      // Show feedback
+      showFeedback(isCorrect, xpEarned, bonus);
+
+      // Float XP
+      if (isCorrect) spawnXPFloat('+' + xpEarned + ' XP');
+
+      updateHUD();
+
+      // Next btn
+      document.getElementById('next-btn').style.display = 'block';
+      document.getElementById('next-btn').textContent =
+        state.currentQ + 1 >= QUESTIONS.length ? 'View Results →' : 'Next Question →';
+    }
+
+    function timeOut() {
+      state.answered = true;
+      const q = QUESTIONS[state.currentQ];
+      state.streak = 0;
+      state.answers.push({ correct: false, timeLeft: 0, xpEarned: 0, questionIdx: state.currentQ });
+
+      for (let i = 0; i < 4; i++) {
+        const btn = document.getElementById('opt-' + i);
+        btn.disabled = true;
+        if (i === q.correct) btn.classList.add('correct');
+        else btn.classList.add('dimmed');
+      }
+
+      showFeedback(false, 0, 0, true);
+      document.getElementById('next-btn').style.display = 'block';
+      document.getElementById('next-btn').textContent =
+        state.currentQ + 1 >= QUESTIONS.length ? 'View Results →' : 'Next Question →';
+      updateHUD();
+    }
+
+    function showFeedback(correct, xp, bonus, timeout) {
+      const banner = document.getElementById('feedback-banner');
+      const icon = document.getElementById('feedback-icon');
+      const text = document.getElementById('feedback-text');
+      const xpEl = document.getElementById('feedback-xp');
+
+      if (timeout) {
+        banner.className = 'feedback-banner wrong-fb';
+        icon.textContent = '⏰';
+        text.textContent = 'Time\'s Up! — The path was lost';
+        xpEl.textContent = '+0 XP';
+      } else if (correct) {
+        banner.className = 'feedback-banner correct-fb';
+        icon.textContent = '✓';
+        const bonusStr = bonus > 0 ? ` (+${bonus} Speed Bonus)` : '';
+        text.textContent = `Correct! A swordsman's instinct${bonusStr}`;
+        xpEl.textContent = '+' + xp + ' XP';
+      } else {
+        banner.className = 'feedback-banner wrong-fb';
+        icon.textContent = '✕';
+        text.textContent = 'Wrong! Even Zoro got that one right...';
+        xpEl.textContent = '+0 XP';
+      }
+    }
+
+    function nextQuestion() {
+      state.currentQ++;
+      loadQuestion();
+    }
+
+    /* ─── XP Float ─── */
+    function spawnXPFloat(text) {
+      const el = document.createElement('div');
+      el.className = 'xp-float';
+      el.textContent = text;
+      el.style.left = (window.innerWidth / 2 - 40) + 'px';
+      el.style.top = (window.innerHeight / 2 + 40) + 'px';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1700);
+    }
+
+    /* ═══ RESULTS ═══ */
+    function showResults() {
+      clearInterval(state.timer);
+      document.getElementById('nav-mode-label').textContent = 'Quest Complete';
+
+      const correct = state.answers.filter(a => a.correct).length;
+      const total = QUESTIONS.length;
+      const accuracy = Math.round((correct / total) * 100);
+
+      // Grade
+      let grade, verdict, crown;
+      if (accuracy === 100) { grade = 'S'; verdict = 'Shadow Monarch Tier'; crown = '👑'; }
+      else if (accuracy >= 80) { grade = 'A'; verdict = 'National Level Hunter'; crown = '🏆'; }
+      else if (accuracy >= 60) { grade = 'B'; verdict = 'Advanced Adventurer'; crown = '⚔️'; }
+      else if (accuracy >= 40) { grade = 'C'; verdict = 'Intermediate Scout'; crown = '🛡️'; }
+      else { grade = 'F'; verdict = 'E-Rank — Train Harder'; crown = '💀'; }
+
+      document.getElementById('result-crown').textContent = crown;
+      document.getElementById('result-grade').className = 'results-grade grade-' + grade.toLowerCase();
+      document.getElementById('result-grade').textContent = grade;
+      document.getElementById('result-verdict').textContent = verdict;
+
+      document.getElementById('res-correct').textContent = correct;
+      document.getElementById('res-wrong').textContent = total - correct;
+      document.getElementById('res-accuracy').textContent = accuracy + '%';
+
+      const totalEarned = state.answers.reduce((s, a) => s + a.xpEarned, 0);
+      document.getElementById('res-xp-earned').textContent = '+' + totalEarned + ' XP';
+
+      // Speed bonus tag
+      const hasBonus = state.answers.some(a => a.xpEarned > 100);
+      if (hasBonus) document.getElementById('res-bonus-tag').style.display = 'block';
+
+      // XP bar animation
+      const oldXP = state.totalXP;
+      const newXP = oldXP + totalEarned;
+      const maxXP = 10000;
+      const oldPct = Math.min((oldXP / maxXP) * 100, 100);
+      const newPct = Math.min((newXP / maxXP) * 100, 100);
+
+      document.getElementById('xp-bar-before').style.width = oldPct + '%';
+      document.getElementById('xp-new-val').textContent = '→ ' + newXP.toLocaleString() + ' XP';
+
+      setTimeout(() => {
+        document.getElementById('xp-bar-after').style.width = newPct + '%';
+      }, 200);
+
+      if (typeof window.__aaSyncQuestXp === 'function') {
+        const resultPayload = {
+          questId: 'zoro-lost-path',
+          questName: "Zoro's Lost Path",
+          score: state.score,
+          correct,
+          total,
+          accuracy,
+          grade,
+          xpEarned: totalEarned,
+          answers: state.answers,
+        };
+        window.__aaSyncQuestXp(resultPayload).catch((err) => console.error('[XP sync]', err));
+      }
+
+      // Breakdown
+      const bList = document.getElementById('breakdown-list');
+      bList.innerHTML = '';
+      state.answers.forEach((ans, i) => {
+        const q = QUESTIONS[ans.questionIdx];
+        const row = document.createElement('div');
+        row.className = 'breakdown-item';
+        row.innerHTML = `
+      <span style="font-size:1.1rem">${ans.correct ? '✅' : '❌'}</span>
+      <span class="bd-q"><strong>Q${i + 1}</strong> — ${q.text.slice(0, 38)}...</span>
+      <span class="bd-result ${ans.correct ? 'c' : 'w'}">${ans.correct ? 'CORRECT' : 'WRONG'}</span>
+      <span class="bd-time">${ans.timeLeft}s left</span>
+      <span class="bd-xp">+${ans.xpEarned}</span>
+    `;
+        bList.appendChild(row);
+      });
+
+      showScreen('results');
+
+      // Animate score counters
+      [
+        ['res-correct', correct],
+        ['res-wrong', total - correct],
+      ].forEach(([id, val]) => {
+        const el = document.getElementById(id);
+        let c = 0;
+        const step = Math.max(1, Math.ceil(val / 30));
+        const t = setInterval(() => {
+          c = Math.min(c + step, val);
+          el.textContent = c;
+          if (c >= val) clearInterval(t);
+        }, 40);
+      });
+    }
+
+    /* ═══ NAVIGATION ═══ */
+    function retryQuest() {
+      showScreen('lobby');
+      document.getElementById('nav-mode-label').textContent = 'Quest Arena';
+      document.getElementById('nav-live-score').style.display = 'none';
+    }
+
+    function goHome() {
+      window.location.href = 'index-1.html';
+    }
+
+    /* ─────────────────────────────
+       DRAWER (mobile menu)
+    ───────────────────────────── */
+    function openDrawer() {
+      document.getElementById('drawer-overlay')?.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      document.getElementById('drawer-overlay')?.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function openCreatorModal() {
+      try { sessionStorage.setItem('aa_open_creator_modal', '1'); } catch (e) { }
+      closeDrawer();
+      window.location.href = 'dashboard.html';
+    }
+
+    /* ═══ KEYBOARD SHORTCUTS ═══ */
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeDrawer();
+      const map = { 'a': 0, 'b': 1, 'c': 2, 'd': 3, '1': 0, '2': 1, '3': 2, '4': 3 };
+      const idx = map[e.key.toLowerCase()];
+      if (idx !== undefined && document.getElementById('screen-arena').classList.contains('active')) {
+        selectAnswer(idx);
+      }
+      if (e.key === 'Enter' || e.key === ' ') {
+        const nBtn = document.getElementById('next-btn');
+        if (nBtn.style.display !== 'none') nextQuestion();
+      }
+    });
+  </script>
+
+  <script type="module">
+    import './firebase-config.js';
+    import { getCurrentPlayer, getCurrentUser, guildSignOut } from './guild-auth.js';
+    import { saveQuestResult } from './guild-db.js';
+
+    const gateEl = document.getElementById('aa-auth-gate');
+    const beginBtn = document.getElementById('btn-begin-quest');
+    const navName = document.getElementById('nav-player-name');
+    const avWrap = document.getElementById('aa-quest-avatar-wrap');
+    const avImg = document.getElementById('aa-quest-avatar');
+    const drawerLogout = document.getElementById('aa-drawer-logout');
+
+    // Expose XP / result sync for the quiz engine
+    window.__aaSyncQuestXp = async (result) => {
+      const user = getCurrentUser();
+      if (!user) return;
+      await saveQuestResult(result);
+    };
+
+    // Basic auth gate for the arena
+    const player = getCurrentPlayer();
+    if (!player || !getCurrentUser()) {
+      if (gateEl) {
+        gateEl.hidden = false;
+      }
+    } else {
+      if (gateEl) {
+        gateEl.hidden = true;
+      }
+      if (navName) navName.textContent = player.username || 'Adventurer';
+      if (player.photoURL && avImg && avWrap) {
+        avImg.src = player.photoURL;
+        avImg.alt = player.username;
+        avWrap.classList.add('has-photo');
+      }
+      if (window.__QUEST_STATE) {
+        window.__QUEST_STATE.totalXP = player.xp || 0;
+      }
+    }
+
+    if (beginBtn) beginBtn.disabled = false;
+    if (drawerLogout) {
+      drawerLogout.addEventListener('click', () => guildSignOut());
+    }
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,3569 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Media Hub — Anime Aawaj Guild</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;600;900&display=swap"
+    rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* ═══════════════════════════════════════
+       ROOT
+    ═══════════════════════════════════════ */
+    :root {
+      --void: #04060F;
+      --abyss: #080C1A;
+      --deep: #0D1229;
+      --glass: rgba(13, 18, 41, 0.58);
+      --blue: #00D4FF;
+      --purple: #7B5CF5;
+      --gold: #FFD700;
+      --crimson: #FF3E6C;
+      --teal: #00FFB3;
+      --rose: #FF6B9D;
+      --text: #E8EEFF;
+      --muted: #7B8DB0;
+      --ghost: #3D4F6B;
+      --b-glow: rgba(0, 212, 255, 0.20);
+      --b-soft: rgba(123, 92, 245, 0.17);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    html {
+      scroll-behavior: smooth
+    }
+
+    body {
+      background: var(--void);
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      overflow-x: hidden;
+      padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+    }
+
+    @media(min-width:1024px) {
+      body {
+        padding-bottom: 0
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 4px
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--void)
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--purple);
+      border-radius: 2px
+    }
+
+    /* ── GRID BG ── */
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        repeating-linear-gradient(0deg, rgba(0, 212, 255, .012) 0, transparent 1px, transparent 60px),
+        repeating-linear-gradient(90deg, rgba(0, 212, 255, .012) 0, transparent 1px, transparent 60px);
+    }
+
+    /* ── NAVBAR ── */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: rgba(4, 6, 15, .9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--b-glow);
+      height: 60px;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .nav-logo {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: .95rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, var(--blue), var(--purple));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .nav-tabs {
+      display: flex;
+      align-items: center;
+      gap: 2px
+    }
+
+    .nav-tab {
+      padding: 6px 14px;
+      font-family: 'Orbitron', monospace;
+      font-size: .6rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: var(--ghost);
+      border-bottom: 2px solid transparent;
+      transition: all .2s;
+    }
+
+    .nav-tab:hover {
+      color: var(--muted)
+    }
+
+    .nav-tab.active {
+      color: var(--blue);
+      border-bottom-color: var(--blue)
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .nav-creator-btn {
+      padding: 7px 16px;
+      font-family: 'Orbitron', monospace;
+      font-size: .6rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: 1px solid var(--purple);
+      color: var(--purple);
+      background: transparent;
+      clip-path: polygon(7px 0%, 100% 0%, calc(100% - 7px) 100%, 0% 100%);
+      transition: all .25s;
+      white-space: nowrap;
+    }
+
+    .nav-creator-btn:hover {
+      background: var(--purple);
+      color: #fff;
+      box-shadow: 0 0 20px rgba(123, 92, 245, .4)
+    }
+
+    @media(max-width:640px) {
+      .nav-tabs {
+        display: none
+      }
+    }
+
+    .aa-nav-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      max-width: min(46vw, 220px);
+      padding: 4px 8px 4px 4px;
+      border-radius: 4px;
+      background: var(--glass);
+      border: 1px solid var(--b-soft);
+    }
+
+    .aa-nav-user img {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid var(--b-glow);
+      flex-shrink: 0;
+      display: none;
+    }
+
+    .aa-nav-user.has-photo img {
+      display: block
+    }
+
+    #aa-news-name {
+      font-size: .82rem;
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--text);
+      min-width: 0;
+    }
+
+    .aa-nav-out {
+      flex-shrink: 0;
+      padding: 5px 8px;
+      font-family: 'Orbitron', monospace;
+      font-size: .5rem;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: 1px solid var(--ghost);
+      background: transparent;
+      color: var(--muted);
+      clip-path: polygon(5px 0%, 100% 0%, calc(100% - 5px) 100%, 0% 100%);
+      transition: all .2s;
+    }
+
+    .aa-nav-out:hover {
+      border-color: var(--crimson);
+      color: var(--crimson)
+    }
+
+    .aa-auth-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 30000;
+      background: rgba(4, 6, 15, .92);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .aa-auth-gate[hidden] {
+      display: none !important
+    }
+
+    .aa-auth-gate-spinner {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 2px solid rgba(0, 212, 255, .2);
+      border-top-color: var(--blue);
+      animation: aa-spin .85s linear infinite;
+    }
+
+    @keyframes aa-spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    .aa-auth-gate-text {
+      font-family: 'Orbitron', monospace;
+      font-size: .58rem;
+      letter-spacing: 2px;
+      color: var(--ghost);
+      text-transform: uppercase
+    }
+
+    @media(max-width:480px) {
+      #aa-news-name {
+        max-width: 64px
+      }
+    }
+
+    /* ── FILTER RAIL ── */
+    .filter-rail {
+      background: var(--abyss);
+      border-bottom: 1px solid var(--b-soft);
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .filter-rail::-webkit-scrollbar {
+      display: none
+    }
+
+    .filter-pill {
+      padding: 9px 18px;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: .88rem;
+      font-weight: 600;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      white-space: nowrap;
+      cursor: pointer;
+      background: transparent;
+      color: var(--muted);
+      border: none;
+      border-bottom: 2px solid transparent;
+      transition: all .22s;
+    }
+
+    .filter-pill:hover {
+      color: var(--text)
+    }
+
+    .filter-pill.active {
+      color: var(--blue);
+      border-bottom-color: var(--blue)
+    }
+
+    .new-chip {
+      font-size: .55rem;
+      font-family: 'Orbitron', monospace;
+      padding: 1px 5px;
+      background: rgba(255, 62, 108, .12);
+      color: var(--crimson);
+      border: 1px solid rgba(255, 62, 108, .25);
+      border-radius: 20px;
+      margin-left: 4px;
+      position: relative;
+      top: -1px;
+    }
+
+    /* ═══════════════════════════════════════
+       PAGE LAYOUT
+    ═══════════════════════════════════════ */
+    .page {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px 20px 60px;
+      position: relative;
+      z-index: 1
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 28px;
+      align-items: start;
+    }
+
+    @media(max-width:1100px) {
+      .content-grid {
+        grid-template-columns: 1fr
+      }
+    }
+
+    /* ═══════════════════════════════════════
+       SECTION SHARED
+    ═══════════════════════════════════════ */
+    .section-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .eyebrow-bar {
+      width: 28px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--blue), var(--purple))
+    }
+
+    .eyebrow-txt {
+      font-family: 'Orbitron', monospace;
+      font-size: .62rem;
+      letter-spacing: 3px;
+      color: var(--blue);
+      text-transform: uppercase;
+    }
+
+    .eyebrow-right {
+      margin-left: auto
+    }
+
+    .see-all {
+      font-family: 'Orbitron', monospace;
+      font-size: .6rem;
+      letter-spacing: 1.5px;
+      color: var(--blue);
+      text-transform: uppercase;
+      cursor: pointer;
+      opacity: .8;
+      transition: opacity .2s;
+    }
+
+    .see-all:hover {
+      opacity: 1
+    }
+
+    /* ═══════════════════════════════════════
+       TRAILER OF THE WEEK
+    ═══════════════════════════════════════ */
+    .trailer-block {
+      margin-bottom: 36px
+    }
+
+    .trailer-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: var(--deep);
+      border: 1px solid var(--b-glow);
+      border-radius: 5px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .trailer-frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(0, 212, 255, .06), transparent 70%);
+      pointer-events: none;
+    }
+
+    /* Scanline effect */
+    .trailer-frame::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px,
+          rgba(0, 0, 0, .08) 2px, rgba(0, 0, 0, .08) 4px);
+    }
+
+    .trailer-bg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: .4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 8rem;
+    }
+
+    .trailer-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .play-ring {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(0, 212, 255, .12);
+      border: 2px solid var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      transition: all .3s;
+      animation: ring-breathe 2.5s ease-in-out infinite;
+      position: relative;
+    }
+
+    @keyframes ring-breathe {
+
+      0%,
+      100% {
+        box-shadow: 0 0 20px rgba(0, 212, 255, .3), inset 0 0 20px rgba(0, 212, 255, .05)
+      }
+
+      50% {
+        box-shadow: 0 0 50px rgba(0, 212, 255, .6), inset 0 0 40px rgba(0, 212, 255, .15)
+      }
+    }
+
+    .play-ring::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 212, 255, .2);
+      animation: spin-ring 6s linear infinite;
+    }
+
+    @keyframes spin-ring {
+      to {
+        transform: rotate(360deg)
+      }
+    }
+
+    .trailer-frame:hover .play-ring {
+      transform: scale(1.12);
+      border-color: var(--teal);
+      background: rgba(0, 255, 179, .12)
+    }
+
+    .trailer-meta {
+      text-align: center;
+    }
+
+    .trailer-tag {
+      font-family: 'Orbitron', monospace;
+      font-size: .6rem;
+      letter-spacing: 2px;
+      color: var(--crimson);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .trailer-title-txt {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1rem, 3vw, 1.5rem);
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .trailer-ep {
+      font-size: .8rem;
+      color: var(--muted);
+      margin-top: 4px
+    }
+
+    .trailer-corner {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-color: var(--blue);
+      border-style: solid;
+    }
+
+    .corner-tl {
+      top: 12px;
+      left: 12px;
+      border-width: 2px 0 0 2px
+    }
+
+    .corner-tr {
+      top: 12px;
+      right: 12px;
+      border-width: 2px 2px 0 0
+    }
+
+    .corner-bl {
+      bottom: 12px;
+      left: 12px;
+      border-width: 0 0 2px 2px
+    }
+
+    .corner-br {
+      bottom: 12px;
+      right: 12px;
+      border-width: 0 2px 2px 0
+    }
+
+    /* YouTube embed inside trailer */
+    .trailer-iframe-wrap {
+      position: absolute;
+      inset: 0;
+      display: none;
+    }
+
+    .trailer-iframe-wrap iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .trailer-iframe-wrap.open {
+      display: block
+    }
+
+    .close-trailer {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 10;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(4, 6, 15, .8);
+      border: 1px solid var(--b-glow);
+      color: var(--muted);
+      cursor: pointer;
+      font-size: .9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .2s;
+    }
+
+    .close-trailer:hover {
+      border-color: var(--crimson);
+      color: var(--crimson)
+    }
+
+    /* ═══════════════════════════════════════
+       MASONRY NEWS GRID
+    ═══════════════════════════════════════ */
+    .news-block {
+      margin-bottom: 36px
+    }
+
+    .masonry-grid {
+      columns: 3;
+      column-gap: 16px;
+    }
+
+    @media(max-width:900px) {
+      .masonry-grid {
+        columns: 2
+      }
+    }
+
+    @media(max-width:500px) {
+      .masonry-grid {
+        columns: 1
+      }
+    }
+
+    .news-card {
+      break-inside: avoid;
+      margin-bottom: 16px;
+      background: var(--deep);
+      border: 1px solid var(--b-soft);
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+      display: block;
+      transition: transform .3s, border-color .3s, box-shadow .3s;
+      animation: card-up .5s ease both;
+    }
+
+    @keyframes card-up {
+      from {
+        opacity: 0;
+        transform: translateY(14px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    .news-card:nth-child(2) {
+      animation-delay: .06s
+    }
+
+    .news-card:nth-child(3) {
+      animation-delay: .12s
+    }
+
+    .news-card:nth-child(4) {
+      animation-delay: .18s
+    }
+
+    .news-card:nth-child(5) {
+      animation-delay: .24s
+    }
+
+    .news-card:nth-child(6) {
+      animation-delay: .30s
+    }
+
+    .news-card:nth-child(7) {
+      animation-delay: .36s
+    }
+
+    .news-card:nth-child(8) {
+      animation-delay: .42s
+    }
+
+    .news-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(0, 212, 255, .35);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, .4), 0 0 20px rgba(0, 212, 255, .07);
+    }
+
+    .card-img {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-img-sm {
+      height: 120px
+    }
+
+    .card-img-md {
+      height: 170px
+    }
+
+    .card-img-lg {
+      height: 220px
+    }
+
+    /* Gradient overlays per category */
+    .bg-new-season {
+      background: linear-gradient(135deg, #0a0f24, #1a0a34)
+    }
+
+    .bg-trailer {
+      background: linear-gradient(135deg, #0a1a10, #102a12)
+    }
+
+    .bg-rumor {
+      background: linear-gradient(135deg, #1a0a0a, #2d1010)
+    }
+
+    .bg-review {
+      background: linear-gradient(135deg, #0a1420, #0a2030)
+    }
+
+    .bg-event {
+      background: linear-gradient(135deg, #1a1404, #2a200a)
+    }
+
+    .bg-fanart {
+      background: linear-gradient(135deg, #14041a, #240a2d)
+    }
+
+    .card-img::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(transparent, var(--deep));
+    }
+
+    .card-body {
+      padding: 12px 14px 14px
+    }
+
+    .card-top-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 7px;
+      flex-wrap: wrap
+    }
+
+    .cat-badge {
+      font-family: 'Orbitron', monospace;
+      font-size: .55rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 20px;
+      clip-path: polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%);
+    }
+
+    .cat-new-season {
+      background: rgba(123, 92, 245, .15);
+      color: var(--purple);
+      border: 1px solid rgba(123, 92, 245, .3)
+    }
+
+    .cat-trailer {
+      background: rgba(0, 255, 179, .1);
+      color: var(--teal);
+      border: 1px solid rgba(0, 255, 179, .25)
+    }
+
+    .cat-rumor {
+      background: rgba(255, 62, 108, .1);
+      color: var(--crimson);
+      border: 1px solid rgba(255, 62, 108, .25)
+    }
+
+    .cat-review {
+      background: rgba(0, 212, 255, .1);
+      color: var(--blue);
+      border: 1px solid rgba(0, 212, 255, .25)
+    }
+
+    .cat-event {
+      background: rgba(255, 215, 0, .1);
+      color: var(--gold);
+      border: 1px solid rgba(255, 215, 0, .25)
+    }
+
+    .cat-fanart {
+      background: rgba(255, 107, 157, .1);
+      color: var(--rose);
+      border: 1px solid rgba(255, 107, 157, .25)
+    }
+
+    .card-date {
+      font-family: 'Orbitron', monospace;
+      font-size: .55rem;
+      color: var(--ghost);
+      letter-spacing: 1px;
+      margin-left: auto;
+    }
+
+    .card-title {
+      font-family: 'Cinzel', serif;
+      font-size: .95rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.35;
+      margin-bottom: 6px;
+    }
+
+    .card-excerpt {
+      font-size: .8rem;
+      color: var(--muted);
+      line-height: 1.45;
+      margin-bottom: 10px;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between
+    }
+
+    .card-author {
+      font-size: .72rem;
+      color: var(--ghost);
+    }
+
+    .card-author strong {
+      color: var(--muted)
+    }
+
+    .card-read-btn {
+      font-family: 'Orbitron', monospace;
+      font-size: .56rem;
+      letter-spacing: 1.5px;
+      color: var(--blue);
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: gap .2s;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .card-read-btn:hover {
+      gap: 8px
+    }
+
+    /* Featured large card */
+    .news-card.featured {
+      break-inside: avoid;
+      border-color: rgba(0, 212, 255, .3);
+      background: linear-gradient(135deg, rgba(13, 18, 41, .98), rgba(8, 12, 26, .98));
+    }
+
+    .news-card.featured .card-title {
+      font-size: 1.1rem
+    }
+
+    /* ═══════════════════════════════════════
+       GALLERY SECTION
+    ═══════════════════════════════════════ */
+    .gallery-block {
+      margin-bottom: 36px
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+    }
+
+    .gallery-thumb {
+      aspect-ratio: 3/4;
+      background: var(--deep);
+      border: 1px solid var(--b-soft);
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+      position: relative;
+      transition: transform .3s, border-color .3s, box-shadow .3s;
+    }
+
+    .gallery-thumb:hover {
+      transform: scale(1.04);
+      border-color: rgba(123, 92, 245, .5);
+      box-shadow: 0 0 24px rgba(123, 92, 245, .2);
+    }
+
+    .gallery-thumb::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(transparent 50%, rgba(4, 6, 15, .9));
+    }
+
+    .gallery-label {
+      position: absolute;
+      bottom: 8px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      z-index: 1;
+      font-family: 'Orbitron', monospace;
+      font-size: .55rem;
+      letter-spacing: 1px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .gallery-hover-icon {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      z-index: 1;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: rgba(4, 6, 15, .7);
+      border: 1px solid var(--b-glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .7rem;
+      opacity: 0;
+      transition: opacity .2s;
+    }
+
+    .gallery-thumb:hover .gallery-hover-icon {
+      opacity: 1
+    }
+
+    .g1 {
+      background: linear-gradient(135deg, #0a0f24, #200a2d)
+    }
+
+    .g2 {
+      background: linear-gradient(135deg, #0a1a10, #1a2d0a)
+    }
+
+    .g3 {
+      background: linear-gradient(135deg, #1a0a0a, #2d1010)
+    }
+
+    .g4 {
+      background: linear-gradient(135deg, #0a1420, #0a2028)
+    }
+
+    .g5 {
+      background: linear-gradient(135deg, #1a1404, #2a200a)
+    }
+
+    .g6 {
+      background: linear-gradient(135deg, #10040a, #201020)
+    }
+
+    .g7 {
+      background: linear-gradient(135deg, #04101a, #041a2a)
+    }
+
+    .g8 {
+      background: linear-gradient(135deg, #140a04, #201410)
+    }
+
+    /* ═══════════════════════════════════════
+       LIGHTBOX
+    ═══════════════════════════════════════ */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 900;
+      background: rgba(4, 6, 15, .96);
+      backdrop-filter: blur(20px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all .35s ease;
+      padding: 20px;
+    }
+
+    .lightbox.open {
+      opacity: 1;
+      visibility: visible
+    }
+
+    .lb-inner {
+      max-width: 680px;
+      width: 100%;
+      position: relative;
+      transform: scale(.92);
+      transition: transform .35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .lightbox.open .lb-inner {
+      transform: scale(1)
+    }
+
+    .lb-img-frame {
+      aspect-ratio: 3/4;
+      max-height: 75vh;
+      background: var(--deep);
+      border: 1px solid var(--b-glow);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .lb-img-frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(123, 92, 245, .08), transparent 70%);
+    }
+
+    .lb-close {
+      position: absolute;
+      top: -16px;
+      right: -16px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--abyss);
+      border: 1px solid var(--b-glow);
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .2s;
+      z-index: 1;
+    }
+
+    .lb-close:hover {
+      border-color: var(--crimson);
+      color: var(--crimson)
+    }
+
+    .lb-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(4, 6, 15, .8);
+      border: 1px solid var(--b-glow);
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .2s;
+    }
+
+    .lb-nav:hover {
+      border-color: var(--blue);
+      color: var(--blue)
+    }
+
+    .lb-prev {
+      right: calc(100% + 12px)
+    }
+
+    .lb-next {
+      left: calc(100% + 12px)
+    }
+
+    @media(max-width:640px) {
+
+      .lb-prev,
+      .lb-next {
+        top: auto;
+        bottom: -56px;
+        transform: none;
+      }
+
+      .lb-prev {
+        right: auto;
+        left: calc(50% - 56px)
+      }
+
+      .lb-next {
+        left: calc(50% + 12px)
+      }
+    }
+
+    .lb-meta {
+      margin-top: 14px;
+      text-align: center
+    }
+
+    .lb-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px
+    }
+
+    .lb-sub {
+      font-size: .8rem;
+      color: var(--muted)
+    }
+
+    .lb-counter {
+      font-family: 'Orbitron', monospace;
+      font-size: .6rem;
+      color: var(--ghost);
+      margin-top: 6px
+    }
+
+    /* ═══════════════════════════════════════
+       SIDEBAR
+    ═══════════════════════════════════════ */
+    .sidebar {
+      position: sticky;
+      top: 76px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    @media(max-width:1100px) {
+      .sidebar {
+        position: static
+      }
+    }
+
+    .s-panel {
+      background: var(--deep);
+      border: 1px solid var(--b-glow);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .s-panel-header {
+      padding: 13px 18px;
+      border-bottom: 1px solid var(--b-glow);
+      background: linear-gradient(90deg, rgba(0, 212, 255, .06), transparent);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .s-panel-title {
+      font-family: 'Orbitron', monospace;
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--blue);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--teal);
+      animation: blink 1.2s infinite;
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .2
+      }
+    }
+
+    /* Release Calendar */
+    .cal-list {
+      padding: 8px 0
+    }
+
+    .cal-day-group {
+      padding: 0 0 4px
+    }
+
+    .cal-day-label {
+      padding: 6px 18px;
+      font-family: 'Orbitron', monospace;
+      font-size: .58rem;
+      letter-spacing: 2px;
+      color: var(--ghost);
+      text-transform: uppercase;
+      background: rgba(255, 255, 255, .02);
+    }
+
+    .cal-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, .03);
+      transition: background .2s;
+      cursor: pointer;
+    }
+
+    .cal-item:hover {
+      background: rgba(0, 212, 255, .03)
+    }
+
+    .cal-item:last-child {
+      border-bottom: none
+    }
+
+    .cal-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0
+    }
+
+    .dot-blue {
+      background: var(--blue);
+      box-shadow: 0 0 6px var(--blue)
+    }
+
+    .dot-purple {
+      background: var(--purple);
+      box-shadow: 0 0 6px var(--purple)
+    }
+
+    .dot-gold {
+      background: var(--gold);
+      box-shadow: 0 0 6px var(--gold)
+    }
+
+    .dot-teal {
+      background: var(--teal);
+      box-shadow: 0 0 6px var(--teal)
+    }
+
+    .dot-crimson {
+      background: var(--crimson);
+      box-shadow: 0 0 6px var(--crimson)
+    }
+
+    .dot-rose {
+      background: var(--rose);
+      box-shadow: 0 0 6px var(--rose)
+    }
+
+    .cal-info {
+      flex: 1
+    }
+
+    .cal-name {
+      font-size: .88rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px
+    }
+
+    .cal-ep {
+      font-family: 'Orbitron', monospace;
+      font-size: .58rem;
+      color: var(--ghost)
+    }
+
+    .cal-time {
+      font-family: 'Orbitron', monospace;
+      font-size: .6rem;
+      color: var(--muted);
+      white-space: nowrap;
+      text-align: right
+    }
+
+    .cal-today-badge {
+      font-family: 'Orbitron', monospace;
+      font-size: .5rem;
+      letter-spacing: 1px;
+      padding: 2px 7px;
+      background: rgba(0, 255, 179, .1);
+      color: var(--teal);
+      border: 1px solid rgba(0, 255, 179, .25);
+      border-radius: 20px;
+    }
+
+    /* Trending Tags */
+    .tags-wrap {
+      padding: 14px 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px
+    }
+
+    .trend-tag {
+      padding: 5px 12px;
+      font-family: 'Orbitron', monospace;
+      font-size: .58rem;
+      letter-spacing: 1px;
+      cursor: pointer;
+      border-radius: 2px;
+      background: rgba(13, 18, 41, .8);
+      border: 1px solid var(--b-soft);
+      color: var(--muted);
+      transition: all .2s;
+      clip-path: polygon(5px 0%, 100% 0%, calc(100% - 5px) 100%, 0% 100%);
+    }
+
+    .trend-tag:hover {
+      border-color: rgba(0, 212, 255, .35);
+      color: var(--blue)
+    }
+
+    /* Stats mini */
+    .mini-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, .03);
+    }
+
+    .mini-row:last-child {
+      border-bottom: none
+    }
+
+    .mini-label {
+      font-size: .82rem;
+      color: var(--muted);
+      font-weight: 500
+    }
+
+    .mini-val {
+      font-family: 'Orbitron', monospace;
+      font-size: .68rem;
+      color: var(--blue)
+    }
+
+    /* ═══════════════════════════════════════
+       HALL OF FAME
+    ═══════════════════════════════════════ */
+    .hof-section {
+      margin-top: 48px
+    }
+
+    .hof-banner {
+      position: relative;
+      border-radius: 5px;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(13, 18, 41, .98), rgba(8, 12, 26, .98));
+      border: 1px solid var(--b-glow);
+      padding: 40px 32px;
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .hof-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(255, 215, 0, .07), transparent 60%);
+      pointer-events: none;
+    }
+
+    .hof-banner::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), var(--purple), var(--gold), transparent);
+    }
+
+    .hof-crown-emoji {
+      font-size: 3rem;
+      display: block;
+      margin-bottom: 12px;
+      animation: crown-float 3s ease-in-out infinite
+    }
+
+    @keyframes crown-float {
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(-3deg)
+      }
+
+      50% {
+        transform: translateY(-8px) rotate(3deg)
+      }
+    }
+
+    .hof-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.6rem, 5vw, 3rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, #FFD700, #FF8C00, #FFD700);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 20px rgba(255, 215, 0, .4));
+      margin-bottom: 6px;
+    }
+
+    .hof-sub {
+      font-family: 'Cinzel', serif;
+      font-size: .9rem;
+      letter-spacing: 3px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .hof-season-chip {
+      display: inline-block;
+      font-family: 'Orbitron', monospace;
+      font-size: .62rem;
+      letter-spacing: 2px;
+      padding: 5px 16px;
+      background: rgba(255, 215, 0, .08);
+      color: var(--gold);
+      border: 1px solid rgba(255, 215, 0, .25);
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    }
+
+    /* HOF Podium (Top 3) */
+    .podium-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 32px;
+      align-items: end;
+    }
+
+    @media(max-width:600px) {
+      .podium-wrap {
+        grid-template-columns: 1fr;
+        align-items: stretch
+      }
+    }
+
+    .podium-card {
+      border-radius: 4px;
+      overflow: hidden;
+      padding: 24px 16px 20px;
+      text-align: center;
+      position: relative;
+      border: 1px solid;
+      transition: transform .3s, box-shadow .3s;
+      cursor: pointer;
+    }
+
+    .podium-card:hover {
+      transform: translateY(-6px)
+    }
+
+    /* 1st place */
+    .rank-1-card {
+      background: linear-gradient(160deg, rgba(255, 215, 0, .1), rgba(13, 18, 41, .98));
+      border-color: rgba(255, 215, 0, .4);
+      padding-top: 32px;
+      box-shadow: 0 0 30px rgba(255, 215, 0, .1);
+    }
+
+    .rank-1-card:hover {
+      box-shadow: 0 0 50px rgba(255, 215, 0, .25)
+    }
+
+    .rank-1-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    /* 2nd place */
+    .rank-2-card {
+      background: linear-gradient(160deg, rgba(192, 192, 192, .08), rgba(13, 18, 41, .98));
+      border-color: rgba(192, 192, 192, .25);
+    }
+
+    .rank-2-card:hover {
+      box-shadow: 0 0 30px rgba(192, 192, 192, .1)
+    }
+
+    /* 3rd place */
+    .rank-3-card {
+      background: linear-gradient(160deg, rgba(205, 127, 50, .08), rgba(13, 18, 41, .98));
+      border-color: rgba(205, 127, 50, .25);
+    }
+
+    .rank-3-card:hover {
+      box-shadow: 0 0 30px rgba(205, 127, 50, .1)
+    }
+
+    .podium-position {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Orbitron', monospace;
+      font-size: .55rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      padding: 3px 10px;
+      clip-path: polygon(5px 0%, 100% 0%, calc(100% - 5px) 100%, 0% 100%);
+    }
+
+    .pos-1 {
+      background: rgba(255, 215, 0, .15);
+      color: var(--gold);
+      border: 1px solid rgba(255, 215, 0, .35)
+    }
+
+    .pos-2 {
+      background: rgba(192, 192, 192, .12);
+      color: #C0C0C0;
+      border: 1px solid rgba(192, 192, 192, .25)
+    }
+
+    .pos-3 {
+      background: rgba(205, 127, 50, .12);
+      color: #CD7F32;
+      border: 1px solid rgba(205, 127, 50, .25)
+    }
+
+    .podium-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin: 0 auto 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      border: 2px solid;
+      position: relative;
+      animation: avatar-float 4s ease-in-out infinite;
+    }
+
+    @keyframes avatar-float {
+
+      0%,
+      100% {
+        transform: translateY(0)
+      }
+
+      50% {
+        transform: translateY(-6px)
+      }
+    }
+
+    .rank-1-card .podium-avatar {
+      border-color: rgba(255, 215, 0, .5);
+      background: rgba(255, 215, 0, .08);
+      box-shadow: 0 0 24px rgba(255, 215, 0, .2);
+      animation-delay: 0s;
+    }
+
+    .rank-2-card .podium-avatar {
+      border-color: rgba(192, 192, 192, .35);
+      background: rgba(192, 192, 192, .05);
+      animation-delay: .8s;
+    }
+
+    .rank-3-card .podium-avatar {
+      border-color: rgba(205, 127, 50, .35);
+      background: rgba(205, 127, 50, .05);
+      animation-delay: 1.6s;
+    }
+
+    .podium-avatar-ring {
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 1px solid;
+      opacity: .3;
+      animation: spin-ring 8s linear infinite;
+    }
+
+    .rank-1-card .podium-avatar-ring {
+      border-color: var(--gold)
+    }
+
+    .rank-2-card .podium-avatar-ring {
+      border-color: #C0C0C0;
+      animation-direction: reverse
+    }
+
+    .rank-3-card .podium-avatar-ring {
+      border-color: #CD7F32
+    }
+
+    .podium-username {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .rank-1-card .podium-username {
+      font-size: 1.15rem
+    }
+
+    .podium-title-tag {
+      font-size: .75rem;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .podium-stats {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .p-stat {
+      text-align: center
+    }
+
+    .p-stat-val {
+      font-family: 'Orbitron', monospace;
+      font-size: .85rem;
+      font-weight: 900;
+      display: block;
+    }
+
+    .rank-1-card .p-stat-val {
+      color: var(--gold)
+    }
+
+    .rank-2-card .p-stat-val {
+      color: #C0C0C0
+    }
+
+    .rank-3-card .p-stat-val {
+      color: #CD7F32
+    }
+
+    .p-stat-label {
+      font-size: .65rem;
+      color: var(--ghost)
+    }
+
+    .podium-badge-row {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .hof-badge {
+      font-size: .7rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-family: 'Orbitron', monospace;
+      font-size: .5rem;
+      letter-spacing: .5px;
+    }
+
+    .hb-gold {
+      background: rgba(255, 215, 0, .1);
+      color: var(--gold);
+      border: 1px solid rgba(255, 215, 0, .25)
+    }
+
+    .hb-blue {
+      background: rgba(0, 212, 255, .08);
+      color: var(--blue);
+      border: 1px solid rgba(0, 212, 255, .2)
+    }
+
+    .hb-purple {
+      background: rgba(123, 92, 245, .1);
+      color: var(--purple);
+      border: 1px solid rgba(123, 92, 245, .25)
+    }
+
+    .hb-teal {
+      background: rgba(0, 255, 179, .08);
+      color: var(--teal);
+      border: 1px solid rgba(0, 255, 179, .2)
+    }
+
+    /* HOF Extended List (4–10) */
+    .hof-list {
+      background: var(--deep);
+      border: 1px solid var(--b-soft);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .hof-list-header {
+      padding: 13px 20px;
+      border-bottom: 1px solid var(--b-soft);
+      background: linear-gradient(90deg, rgba(255, 215, 0, .05), transparent);
+      font-family: 'Orbitron', monospace;
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--gold);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .hof-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, .03);
+      transition: background .2s;
+      cursor: pointer;
+    }
+
+    .hof-row:hover {
+      background: rgba(255, 215, 0, .02)
+    }
+
+    .hof-row:last-child {
+      border-bottom: none
+    }
+
+    .hof-rank-num {
+      font-family: 'Orbitron', monospace;
+      font-size: .8rem;
+      font-weight: 900;
+      width: 28px;
+      text-align: center;
+      flex-shrink: 0;
+      color: var(--ghost);
+    }
+
+    .hof-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      background: rgba(13, 18, 41, .8);
+      border: 1px solid var(--b-soft);
+    }
+
+    .hof-info {
+      flex: 1
+    }
+
+    .hof-name {
+      font-size: .92rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px
+    }
+
+    .hof-sub-info {
+      font-family: 'Orbitron', monospace;
+      font-size: .58rem;
+      color: var(--ghost)
+    }
+
+    .hof-score-col {
+      text-align: right
+    }
+
+    .hof-score {
+      font-family: 'Orbitron', monospace;
+      font-size: .8rem;
+      color: var(--gold);
+      font-weight: 700
+    }
+
+    .hof-class {
+      font-family: 'Orbitron', monospace;
+      font-size: .55rem;
+      padding: 2px 7px;
+      border-radius: 20px;
+      margin-top: 3px;
+      display: inline-block;
+    }
+
+    .cls-s {
+      background: rgba(255, 215, 0, .12);
+      color: var(--gold);
+      border: 1px solid rgba(255, 215, 0, .25)
+    }
+
+    .cls-a {
+      background: rgba(123, 92, 245, .12);
+      color: var(--purple);
+      border: 1px solid rgba(123, 92, 245, .25)
+    }
+
+    .cls-b {
+      background: rgba(0, 212, 255, .1);
+      color: var(--blue);
+      border: 1px solid rgba(0, 212, 255, .2)
+    }
+
+    /* Particles for HOF */
+    .hof-particles {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .hof-particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      animation: particle-rise linear infinite;
+    }
+
+    @keyframes particle-rise {
+      0% {
+        transform: translateY(0) translateX(0);
+        opacity: .6
+      }
+
+      100% {
+        transform: translateY(-100px) translateX(var(--dx, 10px));
+        opacity: 0
+      }
+    }
+
+    /* ── MOBILE BOTTOM NAV ── */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 300;
+      background: rgba(4, 6, 15, .95);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid var(--b-glow);
+      display: none;
+      padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+
+    @media(max-width:1023px) {
+      .bottom-nav {
+        display: flex !important
+      }
+    }
+
+    .bnav-inner {
+      display: flex;
+      width: 100%
+    }
+
+    .bnav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      padding: 8px 4px;
+      cursor: pointer;
+      transition: background .2s;
+      position: relative;
+    }
+
+    .bnav-item.active::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 28px;
+      height: 2px;
+      background: var(--blue);
+    }
+
+    .bnav-icon {
+      font-size: 1.2rem
+    }
+
+    .bnav-label {
+      font-family: 'Orbitron', monospace;
+      font-size: .5rem;
+      letter-spacing: .5px;
+      color: var(--ghost);
+      text-transform: uppercase;
+    }
+
+    .bnav-item.active .bnav-label {
+      color: var(--blue)
+    }
+
+    /* ═══════════════════════════════════════
+       SLIDE-OUT DRAWER (mobile menu)
+    ═══════════════════════════════════════ */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 400;
+      background: rgba(4, 6, 15, 0.6);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    .drawer-overlay.open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: -300px;
+      bottom: 0;
+      width: 280px;
+      z-index: 401;
+      background: var(--abyss);
+      border-left: 1px solid var(--b-glow);
+      transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    .drawer-overlay.open .drawer {
+      right: 0
+    }
+
+    .drawer-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--b-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .drawer-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.9rem;
+      background: linear-gradient(90deg, var(--blue), var(--purple));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .drawer-close {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--b-soft);
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .drawer-close:hover {
+      border-color: var(--crimson);
+      color: var(--crimson)
+    }
+
+    .drawer-body {
+      padding: 12px 0;
+      flex: 1;
+      overflow-y: auto
+    }
+
+    .drawer-section-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 2px;
+      color: var(--ghost);
+      text-transform: uppercase;
+      padding: 8px 20px 6px;
+    }
+
+    .drawer-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 20px;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .drawer-item:hover {
+      background: rgba(0, 212, 255, 0.04);
+      color: var(--text)
+    }
+
+    .drawer-item.active {
+      color: var(--blue)
+    }
+
+    .drawer-item-icon {
+      width: 20px;
+      text-align: center;
+      font-size: 1rem
+    }
+
+    .drawer-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--b-soft)
+    }
+
+    /* ── CREATOR EDITOR MODAL ── */
+    .editor-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      background: rgba(4, 6, 15, .94);
+      backdrop-filter: blur(14px);
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 24px 20px;
+      overflow-y: auto;
+      opacity: 0;
+      visibility: hidden;
+      transition: all .35s;
+    }
+
+    .editor-overlay.open {
+      opacity: 1;
+      visibility: visible
+    }
+
+    .editor-box {
+      width: 100%;
+      max-width: 720px;
+      background: var(--deep);
+      border: 1px solid var(--b-glow);
+      border-radius: 6px;
+      overflow: hidden;
+      transform: translateY(20px);
+      transition: transform .35s cubic-bezier(0.16, 1, 0.3, 1);
+      margin: auto;
+    }
+
+    .editor-overlay.open .editor-box {
+      transform: translateY(0)
+    }
+
+    .editor-header {
+      padding: 18px 24px;
+      background: linear-gradient(90deg, rgba(123, 92, 245, .08), transparent);
+      border-bottom: 1px solid var(--b-glow);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .editor-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text)
+    }
+
+    .editor-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .05);
+      border: 1px solid var(--b-soft);
+      color: var(--muted);
+      cursor: pointer;
+      font-size: .9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .2s;
+    }
+
+    .editor-close:hover {
+      border-color: var(--crimson);
+      color: var(--crimson)
+    }
+
+    .editor-body {
+      padding: 24px
+    }
+
+    .editor-tabs {
+      display: flex;
+      gap: 2px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--b-soft);
+    }
+
+    .editor-tab {
+      padding: 8px 16px;
+      font-family: 'Orbitron', monospace;
+      font-size: .6rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      background: transparent;
+      color: var(--ghost);
+      border: none;
+      border-bottom: 2px solid transparent;
+      transition: all .2s;
+    }
+
+    .editor-tab.active {
+      color: var(--blue);
+      border-bottom-color: var(--blue)
+    }
+
+    .editor-panel {
+      display: none
+    }
+
+    .editor-panel.active {
+      display: block;
+      animation: tab-in .25s ease
+    }
+
+    @keyframes tab-in {
+      from {
+        opacity: 0;
+        transform: translateX(8px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    .e-form-group {
+      margin-bottom: 16px
+    }
+
+    .e-label {
+      display: block;
+      font-family: 'Orbitron', monospace;
+      font-size: .6rem;
+      letter-spacing: 1.5px;
+      color: var(--ghost);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .e-input,
+    .e-textarea,
+    .e-select {
+      width: 100%;
+      background: rgba(4, 6, 15, .8);
+      border: 1px solid var(--b-soft);
+      border-radius: 2px;
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: .95rem;
+      padding: 10px 14px;
+      outline: none;
+      transition: border-color .25s, box-shadow .25s;
+      clip-path: polygon(5px 0%, 100% 0%, calc(100% - 5px) 100%, 0% 100%);
+    }
+
+    .e-input::placeholder,
+    .e-textarea::placeholder {
+      color: var(--ghost)
+    }
+
+    .e-input:focus,
+    .e-textarea:focus,
+    .e-select:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 12px rgba(0, 212, 255, .12);
+    }
+
+    .e-textarea {
+      resize: vertical;
+      min-height: 120px;
+      clip-path: none;
+      border-radius: 2px
+    }
+
+    .e-select {
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237B8DB0'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+    }
+
+    .e-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px
+    }
+
+    @media(max-width:500px) {
+      .e-row {
+        grid-template-columns: 1fr
+      }
+    }
+
+    /* Upload zone */
+    .upload-zone {
+      border: 1px dashed rgba(0, 212, 255, .25);
+      border-radius: 4px;
+      padding: 28px;
+      text-align: center;
+      cursor: pointer;
+      transition: all .25s;
+      background: rgba(0, 212, 255, .02);
+    }
+
+    .upload-zone:hover {
+      border-color: rgba(0, 212, 255, .5);
+      background: rgba(0, 212, 255, .04)
+    }
+
+    .upload-icon {
+      font-size: 2rem;
+      margin-bottom: 8px;
+      display: block
+    }
+
+    .upload-txt {
+      font-size: .85rem;
+      color: var(--muted)
+    }
+
+    .upload-hint {
+      font-family: 'Orbitron', monospace;
+      font-size: .58rem;
+      color: var(--ghost);
+      margin-top: 4px
+    }
+
+    /* Preview */
+    .preview-card {
+      background: var(--abyss);
+      border: 1px solid var(--b-soft);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 16px;
+    }
+
+    .preview-header {
+      padding: 10px 14px;
+      font-family: 'Orbitron', monospace;
+      font-size: .58rem;
+      letter-spacing: 1.5px;
+      color: var(--ghost);
+      border-bottom: 1px solid var(--b-soft);
+    }
+
+    .preview-body {
+      padding: 14px
+    }
+
+    .preview-cat-badge {
+      font-family: 'Orbitron', monospace;
+      font-size: .55rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+
+    .preview-title-txt {
+      font-family: 'Cinzel', serif;
+      font-size: .95rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px
+    }
+
+    .preview-excerpt-txt {
+      font-size: .8rem;
+      color: var(--muted)
+    }
+
+    .editor-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--b-soft);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: rgba(4, 6, 15, .4);
+    }
+
+    .e-btn {
+      padding: 10px 22px;
+      font-family: 'Orbitron', monospace;
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all .25s;
+      clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+    }
+
+    .e-btn-ghost {
+      background: transparent;
+      border: 1px solid var(--b-soft);
+      color: var(--muted);
+    }
+
+    .e-btn-ghost:hover {
+      border-color: var(--muted);
+      color: var(--text)
+    }
+
+    .e-btn-primary {
+      background: transparent;
+      border: 1px solid var(--blue);
+      color: var(--blue);
+    }
+
+    .e-btn-primary:hover {
+      background: rgba(0, 212, 255, .1);
+      box-shadow: 0 0 20px rgba(0, 212, 255, .25)
+    }
+
+    .e-btn-publish {
+      background: linear-gradient(135deg, var(--purple), rgba(0, 212, 255, .8));
+      border: none;
+      color: #fff;
+    }
+
+    .e-btn-publish:hover {
+      box-shadow: 0 0 24px rgba(123, 92, 245, .45);
+      transform: translateY(-1px)
+    }
+
+    .draft-saved {
+      font-family: 'Orbitron', monospace;
+      font-size: .6rem;
+      color: var(--ghost);
+      letter-spacing: 1px;
+    }
+
+    .draft-saved.saved {
+      color: var(--teal);
+      animation: flash-once .5s ease
+    }
+
+    @keyframes flash-once {
+      0% {
+        opacity: 0
+      }
+
+      100% {
+        opacity: 1
+      }
+    }
+
+    /* ── ANNOUNCE TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      z-index: 600;
+      background: var(--deep);
+      border: 1px solid var(--teal);
+      border-radius: 4px;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Orbitron', monospace;
+      font-size: .65rem;
+      letter-spacing: 1px;
+      color: var(--teal);
+      transform: translateY(20px);
+      opacity: 0;
+      transition: all .35s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+      max-width: 300px;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1
+    }
+
+    /* Reveal animations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      animation: rev .55s ease both
+    }
+
+    @keyframes rev {
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    .d1 {
+      animation-delay: .04s
+    }
+
+    .d2 {
+      animation-delay: .1s
+    }
+
+    .d3 {
+      animation-delay: .17s
+    }
+
+    .d4 {
+      animation-delay: .24s
+    }
+
+    .d5 {
+      animation-delay: .31s
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="aa-auth-gate" class="aa-auth-gate">
+    <div class="aa-auth-gate-spinner" aria-hidden="true"></div>
+    <div class="aa-auth-gate-text">Authorizing access…</div>
+  </div>
+
+  <div class="grid-bg"></div>
+
+  <!-- ════ NAVBAR ════ -->
+  <nav class="navbar">
+    <a href="index-1.html" class="nav-logo">Anime Aawaj</a>
+
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="setTab(this,'news')">News Hub</button>
+      <button class="nav-tab" onclick="setTab(this,'gallery')">Gallery</button>
+      <button class="nav-tab" onclick="setTab(this,'hof')">Hall of Fame</button>
+    </div>
+
+    <div class="nav-right">
+      <div class="aa-nav-user" id="aa-news-user">
+        <img id="aa-news-avatar" alt="" width="30" height="30" decoding="async" />
+        <span id="aa-news-name"></span>
+        <button type="button" class="aa-nav-out" id="aa-news-signout">Sign out</button>
+      </div>
+      <button class="nav-creator-btn" onclick="openEditor()">✍ Post Content</button>
+    </div>
+  </nav>
+
+  <!-- ════ FILTER RAIL ════ -->
+  <div class="filter-rail">
+    <button class="filter-pill active" onclick="setFilter(this)">All</button>
+    <button class="filter-pill" onclick="setFilter(this)">New Season<span class="new-chip">2</span></button>
+    <button class="filter-pill" onclick="setFilter(this)">Trailers</button>
+    <button class="filter-pill" onclick="setFilter(this)">Rumors</button>
+    <button class="filter-pill" onclick="setFilter(this)">Reviews</button>
+    <button class="filter-pill" onclick="setFilter(this)">Events<span class="new-chip">1</span></button>
+    <button class="filter-pill" onclick="setFilter(this)">Fan Art</button>
+  </div>
+
+  <!-- ════ MAIN PAGE ════ -->
+  <div class="page">
+
+    <!-- ════════════════ NEWS + SIDEBAR ════════════════ -->
+    <div id="tab-news">
+
+      <div class="content-grid">
+
+        <!-- LEFT MAIN -->
+        <div>
+
+          <!-- TRAILER OF THE WEEK -->
+          <div class="trailer-block reveal d1">
+            <div class="section-eyebrow">
+              <div class="eyebrow-bar"></div>
+              <div class="eyebrow-txt">🎬 Trailer of the Week</div>
+              <div class="eyebrow-right"><span class="see-all" onclick="openTrailer()">Play Now →</span></div>
+            </div>
+
+            <div class="trailer-frame" id="trailer-frame" onclick="openTrailer()">
+              <!-- Corner decorations -->
+              <div class="trailer-corner corner-tl"></div>
+              <div class="trailer-corner corner-tr"></div>
+              <div class="trailer-corner corner-bl"></div>
+              <div class="trailer-corner corner-br"></div>
+
+              <!-- Placeholder BG -->
+              <div class="trailer-bg">🏯</div>
+
+              <!-- Overlay content -->
+              <div class="trailer-overlay">
+                <div class="play-ring" id="play-ring">▶</div>
+                <div class="trailer-meta">
+                  <div class="trailer-tag">🔴 Now Streaming · Official Trailer</div>
+                  <div class="trailer-title-txt">Solo Leveling: Reawakening</div>
+                  <div class="trailer-ep">Season 2 — Final Arc Trailer · 2 min 34 sec</div>
+                </div>
+              </div>
+
+              <!-- Iframe (loads on click) -->
+              <div class="trailer-iframe-wrap" id="trailer-iframe-wrap">
+                <!-- [Beru Hook] Replace src with actual YouTube embed URL -->
+                <!-- e.g. https://www.youtube.com/embed/VIDEO_ID?autoplay=1 -->
+                <iframe id="trailer-iframe" src="about:blank" allow="autoplay; fullscreen" allowfullscreen
+                  title="Trailer of the Week"></iframe>
+                <button class="close-trailer" onclick="closeTrailer(event)">✕</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- NEWS MASONRY GRID -->
+          <div class="news-block reveal d2">
+            <div class="section-eyebrow">
+              <div class="eyebrow-bar"></div>
+              <div class="eyebrow-txt">📡 Latest Transmissions</div>
+              <div class="eyebrow-right"><span class="see-all">View Archive →</span></div>
+            </div>
+
+            <div class="masonry-grid" id="news-grid">
+
+              <!-- FEATURED card -->
+              <div class="news-card featured">
+                <div class="card-img card-img-lg bg-new-season">🌑</div>
+                <div class="card-body">
+                  <div class="card-top-row">
+                    <span class="cat-badge cat-new-season">New Season</span>
+                    <span class="card-date">APR 02</span>
+                  </div>
+                  <div class="card-title">Solo Leveling: Reawakening — Full Season 2 Date Revealed</div>
+                  <div class="card-excerpt">The Guild Council has confirmed the return of Sung Jin-Woo in a spectacular
+                    second arc. Production studio A-1 Pictures drops the full 24-episode lineup starting this summer.
+                  </div>
+                  <div class="card-footer">
+                    <div class="card-author">By <strong>ShadowKing_NP</strong></div>
+                    <div class="card-read-btn">Read <span>→</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 2 -->
+              <div class="news-card">
+                <div class="card-img card-img-sm bg-trailer">⚡</div>
+                <div class="card-body">
+                  <div class="card-top-row">
+                    <span class="cat-badge cat-trailer">Trailer</span>
+                    <span class="card-date">APR 01</span>
+                  </div>
+                  <div class="card-title">JJK Season 3 Final Trailer Drops</div>
+                  <div class="card-excerpt">MAPPA releases the official 90-second final trailer for Jujutsu Kaisen
+                    Season 3 Episode 13, teasing the Culling Game's climax.</div>
+                  <div class="card-footer">
+                    <div class="card-author">By <strong>AnimeRei_07</strong></div>
+                    <div class="card-read-btn">Read <span>→</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 3 -->
+              <div class="news-card">
+                <div class="card-img card-img-md bg-rumor">💀</div>
+                <div class="card-body">
+                  <div class="card-top-row">
+                    <span class="cat-badge cat-rumor">Rumor</span>
+                    <span class="card-date">MAR 31</span>
+                  </div>
+                  <div class="card-title">Is Chainsaw Man Part 3 Coming Earlier Than Expected?</div>
+                  <div class="card-excerpt">Leaked studio schedules suggest MAPPA may accelerate the Chainsaw Man Part 3
+                    anime. Take this with caution — nothing officially confirmed.</div>
+                  <div class="card-footer">
+                    <div class="card-author">By <strong>Bijuli_Sensei</strong></div>
+                    <div class="card-read-btn">Read <span>→</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 4 -->
+              <div class="news-card">
+                <div class="card-img card-img-sm bg-event">🎌</div>
+                <div class="card-body">
+                  <div class="card-top-row">
+                    <span class="cat-badge cat-event">Event</span>
+                    <span class="card-date">MAR 30</span>
+                  </div>
+                  <div class="card-title">Anime Aawaj Trivia Night — Naruto Edition</div>
+                  <div class="card-excerpt">Guild members in Kathmandu gather for an epic live quiz event. Register now
+                    — first 50 get exclusive Guild Coins.</div>
+                  <div class="card-footer">
+                    <div class="card-author">By <strong>Guild Admin</strong></div>
+                    <div class="card-read-btn">Register <span>→</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 5 -->
+              <div class="news-card">
+                <div class="card-img card-img-lg bg-review">🌊</div>
+                <div class="card-body">
+                  <div class="card-top-row">
+                    <span class="cat-badge cat-review">Review</span>
+                    <span class="card-date">MAR 28</span>
+                  </div>
+                  <div class="card-title">One Piece Chapter 1113: The Final Saga Accelerates</div>
+                  <div class="card-excerpt">Oda-sensei delivers another masterclass chapter. The Void Century secrets
+                    unfold at a breathtaking pace. Our in-depth breakdown covers every panel of this historic chapter.
+                  </div>
+                  <div class="card-footer">
+                    <div class="card-author">By <strong>KageNoShin</strong></div>
+                    <div class="card-read-btn">Read <span>→</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 6 -->
+              <div class="news-card">
+                <div class="card-img card-img-sm bg-fanart">🌸</div>
+                <div class="card-body">
+                  <div class="card-top-row">
+                    <span class="cat-badge cat-fanart">Fan Art</span>
+                    <span class="card-date">MAR 27</span>
+                  </div>
+                  <div class="card-title">Community Fan Art Showcase — March Edition</div>
+                  <div class="card-excerpt">This month's top 10 fan artworks from Guild creators. Some truly
+                    extraordinary talent from our Nepali anime community.</div>
+                  <div class="card-footer">
+                    <div class="card-author">By <strong>SakuraNP</strong></div>
+                    <div class="card-read-btn">View <span>→</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 7 -->
+              <div class="news-card">
+                <div class="card-img card-img-md bg-new-season">👁️</div>
+                <div class="card-body">
+                  <div class="card-top-row">
+                    <span class="cat-badge cat-new-season">New Season</span>
+                    <span class="card-date">MAR 25</span>
+                  </div>
+                  <div class="card-title">Demon Slayer: Infinity Castle Arc — Summer 2026 Confirmed</div>
+                  <div class="card-excerpt">Ufotable officially confirms the Infinity Castle arc adaptation. The movie
+                    trilogy format is now confirmed after months of speculation.</div>
+                  <div class="card-footer">
+                    <div class="card-author">By <strong>Agni_Kathmandu</strong></div>
+                    <div class="card-read-btn">Read <span>→</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card 8 -->
+              <div class="news-card">
+                <div class="card-img card-img-sm bg-trailer">🎯</div>
+                <div class="card-body">
+                  <div class="card-top-row">
+                    <span class="cat-badge cat-trailer">Trailer</span>
+                    <span class="card-date">MAR 22</span>
+                  </div>
+                  <div class="card-title">Bleach TYBW Part 4 — Teaser Drops at AnimeJapan</div>
+                  <div class="card-excerpt">Studio Pierrot teases the final Thousand Year Blood War arc with a 45-second
+                    clip. Yhwach vs Ichigo confirmed as the finale.</div>
+                  <div class="card-footer">
+                    <div class="card-author">By <strong>OtakuHunter</strong></div>
+                    <div class="card-read-btn">Read <span>→</span></div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- GALLERY SECTION -->
+          <div class="gallery-block reveal d3" id="tab-gallery-inline">
+            <div class="section-eyebrow">
+              <div class="eyebrow-bar"></div>
+              <div class="eyebrow-txt">🖼 Fan Art & Posters</div>
+              <div class="eyebrow-right"><span class="see-all"
+                  onclick="setTab(document.querySelector('.nav-tab:nth-child(2)'),'gallery')">Full Gallery →</span>
+              </div>
+            </div>
+
+            <div class="gallery-grid">
+              <div class="gallery-thumb g1" onclick="openLightbox(0)">🌑<div class="gallery-label">Shadow Monarch</div>
+                <div class="gallery-hover-icon">⤢</div>
+              </div>
+              <div class="gallery-thumb g2" onclick="openLightbox(1)">⚔️<div class="gallery-label">Zoro — Enma</div>
+                <div class="gallery-hover-icon">⤢</div>
+              </div>
+              <div class="gallery-thumb g3" onclick="openLightbox(2)">👁️<div class="gallery-label">Sukuna Rex</div>
+                <div class="gallery-hover-icon">⤢</div>
+              </div>
+              <div class="gallery-thumb g4" onclick="openLightbox(3)">🌊<div class="gallery-label">One Piece — Final
+                </div>
+                <div class="gallery-hover-icon">⤢</div>
+              </div>
+              <div class="gallery-thumb g5" onclick="openLightbox(4)">⚡<div class="gallery-label">Naruto Sage</div>
+                <div class="gallery-hover-icon">⤢</div>
+              </div>
+              <div class="gallery-thumb g6" onclick="openLightbox(5)">🔥<div class="gallery-label">Nezuko Flame</div>
+                <div class="gallery-hover-icon">⤢</div>
+              </div>
+              <div class="gallery-thumb g7" onclick="openLightbox(6)">🎯<div class="gallery-label">Ichigo Bankai</div>
+                <div class="gallery-hover-icon">⤢</div>
+              </div>
+              <div class="gallery-thumb g8" onclick="openLightbox(7)">🏯<div class="gallery-label">Hashira Summit</div>
+                <div class="gallery-hover-icon">⤢</div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /left col -->
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar reveal d2">
+
+          <!-- Release Calendar -->
+          <div class="s-panel">
+            <div class="s-panel-header">
+              <div class="s-panel-title">
+                <div class="live-dot"></div>This Week's Releases
+              </div>
+              <span style="font-family:'Orbitron',monospace;font-size:.58rem;color:var(--ghost)">APR 2026</span>
+            </div>
+
+            <div class="cal-list">
+              <!-- TODAY -->
+              <div class="cal-day-label">Today — Friday</div>
+              <div class="cal-item">
+                <div class="cal-dot dot-crimson"></div>
+                <div class="cal-info">
+                  <div class="cal-name">Solo Leveling S2</div>
+                  <div class="cal-ep">Episode 11 · Crunchyroll</div>
+                </div>
+                <div>
+                  <div class="cal-today-badge">LIVE</div>
+                </div>
+              </div>
+              <div class="cal-item">
+                <div class="cal-dot dot-blue"></div>
+                <div class="cal-info">
+                  <div class="cal-name">Jujutsu Kaisen S3</div>
+                  <div class="cal-ep">Episode 8 · Crunchyroll</div>
+                </div>
+                <div class="cal-time">23:00</div>
+              </div>
+
+              <!-- SATURDAY -->
+              <div class="cal-day-label">Saturday</div>
+              <div class="cal-item">
+                <div class="cal-dot dot-purple"></div>
+                <div class="cal-info">
+                  <div class="cal-name">One Piece</div>
+                  <div class="cal-ep">Episode 1115 · Funimation</div>
+                </div>
+                <div class="cal-time">09:30</div>
+              </div>
+              <div class="cal-item">
+                <div class="cal-dot dot-teal"></div>
+                <div class="cal-info">
+                  <div class="cal-name">Chainsaw Man S2</div>
+                  <div class="cal-ep">Episode 4 · Netflix</div>
+                </div>
+                <div class="cal-time">12:00</div>
+              </div>
+
+              <!-- SUNDAY -->
+              <div class="cal-day-label">Sunday</div>
+              <div class="cal-item">
+                <div class="cal-dot dot-gold"></div>
+                <div class="cal-info">
+                  <div class="cal-name">Bleach TYBW Pt. 4</div>
+                  <div class="cal-ep">Episode 2 · Disney+</div>
+                </div>
+                <div class="cal-time">11:00</div>
+              </div>
+              <div class="cal-item">
+                <div class="cal-dot dot-rose"></div>
+                <div class="cal-info">
+                  <div class="cal-name">Demon Slayer Movie</div>
+                  <div class="cal-ep">Infinity Castle · Theatres</div>
+                </div>
+                <div class="cal-time">All Day</div>
+              </div>
+
+              <!-- MONDAY -->
+              <div class="cal-day-label">Monday</div>
+              <div class="cal-item">
+                <div class="cal-dot dot-blue"></div>
+                <div class="cal-info">
+                  <div class="cal-name">Naruto: New Era</div>
+                  <div class="cal-ep">Episode 22 · Crunchyroll</div>
+                </div>
+                <div class="cal-time">18:30</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Trending Tags -->
+          <div class="s-panel">
+            <div class="s-panel-header">
+              <div class="s-panel-title">Trending Tags</div>
+            </div>
+            <div class="tags-wrap">
+              <div class="trend-tag">#SoloLeveling</div>
+              <div class="trend-tag">#JJK</div>
+              <div class="trend-tag">#OnePiece</div>
+              <div class="trend-tag">#ChainsawMan</div>
+              <div class="trend-tag">#DemonSlayer</div>
+              <div class="trend-tag">#Bleach</div>
+              <div class="trend-tag">#Naruto</div>
+              <div class="trend-tag">#AnimeNepal</div>
+              <div class="trend-tag">#AnimeAawaj</div>
+              <div class="trend-tag">#NewSeason</div>
+            </div>
+          </div>
+
+          <!-- Hub Stats -->
+          <div class="s-panel">
+            <div class="s-panel-header">
+              <div class="s-panel-title">Hub Stats</div>
+            </div>
+            <div style="padding:4px 0">
+              <div class="mini-row">
+                <div class="mini-label">Articles Published</div>
+                <div class="mini-val">342</div>
+              </div>
+              <div class="mini-row">
+                <div class="mini-label">Active Creators</div>
+                <div class="mini-val">28</div>
+              </div>
+              <div class="mini-row">
+                <div class="mini-label">Fan Arts Uploaded</div>
+                <div class="mini-val" style="color:var(--rose)">184</div>
+              </div>
+              <div class="mini-row">
+                <div class="mini-label">Trailers Featured</div>
+                <div class="mini-val" style="color:var(--teal)">47</div>
+              </div>
+              <div class="mini-row">
+                <div class="mini-label">Weekly Readers</div>
+                <div class="mini-val" style="color:var(--gold)">14.2K</div>
+              </div>
+            </div>
+          </div>
+
+        </aside>
+
+      </div><!-- /content-grid -->
+
+      <!-- ════ HALL OF FAME (inline) ════ -->
+      <div class="hof-section reveal d4" id="tab-hof-inline">
+
+        <!-- Banner -->
+        <div class="hof-banner">
+          <div class="hof-particles" id="hof-particles"></div>
+          <span class="hof-crown-emoji">👑</span>
+          <div class="hof-title">Hall of Fame</div>
+          <div class="hof-sub">The Eternal Champions of the Guild</div>
+          <div class="hof-season-chip">◆ Season III — Final Rankings ◆</div>
+        </div>
+
+        <!-- TOP 3 PODIUM -->
+        <div class="section-eyebrow" style="margin-bottom:20px">
+          <div class="eyebrow-bar"></div>
+          <div class="eyebrow-txt">🏆 S-Class Champions</div>
+        </div>
+
+        <div class="podium-wrap">
+
+          <!-- 2nd Place (left) -->
+          <div class="podium-card rank-2-card" style="margin-top:28px">
+            <div class="podium-position pos-2">2nd Place</div>
+            <div class="podium-avatar">🌙<div class="podium-avatar-ring"></div>
+            </div>
+            <div class="podium-username">AnimeRei_07</div>
+            <div class="podium-title-tag">The Moonlit Scholar</div>
+            <div class="podium-stats">
+              <div class="p-stat"><span class="p-stat-val">15,880</span><span class="p-stat-label">Score</span></div>
+              <div class="p-stat"><span class="p-stat-val">Lv.39</span><span class="p-stat-label">Level</span></div>
+              <div class="p-stat"><span class="p-stat-val">94%</span><span class="p-stat-label">Acc.</span></div>
+            </div>
+            <div class="podium-badge-row">
+              <span class="hof-badge hb-blue">A-Class</span>
+              <span class="hof-badge hb-purple">Scholar</span>
+            </div>
+          </div>
+
+          <!-- 1st Place (center — tallest) -->
+          <div class="podium-card rank-1-card">
+            <div class="podium-position pos-1">👑 1st Place</div>
+            <div class="podium-avatar" style="width:96px;height:96px;font-size:3rem">⚔️<div class="podium-avatar-ring">
+              </div>
+            </div>
+            <div class="podium-username">ShadowKing_NP</div>
+            <div class="podium-title-tag" style="color:var(--gold);font-weight:600">Shadow Monarch</div>
+            <div class="podium-stats">
+              <div class="p-stat"><span class="p-stat-val">18,430</span><span class="p-stat-label">Score</span></div>
+              <div class="p-stat"><span class="p-stat-val">Lv.43</span><span class="p-stat-label">Level</span></div>
+              <div class="p-stat"><span class="p-stat-val">S-Class</span><span class="p-stat-label">Rank</span></div>
+            </div>
+            <div class="podium-badge-row">
+              <span class="hof-badge hb-gold">S-Class</span>
+              <span class="hof-badge hb-teal">Speed King</span>
+              <span class="hof-badge hb-purple">Creator</span>
+            </div>
+          </div>
+
+          <!-- 3rd Place (right) -->
+          <div class="podium-card rank-3-card" style="margin-top:48px">
+            <div class="podium-position pos-3">3rd Place</div>
+            <div class="podium-avatar">⚡<div class="podium-avatar-ring"></div>
+            </div>
+            <div class="podium-username">Bijuli_Sensei</div>
+            <div class="podium-title-tag">The Thunder Sage</div>
+            <div class="podium-stats">
+              <div class="p-stat"><span class="p-stat-val">13,200</span><span class="p-stat-label">Score</span></div>
+              <div class="p-stat"><span class="p-stat-val">Lv.35</span><span class="p-stat-label">Level</span></div>
+              <div class="p-stat"><span class="p-stat-val">89%</span><span class="p-stat-label">Acc.</span></div>
+            </div>
+            <div class="podium-badge-row">
+              <span class="hof-badge hb-blue">A-Class</span>
+              <span class="hof-badge hb-teal">Sensei</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RANKS 4–10 -->
+        <div class="hof-list reveal d5">
+          <div class="hof-list-header">
+            <span>◆</span> Guild Legends — Ranks 4 to 10
+          </div>
+
+          <div class="hof-row">
+            <div class="hof-rank-num" style="color:var(--muted)">4</div>
+            <div class="hof-avatar">🗡️</div>
+            <div class="hof-info">
+              <div class="hof-name">KageNoShin</div>
+              <div class="hof-sub-info">Lv.30 · 128 Quests · B-Class</div>
+            </div>
+            <div class="hof-score-col">
+              <div class="hof-score">10,750</div>
+              <div class="hof-class cls-b">B-Class</div>
+            </div>
+          </div>
+
+          <div class="hof-row">
+            <div class="hof-rank-num" style="color:var(--muted)">5</div>
+            <div class="hof-avatar">🌸</div>
+            <div class="hof-info">
+              <div class="hof-name">SakuraNP</div>
+              <div class="hof-sub-info">Lv.28 · 104 Quests · B-Class</div>
+            </div>
+            <div class="hof-score-col">
+              <div class="hof-score">9,600</div>
+              <div class="hof-class cls-b">B-Class</div>
+            </div>
+          </div>
+
+          <div class="hof-row">
+            <div class="hof-rank-num" style="color:var(--muted)">6</div>
+            <div class="hof-avatar">🔥</div>
+            <div class="hof-info">
+              <div class="hof-name">Agni_Kathmandu</div>
+              <div class="hof-sub-info">Lv.25 · 88 Quests · B-Class</div>
+            </div>
+            <div class="hof-score-col">
+              <div class="hof-score">8,350</div>
+              <div class="hof-class cls-b">B-Class</div>
+            </div>
+          </div>
+
+          <div class="hof-row">
+            <div class="hof-rank-num" style="color:var(--muted)">7</div>
+            <div class="hof-avatar">🎯</div>
+            <div class="hof-info">
+              <div class="hof-name">OtakuHunter</div>
+              <div class="hof-sub-info">Lv.22 · 76 Quests · A-Class</div>
+            </div>
+            <div class="hof-score-col">
+              <div class="hof-score">7,100</div>
+              <div class="hof-class cls-a">A-Class</div>
+            </div>
+          </div>
+
+          <div class="hof-row">
+            <div class="hof-rank-num" style="color:var(--muted)">8</div>
+            <div class="hof-avatar">🐉</div>
+            <div class="hof-info">
+              <div class="hof-name">DragonPokhari</div>
+              <div class="hof-sub-info">Lv.20 · 62 Quests · B-Class</div>
+            </div>
+            <div class="hof-score-col">
+              <div class="hof-score">6,400</div>
+              <div class="hof-class cls-b">B-Class</div>
+            </div>
+          </div>
+
+          <div class="hof-row">
+            <div class="hof-rank-num" style="color:var(--muted)">9</div>
+            <div class="hof-avatar">⭐</div>
+            <div class="hof-info">
+              <div class="hof-name">StarGazer_NP</div>
+              <div class="hof-sub-info">Lv.18 · 55 Quests · B-Class</div>
+            </div>
+            <div class="hof-score-col">
+              <div class="hof-score">5,200</div>
+              <div class="hof-class cls-b">B-Class</div>
+            </div>
+          </div>
+
+          <div class="hof-row">
+            <div class="hof-rank-num" style="color:var(--muted)">10</div>
+            <div class="hof-avatar">🌊</div>
+            <div class="hof-info">
+              <div class="hof-name">MizunoKai</div>
+              <div class="hof-sub-info">Lv.15 · 44 Quests · A-Class</div>
+            </div>
+            <div class="hof-score-col">
+              <div class="hof-score">4,800</div>
+              <div class="hof-class cls-a">A-Class</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div><!-- /hof section -->
+
+    </div><!-- /tab-news -->
+
+  </div><!-- /page -->
+
+  <!-- ═══ LIGHTBOX ═══ -->
+  <div class="lightbox" id="lightbox" onclick="closeLightboxOnOverlay(event)">
+    <div class="lb-inner">
+      <div class="lb-img-frame" id="lb-img"><span id="lb-emoji"
+          style="font-size:9rem;position:relative;z-index:1">🌑</span></div>
+      <button class="lb-close" onclick="closeLightbox()">✕</button>
+      <button class="lb-nav lb-prev" onclick="lbNav(-1)">‹</button>
+      <button class="lb-nav lb-next" onclick="lbNav(1)">›</button>
+      <div class="lb-meta">
+        <div class="lb-title" id="lb-title">Shadow Monarch</div>
+        <div class="lb-sub" id="lb-sub">Fan Art · by ShadowKing_NP</div>
+        <div class="lb-counter" id="lb-counter">1 / 8</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CREATOR EDITOR MODAL ═══ -->
+  <div class="editor-overlay" id="editor-overlay">
+    <div class="editor-box">
+
+      <div class="editor-header">
+        <div class="editor-title">✍ Creator Post Editor</div>
+        <button class="editor-close" onclick="closeEditor()">✕</button>
+      </div>
+
+      <div class="editor-body">
+        <div class="editor-tabs">
+          <button class="editor-tab active" onclick="setEditorTab(this,'write')">Write</button>
+          <button class="editor-tab" onclick="setEditorTab(this,'media')">Media</button>
+          <button class="editor-tab" onclick="setEditorTab(this,'preview')">Preview</button>
+        </div>
+
+        <!-- WRITE TAB -->
+        <div class="editor-panel active" id="editor-write">
+          <div class="e-row">
+            <div class="e-form-group">
+              <label class="e-label">Post Title</label>
+              <input type="text" class="e-input" placeholder="e.g. Solo Leveling Season 2 Review..." id="e-title"
+                oninput="livePreview()" />
+            </div>
+            <div class="e-form-group">
+              <label class="e-label">Category</label>
+              <select class="e-select" id="e-category" onchange="livePreview()">
+                <option value="">Select category...</option>
+                <option value="new-season">New Season</option>
+                <option value="trailer">Trailer</option>
+                <option value="rumor">Rumor</option>
+                <option value="review">Review</option>
+                <option value="event">Event</option>
+                <option value="fanart">Fan Art</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="e-form-group">
+            <label class="e-label">Excerpt / Summary</label>
+            <input type="text" class="e-input" placeholder="One-line summary shown on the card..." id="e-excerpt"
+              oninput="livePreview()" />
+          </div>
+
+          <div class="e-form-group">
+            <label class="e-label">Full Article Content (Markdown supported)</label>
+            <textarea class="e-textarea"
+              placeholder="Write your full article here... Use **bold**, *italic*, and ## headings for formatting."
+              id="e-content" style="min-height:180px"></textarea>
+          </div>
+
+          <div class="e-row">
+            <div class="e-form-group">
+              <label class="e-label">Anime / Topic Tags</label>
+              <input type="text" class="e-input" placeholder="#SoloLeveling #AnimeAawaj" />
+            </div>
+            <div class="e-form-group">
+              <label class="e-label">Reference / Source URL</label>
+              <input type="url" class="e-input" placeholder="https://..." />
+            </div>
+          </div>
+        </div>
+
+        <!-- MEDIA TAB -->
+        <div class="editor-panel" id="editor-media">
+          <div class="e-form-group">
+            <label class="e-label">Cover Image</label>
+            <!-- [Beru Hook] Connect to Firebase Storage upload -->
+            <div class="upload-zone"
+              onclick="alert('[Beru Hook] Open file picker → Upload to Firebase Storage → store downloadURL')">
+              <span class="upload-icon">🖼</span>
+              <div class="upload-txt">Click to upload cover image</div>
+              <div class="upload-hint">JPG, PNG, WEBP · Max 5MB · Recommended 1280×720</div>
+            </div>
+          </div>
+
+          <div class="e-form-group">
+            <label class="e-label">YouTube Trailer URL (Optional)</label>
+            <input type="url" class="e-input" placeholder="https://youtube.com/watch?v=..." id="e-yt-url" />
+            <div style="font-size:.72rem;color:var(--ghost);margin-top:4px">If provided, a play button will appear on
+              the card.</div>
+          </div>
+
+          <div class="e-form-group">
+            <label class="e-label">Gallery Images (Optional — up to 6)</label>
+            <div class="upload-zone"
+              onclick="alert('[Beru Hook] Multi-file upload → Firebase Storage → store array of downloadURLs')">
+              <span class="upload-icon">📸</span>
+              <div class="upload-txt">Add extra images for the post gallery</div>
+              <div class="upload-hint">Drag & drop or click to select multiple files</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PREVIEW TAB -->
+        <div class="editor-panel" id="editor-preview">
+          <div
+            style="font-family:'Orbitron',monospace;font-size:.6rem;color:var(--ghost);letter-spacing:1px;margin-bottom:12px">
+            CARD PREVIEW — AS IT APPEARS IN THE NEWS FEED
+          </div>
+          <div class="preview-card">
+            <div
+              style="height:90px;background:var(--deep);display:flex;align-items:center;justify-content:center;font-size:3rem;color:var(--ghost)">
+              🖼 Cover Image
+            </div>
+            <div class="preview-body">
+              <div class="preview-cat-badge cat-new-season" id="prev-badge">Category</div>
+              <div class="preview-title-txt" id="prev-title">Your post title will appear here...</div>
+              <div class="preview-excerpt-txt" id="prev-excerpt">Your excerpt will appear here as the card description.
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /editor-body -->
+
+      <div class="editor-footer">
+        <div class="draft-saved" id="draft-status">● Unsaved draft</div>
+        <div style="display:flex;gap:10px">
+          <button class="e-btn e-btn-ghost" onclick="saveDraft()">Save Draft</button>
+          <button class="e-btn e-btn-publish" onclick="publishPost()">
+            ⟡ Publish Post
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ TOAST ═══ -->
+  <div class="toast" id="toast">
+    <span>✓</span>
+    <span id="toast-msg">Post published to the Guild!</span>
+  </div>
+
+  <!-- MOBILE BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <div class="bnav-inner">
+      <div class="bnav-item" onclick="window.location.href='index-1.html'">
+        <div class="bnav-icon">🏠</div>
+        <div class="bnav-label">Home</div>
+      </div>
+      <div class="bnav-item active">
+        <div class="bnav-icon">📡</div>
+        <div class="bnav-label">News</div>
+      </div>
+      <div class="bnav-item" onclick="window.location.href='quest-arena.html'">
+        <div class="bnav-icon">⚔️</div>
+        <div class="bnav-label">Quest</div>
+      </div>
+      <div class="bnav-item" onclick="window.location.href='dashboard.html'">
+        <div class="bnav-icon">🛡️</div>
+        <div class="bnav-label">Profile</div>
+      </div>
+      <div class="bnav-item" onclick="openEditor()">
+        <div class="bnav-icon">✍</div>
+        <div class="bnav-label">Post</div>
+      </div>
+      <div class="bnav-item" onclick="openDrawer()">
+        <div class="bnav-icon">☰</div>
+        <div class="bnav-label">Menu</div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ════════════════════════════════════
+     SLIDE-OUT DRAWER
+════════════════════════════════════ -->
+  <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()">
+    <div class="drawer" onclick="event.stopPropagation()">
+      <div class="drawer-header">
+        <div class="drawer-title">Anime Aawaj</div>
+        <div class="drawer-close" onclick="closeDrawer()">✕</div>
+      </div>
+      <div class="drawer-body">
+        <div class="drawer-section-label">Navigation</div>
+        <div class="drawer-item" onclick="window.location.href='index-1.html'">
+          <div class="drawer-item-icon">🏠</div> Home
+        </div>
+        <div class="drawer-item" onclick="window.location.href='dashboard.html'">
+          <div class="drawer-item-icon">🛡️</div> Player Profile
+        </div>
+        <div class="drawer-item" onclick="window.location.href='quest-arena.html'">
+          <div class="drawer-item-icon">⚔️</div> Quest Board
+        </div>
+        <div class="drawer-item" onclick="window.location.href='rankings.html'">
+          <div class="drawer-item-icon">🏆</div> Guild Rankings
+        </div>
+        <div class="drawer-item active" onclick="window.location.href='news-hub.html'">
+          <div class="drawer-item-icon">📰</div> Anime News
+        </div>
+        <div class="drawer-section-label" style="margin-top:10px;">Creator</div>
+        <div class="drawer-item" onclick="openCreatorModal(); closeDrawer()">
+          <div class="drawer-item-icon">✍️</div> Apply for Creator ID
+        </div>
+        <div class="drawer-item" onclick="window.location.href='rankings.html'">
+          <div class="drawer-item-icon">🎖️</div> Hall of Fame
+        </div>
+        <div class="drawer-section-label" style="margin-top:10px;">Account</div>
+        <div class="drawer-item" onclick="window.location.href='dashboard.html'">
+          <div class="drawer-item-icon">⚙️</div> Settings
+        </div>
+        <div class="drawer-item" id="aa-drawer-logout" style="color: var(--crimson);">
+          <div class="drawer-item-icon">🚪</div> Log Out
+        </div>
+      </div>
+      <div class="drawer-footer">
+        <div style="font-family:'Orbitron',monospace; font-size:0.58rem; color:var(--ghost); letter-spacing:1px;">
+          SEASON III · GUILD SYSTEM v0.1
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ═══ HOF PARTICLES ═══ */
+    (function spawnHofParticles() {
+      const wrap = document.getElementById('hof-particles');
+      if (!wrap) return;
+      const colors = ['#FFD700', '#FF8C00', '#7B5CF5', '#00D4FF'];
+      for (let i = 0; i < 20; i++) {
+        const p = document.createElement('div');
+        p.className = 'hof-particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.bottom = Math.random() * 40 + '%';
+        p.style.background = colors[Math.floor(Math.random() * colors.length)];
+        p.style.animationDuration = (3 + Math.random() * 5) + 's';
+        p.style.animationDelay = (Math.random() * 4) + 's';
+        p.style.setProperty('--dx', (Math.random() * 30 - 15) + 'px');
+        wrap.appendChild(p);
+      }
+    })();
+
+    /* ═══ FILTER RAIL ═══ */
+    function setFilter(el) {
+      document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+      // [Beru Hook] filter news cards by category here
+    }
+
+    /* ═══ NAV TABS ═══ */
+    function setTab(el, id) {
+      document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+      const section = { news: 'tab-news-anchor', gallery: 'tab-gallery-inline', hof: 'tab-hof-inline' };
+      const target = document.getElementById(section[id]);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    /* ═══ TRAILER ═══ */
+    function openTrailer() {
+      const wrap = document.getElementById('trailer-iframe-wrap');
+      const iframe = document.getElementById('trailer-iframe');
+      // [Beru Hook] Replace VIDEO_ID with actual YouTube ID from Firestore
+      iframe.src = 'https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1';
+      wrap.classList.add('open');
+      document.getElementById('play-ring').style.display = 'none';
+    }
+
+    function closeTrailer(e) {
+      e.stopPropagation();
+      const wrap = document.getElementById('trailer-iframe-wrap');
+      document.getElementById('trailer-iframe').src = 'about:blank';
+      wrap.classList.remove('open');
+      document.getElementById('play-ring').style.display = '';
+    }
+
+    /* ═══ LIGHTBOX ═══ */
+    const GALLERY_DATA = [
+      { emoji: '🌑', title: 'Shadow Monarch', sub: 'Fan Art · by ShadowKing_NP' },
+      { emoji: '⚔️', title: 'Zoro — Enma Arc', sub: 'Fan Art · by KageNoShin' },
+      { emoji: '👁️', title: 'Sukuna Rex', sub: 'Digital Art · by OtakuHunter' },
+      { emoji: '🌊', title: 'One Piece — Final Saga', sub: 'Poster · by DragonPokhari' },
+      { emoji: '⚡', title: 'Naruto: Sage Mode', sub: 'Fan Art · by Bijuli_Sensei' },
+      { emoji: '🔥', title: 'Nezuko Demon Form', sub: 'Fan Art · by SakuraNP' },
+      { emoji: '🎯', title: 'Ichigo Bankai — TYBW', sub: 'Digital Art · by AnimeRei_07' },
+      { emoji: '🏯', title: 'Hashira Summit', sub: 'Poster · by Agni_Kathmandu' },
+    ];
+
+    let currentLBIdx = 0;
+
+    function openLightbox(idx) {
+      currentLBIdx = idx;
+      renderLightbox();
+      document.getElementById('lightbox').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function renderLightbox() {
+      const d = GALLERY_DATA[currentLBIdx];
+      document.getElementById('lb-emoji').textContent = d.emoji;
+      document.getElementById('lb-title').textContent = d.title;
+      document.getElementById('lb-sub').textContent = d.sub;
+      document.getElementById('lb-counter').textContent = `${currentLBIdx + 1} / ${GALLERY_DATA.length}`;
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function closeLightboxOnOverlay(e) {
+      if (e.target === document.getElementById('lightbox')) closeLightbox();
+    }
+
+    function lbNav(dir) {
+      currentLBIdx = (currentLBIdx + dir + GALLERY_DATA.length) % GALLERY_DATA.length;
+      renderLightbox();
+    }
+
+    document.addEventListener('keydown', e => {
+      const lb = document.getElementById('lightbox');
+      if (!lb.classList.contains('open')) return;
+      if (e.key === 'ArrowLeft') lbNav(-1);
+      if (e.key === 'ArrowRight') lbNav(1);
+      if (e.key === 'Escape') {
+        closeLightbox();
+        closeDrawer();
+      }
+    });
+
+    /* ═══ CREATOR EDITOR ═══ */
+    function openEditor() {
+      document.getElementById('editor-overlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeEditor() {
+      document.getElementById('editor-overlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    /* ─────────────────────────────
+       DRAWER (mobile menu)
+    ───────────────────────────── */
+    function openDrawer() {
+      document.getElementById('drawer-overlay')?.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      document.getElementById('drawer-overlay')?.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function openCreatorModal() {
+      try { sessionStorage.setItem('aa_open_creator_modal', '1'); } catch (e) { }
+      closeDrawer();
+      window.location.href = 'dashboard.html';
+    }
+
+    function setEditorTab(el, id) {
+      document.querySelectorAll('.editor-tab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.editor-panel').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+      document.getElementById('editor-' + id).classList.add('active');
+    }
+
+    const catMap = {
+      'new-season': { label: 'New Season', cls: 'cat-new-season' },
+      'trailer': { label: 'Trailer', cls: 'cat-trailer' },
+      'rumor': { label: 'Rumor', cls: 'cat-rumor' },
+      'review': { label: 'Review', cls: 'cat-review' },
+      'event': { label: 'Event', cls: 'cat-event' },
+      'fanart': { label: 'Fan Art', cls: 'cat-fanart' },
+    };
+
+    function livePreview() {
+      const title = document.getElementById('e-title').value || 'Your post title will appear here...';
+      const excerpt = document.getElementById('e-excerpt').value || 'Your excerpt will appear here as the card description.';
+      const catVal = document.getElementById('e-category').value;
+      const cat = catMap[catVal];
+
+      document.getElementById('prev-title').textContent = title;
+      document.getElementById('prev-excerpt').textContent = excerpt;
+
+      const badge = document.getElementById('prev-badge');
+      if (cat) {
+        badge.textContent = cat.label;
+        badge.className = 'preview-cat-badge ' + cat.cls;
+      } else {
+        badge.textContent = 'Category';
+        badge.className = 'preview-cat-badge cat-review';
+      }
+    }
+
+    let draftTimer;
+    function saveDraft() {
+      // [Beru Hook] Save to Firebase Firestore as status:'draft'
+      const status = document.getElementById('draft-status');
+      status.textContent = '✓ Draft saved';
+      status.classList.add('saved');
+      clearTimeout(draftTimer);
+      draftTimer = setTimeout(() => {
+        status.textContent = '● Unsaved draft';
+        status.classList.remove('saved');
+      }, 3000);
+    }
+
+    // Auto-save draft every 30 seconds
+    setInterval(saveDraft, 30000);
+
+    function publishPost() {
+      const title = document.getElementById('e-title').value;
+      if (!title.trim()) {
+        showToast('⚠ Title is required before publishing!', true);
+        return;
+      }
+      // [Beru Hook] POST to Firebase Firestore:
+      // firestore.collection('posts').add({
+      //   title, category, excerpt, content, tags, ytUrl, coverImage,
+      //   authorId, authorName, status:'published', createdAt: serverTimestamp()
+      // })
+      closeEditor();
+      showToast('⟡ Post published to the Guild!');
+    }
+
+    function showToast(msg, isError) {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg;
+      t.style.borderColor = isError ? 'var(--crimson)' : 'var(--teal)';
+      t.style.color = isError ? 'var(--crimson)' : 'var(--teal)';
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        closeEditor();
+        closeLightbox();
+        closeDrawer();
+      }
+    });
+    document.getElementById('editor-overlay').addEventListener('click', function (e) {
+      if (e.target === this) closeEditor();
+    });
+  </script>
+
+  <script type="module">
+    import {
+      getFirebase,
+      initAnalytics,
+      guardAuthenticatedPage,
+      subscribeUserProfile,
+      signOutUser,
+      ensureUserDocument,
+    } from './firebase-app.js';
+
+    (async () => {
+      getFirebase();
+      await initAnalytics();
+      const user = await guardAuthenticatedPage();
+      await ensureUserDocument(user);
+
+      const wrap = document.getElementById('aa-news-user');
+      const img = document.getElementById('aa-news-avatar');
+      const nm = document.getElementById('aa-news-name');
+
+      subscribeUserProfile(user.uid, (data) => {
+        const name = data?.name || user.displayName || 'Adventurer';
+        const photo = data?.photo || user.photoURL;
+        if (nm) nm.textContent = name;
+        if (photo && img && wrap) {
+          img.src = photo;
+          img.alt = name;
+          wrap.classList.add('has-photo');
+        } else if (wrap) {
+          wrap.classList.remove('has-photo');
+        }
+      });
+
+      document.getElementById('aa-news-signout')?.addEventListener('click', () => signOutUser());
+      document.getElementById('aa-drawer-logout')?.addEventListener('click', () => signOutUser());
+    })();
+  </script>
+
+</body>
+
+</html>
